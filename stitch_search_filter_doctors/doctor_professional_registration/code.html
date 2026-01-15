@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Doctor Professional Registration | HealthConnect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen text-[#0d141b] dark:text-slate-50 transition-colors duration-200">
+<div class="layout-container flex flex-col min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#cfdbe7] dark:border-slate-700 bg-white dark:bg-background-dark px-4 md:px-40 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-4">
+<div class="text-primary">
+<span class="material-symbols-outlined text-3xl">medical_services</span>
+</div>
+<h2 class="text-[#0d141b] dark:text-white text-lg font-bold leading-tight tracking-tight">HealthConnect</h2>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden md:flex items-center gap-9">
+<a class="text-[#0d141b] dark:text-slate-300 text-sm font-medium hover:text-primary transition-colors" href="#">Back to Login</a>
+<a class="text-[#0d141b] dark:text-slate-300 text-sm font-medium hover:text-primary transition-colors" href="#">Help Center</a>
+</div>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold transition-all hover:bg-primary/90">
+<span class="truncate">Support</span>
+</button>
+</div>
+</header>
+<main class="flex flex-1 justify-center py-10 px-4">
+<div class="layout-content-container flex flex-col max-w-[800px] flex-1">
+<!-- Page Heading -->
+<div class="flex flex-wrap justify-between gap-3 p-4">
+<div class="flex min-w-72 flex-col gap-3">
+<h1 class="text-[#0d141b] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Doctor Professional Registration</h1>
+<p class="text-[#4c739a] dark:text-slate-400 text-base font-normal">Complete your professional profile to start connecting with patients.</p>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="flex flex-col gap-3 p-4">
+<div class="flex gap-6 justify-between items-center">
+<p class="text-[#0d141b] dark:text-slate-200 text-base font-medium">Step 2: Professional Credentials</p>
+<p class="text-[#0d141b] dark:text-slate-200 text-sm font-normal">66% Completed</p>
+</div>
+<div class="rounded-full bg-[#cfdbe7] dark:bg-slate-700 h-2 overflow-hidden">
+<div class="h-2 bg-primary transition-all duration-500" style="width: 66%;"></div>
+</div>
+<p class="text-[#4c739a] dark:text-slate-400 text-sm">Almost there! Your verification process begins after submission.</p>
+</div>
+<form class="space-y-6">
+<!-- Section: Professional Identity -->
+<div class="bg-white dark:bg-slate-800/50 rounded-xl border border-[#cfdbe7] dark:border-slate-700 overflow-hidden mt-6">
+<h2 class="text-[#0d141b] dark:text-white text-[22px] font-bold leading-tight px-6 pb-3 pt-6 border-b border-[#cfdbe7] dark:border-slate-700">Professional Identity</h2>
+<div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="flex flex-col gap-2">
+<label class="text-[#0d141b] dark:text-slate-200 text-sm font-medium">Medical License Number</label>
+<div class="relative">
+<input class="w-full rounded-lg border border-[#cfdbe7] dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-[#0d141b] dark:text-white h-12 px-4 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-[#4c739a]" placeholder="e.g. 1234567890" type="text"/>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-[#0d141b] dark:text-slate-200 text-sm font-medium">Issuing Authority / State Board</label>
+<input class="w-full rounded-lg border border-[#cfdbe7] dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-[#0d141b] dark:text-white h-12 px-4 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-[#4c739a]" placeholder="e.g. Medical Board of California" type="text"/>
+</div>
+</div>
+</div>
+<!-- Section: Clinical Expertise -->
+<div class="bg-white dark:bg-slate-800/50 rounded-xl border border-[#cfdbe7] dark:border-slate-700 overflow-hidden">
+<h2 class="text-[#0d141b] dark:text-white text-[22px] font-bold leading-tight px-6 pb-3 pt-6 border-b border-[#cfdbe7] dark:border-slate-700">Clinical Expertise</h2>
+<div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="flex flex-col gap-2">
+<label class="text-[#0d141b] dark:text-slate-200 text-sm font-medium">Primary Specialty</label>
+<select class="w-full rounded-lg border border-[#cfdbe7] dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-[#0d141b] dark:text-white h-12 px-4 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all">
+<option disabled="" selected="" value="">Select your specialty</option>
+<option value="cardiology">Cardiology</option>
+<option value="dermatology">Dermatology</option>
+<option value="pediatrics">Pediatrics</option>
+<option value="neurology">Neurology</option>
+<option value="general_practice">General Practice</option>
+</select>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-[#0d141b] dark:text-slate-200 text-sm font-medium">Years of Practice</label>
+<input class="w-full rounded-lg border border-[#cfdbe7] dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-[#0d141b] dark:text-white h-12 px-4 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" max="60" min="0" placeholder="Years of experience" type="number"/>
+</div>
+</div>
+</div>
+<!-- Section: Verification Documents -->
+<div class="bg-white dark:bg-slate-800/50 rounded-xl border border-[#cfdbe7] dark:border-slate-700 overflow-hidden">
+<h2 class="text-[#0d141b] dark:text-white text-[22px] font-bold leading-tight px-6 pb-3 pt-6 border-b border-[#cfdbe7] dark:border-slate-700">Verification Documents</h2>
+<div class="p-6">
+<div class="border-2 border-dashed border-[#cfdbe7] dark:border-slate-600 rounded-xl p-10 flex flex-col items-center justify-center gap-4 bg-slate-50 dark:bg-slate-900/50 hover:bg-primary/5 dark:hover:bg-primary/10 transition-colors cursor-pointer group">
+<div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl">cloud_upload</span>
+</div>
+<div class="text-center">
+<p class="text-[#0d141b] dark:text-white font-bold text-lg">Upload Professional Certifications</p>
+<p class="text-[#4c739a] dark:text-slate-400 text-sm mt-1">Drag and drop your diploma or medical board certificate here</p>
+<p class="text-[#4c739a] dark:text-slate-400 text-xs mt-2 italic">Supports PDF, JPG or PNG (Max 10MB)</p>
+</div>
+<button class="mt-2 px-6 py-2 bg-white dark:bg-slate-800 border border-[#cfdbe7] dark:border-slate-600 rounded-lg text-sm font-semibold hover:border-primary transition-colors" type="button">Select Files</button>
+</div>
+</div>
+</div>
+<!-- Approval Notice Callout -->
+<div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-5 flex gap-4">
+<div class="text-blue-600 dark:text-blue-400">
+<span class="material-symbols-outlined">info</span>
+</div>
+<div class="flex flex-col gap-1">
+<p class="text-blue-800 dark:text-blue-300 font-bold text-sm">Account Status: Pending Approval</p>
+<p class="text-blue-700 dark:text-blue-400 text-sm leading-relaxed">
+                                Your registration is subject to administrative approval. Our medical board will verify your credentials within 24-48 hours. You will receive an email notification once your profile is active.
+                            </p>
+</div>
+</div>
+<!-- Form Footer / Actions -->
+<div class="flex flex-col md:flex-row items-center justify-between gap-6 pt-6 pb-12">
+<div class="flex items-center gap-2 text-[#4c739a] dark:text-slate-400">
+<span class="material-symbols-outlined text-green-500">lock</span>
+<span class="text-xs">Your data is encrypted and stored securely following HIPAA standards.</span>
+</div>
+<div class="flex gap-4 w-full md:w-auto">
+<button class="flex-1 md:flex-none px-8 py-3 rounded-lg border border-[#cfdbe7] dark:border-slate-600 text-[#0d141b] dark:text-white font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" type="button">
+                                Save Draft
+                            </button>
+<button class="flex-1 md:flex-none px-12 py-3 rounded-lg bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all hover:-translate-y-0.5" type="submit">
+                                Complete Registration
+                            </button>
+</div>
+</div>
+</form>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-white dark:bg-background-dark border-t border-[#cfdbe7] dark:border-slate-700 py-8 px-40">
+<div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-[#4c739a] dark:text-slate-500">
+<p>© 2023 HealthConnect. All rights reserved.</p>
+<div class="flex gap-6">
+<a class="hover:text-primary" href="#">Privacy Policy</a>
+<a class="hover:text-primary" href="#">Terms of Service</a>
+<a class="hover:text-primary" href="#">Medical Compliance</a>
+</div>
+</div>
+</footer>
+</div>
+</body></html>

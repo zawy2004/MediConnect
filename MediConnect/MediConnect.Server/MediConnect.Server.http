@@ -1,0 +1,6 @@
+@MediConnect.Server_HostAddress = http://localhost:5298
+
+GET {{MediConnect.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

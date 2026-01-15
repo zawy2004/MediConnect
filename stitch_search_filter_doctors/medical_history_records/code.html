@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Medical History Records - HealthConnect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display min-h-screen text-slate-900 dark:text-slate-100">
+<div class="layout-container flex h-full grow flex-col">
+<!-- TopNavBar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-10 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-6">
+<span class="material-symbols-outlined text-3xl">medical_services</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">HealthConnect</h2>
+</div>
+<nav class="hidden lg:flex items-center gap-9">
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Dashboard</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Appointments</a>
+<a class="text-primary text-sm font-bold border-b-2 border-primary py-1" href="#">Medical Records</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Messages</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-6">
+<label class="flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-slate-400 flex border-none bg-slate-100 dark:bg-slate-800 items-center justify-center pl-4 rounded-l-lg" data-icon="MagnifyingGlass">
+<span class="material-symbols-outlined text-xl">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 border-none bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-0 h-full placeholder:text-slate-400 px-4 rounded-r-lg pl-2 text-base font-normal" placeholder="Search records..."/>
+</div>
+</label>
+<div class="flex gap-2">
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-slate-200 dark:border-slate-700" data-alt="Avatar of patient" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBEtJ0JDYlYSrGgqeZ-B8Kba2DiizPwuLAl06CjGDCKSi8bj4NkstIm_7h9jNBJ3mDBrMOfWtUrMSKko-Ip1IHI_8EXRkOTCBvvBd3SJgn8G2Ug6Hc7RDGG2dCriyv4BjSwfpIaPXEM-4QrMFARYO3CVHJg7RmLSasJ488R8YHQFOv2boXft1aS6LJ4rn0oXIeHjAk3wbGmjs2v8clxA2nWpofEnks5O-8-0eFBcsWV6SvnJppP3G5fhuRl3oUFMffybaRDlTFLHTrA");'></div>
+</div>
+</header>
+<main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-10 py-8">
+<!-- PageHeading -->
+<div class="flex flex-wrap justify-between items-end gap-3 mb-8">
+<div class="flex flex-col gap-1">
+<p class="text-slate-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Medical History</p>
+<div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-sm">verified_user</span>
+<p class="text-base font-normal">Secure Records • Last updated: Oct 24, 2023</p>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 cursor-pointer rounded-lg h-11 px-5 bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white text-sm font-bold transition-all hover:bg-slate-300 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-lg">download</span>
+<span>Export All</span>
+</button>
+<button class="flex items-center gap-2 cursor-pointer rounded-lg h-11 px-6 bg-primary text-white text-sm font-bold transition-all hover:opacity-90 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-lg">add</span>
+<span>Add New Record</span>
+</button>
+</div>
+</div>
+<!-- Stats & Quick Alerts -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+<div class="flex flex-col gap-2 rounded-xl p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium uppercase tracking-wider">Chronic Conditions</p>
+<p class="text-slate-900 dark:text-white text-3xl font-bold">2</p>
+<div class="text-red-500 text-xs font-bold flex items-center gap-1 mt-1">
+                         High Attention Required
+                    </div>
+</div>
+<div class="flex flex-col gap-2 rounded-xl p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium uppercase tracking-wider">Active Prescriptions</p>
+<p class="text-slate-900 dark:text-white text-3xl font-bold">4</p>
+<div class="text-primary text-xs font-bold flex items-center gap-1 mt-1">
+                        View Details
+                    </div>
+</div>
+<div class="flex flex-col gap-2 rounded-xl p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium uppercase tracking-wider">Total Documents</p>
+<p class="text-slate-900 dark:text-white text-3xl font-bold">18</p>
+<div class="text-slate-500 text-xs font-medium flex items-center gap-1 mt-1">
+                        Encrypted Storage
+                    </div>
+</div>
+<div class="flex flex-col gap-2 rounded-xl p-6 border border-primary/20 bg-primary/5 dark:bg-primary/10 shadow-sm">
+<p class="text-primary dark:text-primary text-sm font-bold uppercase tracking-wider">Blood Type</p>
+<p class="text-slate-900 dark:text-white text-3xl font-bold">O Positive</p>
+<div class="text-primary text-xs font-medium flex items-center gap-1 mt-1">
+                         Universal Donor
+                    </div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Main Content Column -->
+<div class="lg:col-span-8 flex flex-col gap-6">
+<!-- Critical Alerts -->
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+<h2 class="text-slate-900 dark:text-white text-lg font-bold px-6 pt-5 pb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-red-500">warning</span>
+                            Critical Alerts
+                        </h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-6 pt-2">
+<div class="flex gap-4 rounded-lg border border-red-100 dark:border-red-900/30 bg-red-50 dark:bg-red-900/10 p-4">
+<div class="text-red-500">
+<span class="material-symbols-outlined">pill</span>
+</div>
+<div class="flex flex-col gap-1">
+<h2 class="text-red-900 dark:text-red-300 text-base font-bold">Allergies</h2>
+<p class="text-red-700 dark:text-red-400 text-sm font-medium">Penicillin, Peanuts, Latex</p>
+</div>
+</div>
+<div class="flex gap-4 rounded-lg border border-amber-100 dark:border-amber-900/30 bg-amber-50 dark:bg-amber-900/10 p-4">
+<div class="text-amber-600">
+<span class="material-symbols-outlined">monitor_heart</span>
+</div>
+<div class="flex flex-col gap-1">
+<h2 class="text-amber-900 dark:text-amber-300 text-base font-bold">Chronic Conditions</h2>
+<p class="text-amber-700 dark:text-amber-400 text-sm font-medium">Hypertension, Type 2 Diabetes</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Medical Timeline -->
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-slate-900 dark:text-white text-lg font-bold">Activity Timeline</h2>
+<div class="flex gap-2">
+<button class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+</button>
+</div>
+</div>
+<div class="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-200 dark:before:via-slate-700 before:to-transparent">
+<!-- Timeline Item 1 -->
+<div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+<div class="flex items-center justify-center w-10 h-10 rounded-full border border-white dark:border-slate-900 bg-primary text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">
+<span class="material-symbols-outlined text-sm">event_note</span>
+</div>
+<div class="w-[calc(100%-4rem)] md:w-[45%] p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+<div class="flex items-center justify-between mb-1">
+<time class="font-bold text-slate-500 text-sm">Oct 20, 2023</time>
+</div>
+<div class="text-slate-900 dark:text-white font-bold mb-1">Annual Wellness Exam</div>
+<p class="text-slate-600 dark:text-slate-400 text-sm">Dr. Sarah Johnson • General Medicine. Blood work normal, adjusted BP medication.</p>
+</div>
+</div>
+<!-- Timeline Item 2 -->
+<div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+<div class="flex items-center justify-center w-10 h-10 rounded-full border border-white dark:border-slate-900 bg-slate-200 dark:bg-slate-700 text-slate-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">
+<span class="material-symbols-outlined text-sm">vaccines</span>
+</div>
+<div class="w-[calc(100%-4rem)] md:w-[45%] p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+<div class="flex items-center justify-between mb-1">
+<time class="font-bold text-slate-500 text-sm">Sep 12, 2023</time>
+</div>
+<div class="text-slate-900 dark:text-white font-bold mb-1">Flu Vaccination</div>
+<p class="text-slate-600 dark:text-slate-400 text-sm">CVS Pharmacy • Administered seasonal flu shot (Quadrivalent).</p>
+</div>
+</div>
+<!-- Timeline Item 3 -->
+<div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+<div class="flex items-center justify-center w-10 h-10 rounded-full border border-white dark:border-slate-900 bg-slate-200 dark:bg-slate-700 text-slate-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">
+<span class="material-symbols-outlined text-sm">biotech</span>
+</div>
+<div class="w-[calc(100%-4rem)] md:w-[45%] p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+<div class="flex items-center justify-between mb-1">
+<time class="font-bold text-slate-500 text-sm">Aug 05, 2023</time>
+</div>
+<div class="text-slate-900 dark:text-white font-bold mb-1">MRI Scan - Lumbar Spine</div>
+<p class="text-slate-600 dark:text-slate-400 text-sm">Metro Imaging Center • Routine check on previous disk issues. Result: Stable.</p>
+<div class="mt-3 flex gap-2">
+<span class="inline-flex items-center gap-1 rounded bg-slate-200 dark:bg-slate-700 px-2 py-1 text-xs font-bold text-slate-700 dark:text-slate-300">
+<span class="material-symbols-outlined text-xs">picture_as_pdf</span>
+                                            mri_results.pdf
+                                        </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Side Column -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<!-- Prescription Box -->
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="p-6">
+<h2 class="text-slate-900 dark:text-white text-lg font-bold mb-4">Active Prescriptions</h2>
+<div class="space-y-4">
+<div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">medication</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold text-slate-900 dark:text-white">Lisinopril 10mg</p>
+<p class="text-xs text-slate-500">1 tablet daily • 2 refills left</p>
+</div>
+</div>
+<div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">medication</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold text-slate-900 dark:text-white">Metformin 500mg</p>
+<p class="text-xs text-slate-500">2 tablets daily • 1 refill left</p>
+</div>
+</div>
+<div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">medication_liquid</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold text-slate-900 dark:text-white">Vitamin D3 5000 IU</p>
+<p class="text-xs text-slate-500">Over-the-counter • Daily</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-4 text-primary text-sm font-bold flex items-center justify-center gap-1">
+                                Request Refills <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Documents/Upload Section -->
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="p-6">
+<h2 class="text-slate-900 dark:text-white text-lg font-bold mb-4">Upload Documents</h2>
+<div class="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-8 flex flex-col items-center justify-center gap-3 bg-slate-50/50 dark:bg-slate-800/20 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+<div class="size-12 rounded-full bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-2xl">upload_file</span>
+</div>
+<div class="text-center">
+<p class="text-sm font-bold text-slate-900 dark:text-white">Drop medical files here</p>
+<p class="text-xs text-slate-500 mt-1">PDF, JPG, or PNG up to 10MB</p>
+</div>
+</div>
+<div class="mt-6">
+<h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Recent Uploads</h3>
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between p-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">description</span>
+<div>
+<p class="text-xs font-bold text-slate-700 dark:text-slate-300">Blood_Work_Oct.pdf</p>
+<p class="text-[10px] text-slate-500">2.4 MB • Oct 21</p>
+</div>
+</div>
+<button class="text-slate-400 hover:text-slate-600">
+<span class="material-symbols-outlined text-sm">more_vert</span>
+</button>
+</div>
+<div class="flex items-center justify-between p-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">image</span>
+<div>
+<p class="text-xs font-bold text-slate-700 dark:text-slate-300">Skin_Rash_Photo.jpg</p>
+<p class="text-[10px] text-slate-500">5.1 MB • Oct 18</p>
+</div>
+</div>
+<button class="text-slate-400 hover:text-slate-600">
+<span class="material-symbols-outlined text-sm">more_vert</span>
+</button>
+</div>
+</div>
+<button class="w-full mt-3 text-slate-500 dark:text-slate-400 text-xs font-bold hover:text-primary transition-colors">
+                                    View All Files (18)
+                                </button>
+</div>
+</div>
+</div>
+<!-- Security Badge -->
+<div class="flex items-center gap-3 p-4 rounded-xl border border-green-100 dark:border-green-900/30 bg-green-50 dark:bg-green-900/10">
+<span class="material-symbols-outlined text-green-600 dark:text-green-400">shield_lock</span>
+<p class="text-xs font-medium text-green-800 dark:text-green-300">
+                            Your health records are end-to-end encrypted and HIPAA compliant.
+                        </p>
+</div>
+</div>
+</div>
+</main>
+<!-- Mobile Bottom Nav (Optional addition for completeness) -->
+<div class="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex justify-around p-3 z-50">
+<button class="flex flex-col items-center text-slate-400"><span class="material-symbols-outlined">dashboard</span><span class="text-[10px]">Home</span></button>
+<button class="flex flex-col items-center text-primary"><span class="material-symbols-outlined">folder_shared</span><span class="text-[10px]">Records</span></button>
+<button class="flex flex-col items-center text-slate-400"><span class="material-symbols-outlined">calendar_month</span><span class="text-[10px]">Appts</span></button>
+<button class="flex flex-col items-center text-slate-400"><span class="material-symbols-outlined">person</span><span class="text-[10px]">Profile</span></button>
+</div>
+</div>
+</body></html>

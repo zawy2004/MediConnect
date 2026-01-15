@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Schedule Management - HealConnect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: 80px repeat(7, 1fr);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#0d141b] dark:text-slate-50 min-h-screen">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e7edf3] dark:border-b-slate-800 bg-white dark:bg-[#1a2634] px-10 py-3">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-6">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M39.475 21.6262C40.358 21.4363 40.6863 21.5589 40.7581 21.5934C40.7876 21.655 40.8547 21.857 40.8082 22.3336C40.7408 23.0255 40.4502 24.0046 39.8572 25.2301C38.6799 27.6631 36.5085 30.6631 33.5858 33.5858C30.6631 36.5085 27.6632 38.6799 25.2301 39.8572C24.0046 40.4502 23.0255 40.7407 22.3336 40.8082C21.8571 40.8547 21.6551 40.7875 21.5934 40.7581C21.5589 40.6863 21.4363 40.358 21.6262 39.475C21.8562 38.4054 22.4689 36.9657 23.5038 35.2817C24.7575 33.2417 26.5497 30.9744 28.7621 28.762C30.9744 26.5497 33.2417 24.7574 35.2817 23.5037C36.9657 22.4689 38.4054 21.8562 39.475 21.6262ZM4.41189 29.2403L18.7597 43.5881C19.8813 44.7097 21.4027 44.9179 22.7217 44.7893C24.0585 44.659 25.5148 44.1631 26.9723 43.4579C29.9052 42.0387 33.2618 39.5667 36.4142 36.4142C39.5667 33.2618 42.0387 29.9052 43.4579 26.9723C44.1631 25.5148 44.659 24.0585 44.7893 22.7217C44.9179 21.4027 44.7097 19.8813 43.5881 18.7597L29.2403 4.41187C27.8527 3.02428 25.8765 3.02573 24.2861 3.36776C22.6081 3.72863 20.7334 4.58419 18.8396 5.74801C16.4978 7.18716 13.9881 9.18353 11.5858 11.5858C9.18354 13.988 7.18717 16.4978 5.74802 18.8396C4.58421 20.7334 3.72865 22.6081 3.36778 24.2861C3.02574 25.8765 3.02429 27.8527 4.41189 29.2403Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-[#0d141b] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">HealConnect</h2>
+</div>
+<div class="flex items-center gap-9">
+<a class="text-[#0d141b] dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-[#0d141b] dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Patients</a>
+<a class="text-primary text-sm font-bold leading-normal" href="#">Schedule</a>
+<a class="text-[#0d141b] dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Messages</a>
+<a class="text-[#0d141b] dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Reports</a>
+</div>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<label class="flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-[#4c739a] flex border-none bg-[#e7edf3] dark:bg-slate-800 items-center justify-center pl-4 rounded-l-lg border-r-0">
+<span class="material-symbols-outlined text-xl">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d141b] dark:text-white focus:outline-0 focus:ring-0 border-none bg-[#e7edf3] dark:bg-slate-800 focus:border-none h-full placeholder:text-[#4c739a] px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search patients or dates" value=""/>
+</div>
+</label>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-slate-200 dark:border-slate-700" data-alt="Profile picture of Dr. Sarah Miller" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCw75BD7fGoU0MCQ7nCpiX7cIkTQopyPPU4zRaAnFitUB69aX6vcNh8AUV6lP_p6tFLiP4AI8SfJz7X0QGZxk0JJsM0uxpakhZAgZbdIgjpK2Gzr1_IklNPC7fAYO51y3bvQsSjPI7c2rjlMFMfebqNq3yXwcNU5Qcrq9hE_MU7vlI300Kvb2Oflu7wJq72FLvReH4t9B73LyzEEce2_wCvDoVJmDFNYrZ0asHg8c5hy3Iabf80gudVhP-XjNI_sQ657KriLoYIDql7");'></div>
+</div>
+</header>
+<main class="flex-1 flex flex-col max-w-[1440px] mx-auto w-full px-4 md:px-10 py-6">
+<!-- Breadcrumbs -->
+<div class="flex flex-wrap gap-2 py-2">
+<a class="text-[#4c739a] text-sm font-medium leading-normal" href="#">Dashboard</a>
+<span class="text-[#4c739a] text-sm font-medium leading-normal">/</span>
+<span class="text-[#0d141b] dark:text-slate-400 text-sm font-medium leading-normal">Schedule</span>
+</div>
+<!-- Page Heading -->
+<div class="flex flex-wrap justify-between items-end gap-3 py-4">
+<div class="flex min-w-72 flex-col gap-1">
+<p class="text-[#0d141b] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Manage Working Schedule</p>
+<p class="text-[#4c739a] dark:text-slate-400 text-base font-normal leading-normal">Configure your availability and optimize your clinical hours with AI insights.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 gap-2">
+<span class="material-symbols-outlined text-lg">auto_awesome</span>
+<span class="truncate">AI Optimize Schedule</span>
+</button>
+</div>
+</div>
+<!-- Dashboard Content Layout -->
+<div class="flex flex-col lg:flex-row gap-6 mt-4 grow">
+<!-- Left Sidebar: Settings -->
+<aside class="w-full lg:w-80 flex flex-col gap-6">
+<!-- Working Hours Config -->
+<div class="bg-white dark:bg-[#1a2634] p-6 rounded-xl border border-[#e7edf3] dark:border-slate-800 shadow-sm">
+<h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">settings_suggest</span>
+                            Recurring Hours
+                        </h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="text-sm font-medium">Monday</span>
+<span class="text-xs text-[#4c739a]">08:00 - 17:00</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-sm font-medium">Tuesday</span>
+<span class="text-xs text-[#4c739a]">08:00 - 17:00</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-sm font-medium">Wednesday</span>
+<span class="text-xs text-[#4c739a]">08:00 - 17:00</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-sm font-medium">Thursday</span>
+<span class="text-xs text-[#4c739a]">08:00 - 17:00</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-sm font-medium">Friday</span>
+<span class="text-xs text-[#4c739a]">08:00 - 14:00</span>
+</div>
+</div>
+<button class="w-full mt-6 py-2 px-4 border border-[#e7edf3] dark:border-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                            Edit Defaults
+                        </button>
+</div>
+<!-- Legend -->
+<div class="bg-white dark:bg-[#1a2634] p-6 rounded-xl border border-[#e7edf3] dark:border-slate-800 shadow-sm">
+<h3 class="text-sm font-bold text-[#4c739a] uppercase tracking-wider mb-4">Availability Key</h3>
+<div class="space-y-3">
+<div class="flex items-center gap-3">
+<div class="size-3 rounded-full bg-emerald-500"></div>
+<span class="text-sm">Available Slot</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="size-3 rounded-full bg-primary"></div>
+<span class="text-sm">Booked Patient</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="size-3 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+<span class="text-sm">Blocked/Private</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="size-3 rounded-full bg-orange-400"></div>
+<span class="text-sm">Vacation/Out</span>
+</div>
+</div>
+</div>
+<!-- AI Insights Mini Panel -->
+<div class="bg-primary/5 dark:bg-primary/10 p-6 rounded-xl border border-primary/20">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary">lightbulb</span>
+<div>
+<p class="text-sm font-bold text-primary">AI Insight</p>
+<p class="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
+                                    You have high demand on Tuesday mornings. Consider shifting your 14:00 Friday block to Tuesday 08:00.
+                                </p>
+<button class="text-xs font-bold text-primary mt-3 hover:underline">Apply Recommendation</button>
+</div>
+</div>
+</div>
+</aside>
+<!-- Right Side: Calendar -->
+<section class="flex-1 flex flex-col bg-white dark:bg-[#1a2634] rounded-xl border border-[#e7edf3] dark:border-slate-800 shadow-sm overflow-hidden">
+<!-- Toolbar -->
+<div class="flex flex-col sm:flex-row justify-between items-center gap-4 px-6 py-4 border-b border-[#e7edf3] dark:border-slate-800">
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-[#0d141b] dark:text-white">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<h2 class="text-lg font-bold min-w-40 text-center">October 14 – 20, 2024</h2>
+<button class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-[#0d141b] dark:text-white">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<div class="flex items-center gap-4">
+<!-- View Toggle -->
+<div class="flex h-10 items-center justify-center rounded-lg bg-[#e7edf3] dark:bg-slate-800 p-1 min-w-[200px]">
+<label class="flex cursor-pointer h-full grow items-center justify-center rounded-lg px-4 has-[:checked]:bg-white dark:has-[:checked]:bg-[#1a2634] has-[:checked]:shadow-sm has-[:checked]:text-[#0d141b] dark:has-[:checked]:text-white text-[#4c739a] text-xs font-bold uppercase transition-all">
+<span>Day</span>
+<input class="invisible w-0" name="view-toggle" type="radio" value="Day"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center rounded-lg px-4 has-[:checked]:bg-white dark:has-[:checked]:bg-[#1a2634] has-[:checked]:shadow-sm has-[:checked]:text-[#0d141b] dark:has-[:checked]:text-white text-[#4c739a] text-xs font-bold uppercase transition-all">
+<span>Week</span>
+<input checked="" class="invisible w-0" name="view-toggle" type="radio" value="Week"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center rounded-lg px-4 has-[:checked]:bg-white dark:has-[:checked]:bg-[#1a2634] has-[:checked]:shadow-sm has-[:checked]:text-[#0d141b] dark:has-[:checked]:text-white text-[#4c739a] text-xs font-bold uppercase transition-all">
+<span>Month</span>
+<input class="invisible w-0" name="view-toggle" type="radio" value="Month"/>
+</label>
+</div>
+<button class="flex items-center justify-center rounded-lg h-10 bg-primary text-white px-4 text-sm font-bold gap-2 hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined text-lg">flight_takeoff</span>
+<span>Add Vacation</span>
+</button>
+</div>
+</div>
+<!-- Calendar Grid -->
+<div class="flex-1 overflow-auto">
+<div class="calendar-grid min-w-[800px]">
+<!-- Header Row -->
+<div class="h-12 border-b border-r border-slate-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-[#1a2634] z-10"></div>
+<div class="h-12 border-b border-r border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center sticky top-0 bg-white dark:bg-[#1a2634] z-10">
+<span class="text-[10px] font-bold text-slate-400 uppercase">Mon</span>
+<span class="text-sm font-black">14</span>
+</div>
+<div class="h-12 border-b border-r border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center sticky top-0 bg-white dark:bg-[#1a2634] z-10">
+<span class="text-[10px] font-bold text-slate-400 uppercase">Tue</span>
+<span class="text-sm font-black">15</span>
+</div>
+<div class="h-12 border-b border-r border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center sticky top-0 bg-white dark:bg-[#1a2634] z-10">
+<span class="text-[10px] font-bold text-slate-400 uppercase">Wed</span>
+<span class="text-sm font-black text-primary">16</span>
+<div class="absolute bottom-1 size-1 bg-primary rounded-full"></div>
+</div>
+<div class="h-12 border-b border-r border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center sticky top-0 bg-white dark:bg-[#1a2634] z-10">
+<span class="text-[10px] font-bold text-slate-400 uppercase">Thu</span>
+<span class="text-sm font-black">17</span>
+</div>
+<div class="h-12 border-b border-r border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center sticky top-0 bg-white dark:bg-[#1a2634] z-10">
+<span class="text-[10px] font-bold text-slate-400 uppercase">Fri</span>
+<span class="text-sm font-black">18</span>
+</div>
+<div class="h-12 border-b border-r border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center sticky top-0 bg-white dark:bg-[#1a2634] z-10">
+<span class="text-[10px] font-bold text-slate-400 uppercase">Sat</span>
+<span class="text-sm font-black text-slate-400">19</span>
+</div>
+<div class="h-12 border-b border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center sticky top-0 bg-white dark:bg-[#1a2634] z-10">
+<span class="text-[10px] font-bold text-slate-400 uppercase">Sun</span>
+<span class="text-sm font-black text-slate-400">20</span>
+</div>
+<!-- Time Slots (Example rows) -->
+<!-- 08:00 Row -->
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 text-[10px] text-[#4c739a] font-bold p-2 text-right">08:00</div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 bg-emerald-500/10 p-1">
+<div class="h-full w-full bg-emerald-500/20 rounded border border-emerald-500/30 flex items-center justify-center">
+<span class="text-[10px] font-bold text-emerald-700">Available</span>
+</div>
+</div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 p-1">
+<div class="h-full w-full bg-primary rounded border border-primary text-white p-2">
+<p class="text-[10px] font-bold truncate">James Wilson</p>
+<p class="text-[8px] opacity-80">Follow-up</p>
+</div>
+</div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 bg-emerald-500/10 p-1"></div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 bg-emerald-500/10 p-1"></div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 bg-emerald-500/10 p-1"></div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50"></div>
+<div class="h-16 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50"></div>
+<!-- 09:00 Row -->
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 text-[10px] text-[#4c739a] font-bold p-2 text-right">09:00</div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 p-1">
+<div class="h-full w-full bg-primary rounded border border-primary text-white p-2">
+<p class="text-[10px] font-bold truncate">Sarah Chen</p>
+<p class="text-[8px] opacity-80">Consultation</p>
+</div>
+</div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 p-1">
+<div class="h-full w-full bg-primary rounded border border-primary text-white p-2">
+<p class="text-[10px] font-bold truncate">Robert Fox</p>
+<p class="text-[8px] opacity-80">Annual Checkup</p>
+</div>
+</div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 p-1">
+<div class="h-full w-full bg-primary rounded border border-primary text-white p-2">
+<p class="text-[10px] font-bold truncate">Linda Bell</p>
+<p class="text-[8px] opacity-80">Flu Shot</p>
+</div>
+</div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 bg-emerald-500/10 p-1"></div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 bg-emerald-500/10 p-1"></div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50"></div>
+<div class="h-16 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50"></div>
+<!-- 10:00 Row (Blocked) -->
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 text-[10px] text-[#4c739a] font-bold p-2 text-right">10:00</div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 p-1">
+<div class="h-full w-full bg-slate-200 dark:bg-slate-700 rounded border border-slate-300 dark:border-slate-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400 text-sm">lock</span>
+</div>
+</div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 p-1">
+<div class="h-full w-full bg-slate-200 dark:bg-slate-700 rounded border border-slate-300 dark:border-slate-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400 text-sm">lock</span>
+</div>
+</div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 p-1">
+<div class="h-full w-full bg-slate-200 dark:bg-slate-700 rounded border border-slate-300 dark:border-slate-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400 text-sm">lock</span>
+</div>
+</div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 p-1">
+<div class="h-full w-full bg-slate-200 dark:bg-slate-700 rounded border border-slate-300 dark:border-slate-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400 text-sm">lock</span>
+</div>
+</div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 p-1">
+<div class="h-full w-full bg-slate-200 dark:bg-slate-700 rounded border border-slate-300 dark:border-slate-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400 text-sm">lock</span>
+</div>
+</div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50"></div>
+<div class="h-16 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50"></div>
+<!-- 11:00 Row (Vacation Example) -->
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 text-[10px] text-[#4c739a] font-bold p-2 text-right">11:00</div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 bg-emerald-500/10 p-1"></div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 bg-emerald-500/10 p-1"></div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 bg-emerald-500/10 p-1"></div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 p-1">
+<div class="h-full w-full bg-orange-100 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-800 rounded p-1">
+<p class="text-[9px] font-bold text-orange-700 dark:text-orange-400">Conference</p>
+</div>
+</div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 p-1">
+<div class="h-full w-full bg-orange-100 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-800 rounded p-1">
+<p class="text-[9px] font-bold text-orange-700 dark:text-orange-400">Conference</p>
+</div>
+</div>
+<div class="h-16 border-b border-r border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50"></div>
+<div class="h-16 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50"></div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+<!-- AI Optimize Overlay (Implicit/Contextual Example) -->
+<div class="fixed bottom-8 right-8 bg-white dark:bg-[#1a2634] shadow-2xl rounded-2xl p-4 border border-[#e7edf3] dark:border-slate-700 flex items-center gap-4 max-w-sm">
+<div class="size-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-2xl">bolt</span>
+</div>
+<div class="flex-1">
+<p class="text-xs font-bold text-slate-500 uppercase">System Status</p>
+<p class="text-sm font-semibold">Schedule is 84% optimized</p>
+<div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+<div class="bg-primary h-full w-[84%]"></div>
+</div>
+</div>
+<button class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full">
+<span class="material-symbols-outlined text-slate-400">close</span>
+</button>
+</div>
+</body></html>

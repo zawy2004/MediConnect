@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Statistical Report Generator | HealthAdmin Pro</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .chart-gradient { background: linear-gradient(180deg, rgba(19, 127, 236, 0.1) 0%, rgba(19, 127, 236, 0) 100%); }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen font-display">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#e7edf3] dark:border-slate-800 bg-white dark:bg-slate-900 px-10 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-8 flex items-center justify-center bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined">analytics</span>
+</div>
+<h2 class="text-[#0d141b] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">HealthAdmin Pro</h2>
+</div>
+<nav class="flex items-center gap-9">
+<a class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Patients</a>
+<a class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Doctors</a>
+<a class="text-primary text-sm font-bold leading-normal border-b-2 border-primary pb-1" href="#">Reports</a>
+<a class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Settings</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<label class="flex flex-col min-w-40 h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-slate-400 flex border-none bg-slate-100 dark:bg-slate-800 items-center justify-center pl-4 rounded-l-lg" data-icon="MagnifyingGlass">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 border-none bg-slate-100 dark:bg-slate-800 text-[#0d141b] dark:text-white focus:ring-0 h-full placeholder:text-slate-400 px-4 rounded-r-lg pl-2 text-sm font-normal" placeholder="Search data..."/>
+</div>
+</label>
+<div class="flex gap-2">
+<button class="flex items-center justify-center rounded-lg size-10 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button class="flex items-center justify-center rounded-lg size-10 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+</button>
+</div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-white dark:border-slate-700" data-alt="Profile picture of administrator" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBIhuEcylkH5UjrahYabGxshoVidqX9E_1Iv8k0PndsT-eJR0dqVpky5G8fhTkBQode4533tWTJqZv2a7qVVumobz3csZWucIHfmEVQ7qhS-LOt8nNxs-7VULhAi8hBYESXZkZVqazU1Dm1w52OXYjoRAmON5LgQS91kVWJ_dW5qWlL5RQC4dNgacycdFHF3TawpHm-UBAOZJNSUJ9IDLUyQYUoudXl6qOmzUwUvcnGAuZqc3gu6mrXz04P0iAUJg0jmHz-RuPd4KzZ");'></div>
+</div>
+</header>
+<div class="flex h-[calc(100vh-64px)] overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="w-72 bg-white dark:bg-slate-900 border-r border-[#e7edf3] dark:border-slate-800 flex flex-col justify-between p-4 overflow-y-auto">
+<div class="flex flex-col gap-6">
+<!-- User Context -->
+<div class="flex gap-3 items-center p-2">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-10" data-alt="Healthcare system logo" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAup_di8eW8w9704bq_aAcaBctSZeN9xUjIw2cL-cYjlZ1JJFZIprOmnnE0cyZgkWg8RB6DphpfNwiF_qgq4brnn_UqkT4jbEq90e7OOPbT5cy7-TUcIpY75USGoh03TS9vf2T_kLGjWO7hS3ov1jGRdkZpPDBfA4MCvBEZS1l4Aj63uzyobhcpjW0KHj2ehNhJ527hkQCKRNspc1YNchGu9Lf7zsf-S06douBW6pCsQYCeGtTJgKvVG592yh-HPO7-ACk0HaiaV4n3");'></div>
+<div class="flex flex-col">
+<h1 class="text-[#0d141b] dark:text-white text-sm font-bold leading-tight">Admin Portal</h1>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-normal">North General Health</p>
+</div>
+</div>
+<!-- Nav Groups -->
+<div class="flex flex-col gap-1">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 mb-2">Main Menu</p>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<p class="text-sm font-medium">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<p class="text-sm font-medium">Manage Staff</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">bar_chart</span>
+<p class="text-sm font-bold">Analytics &amp; Reports</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+<p class="text-sm font-medium">Billing</p>
+</a>
+</div>
+<div class="flex flex-col gap-1 mt-4">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 mb-2">System</p>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">history</span>
+<p class="text-sm font-medium">System Logs</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<p class="text-sm font-medium">Configuration</p>
+</a>
+</div>
+</div>
+<div class="pt-6 border-t border-slate-100 dark:border-slate-800">
+<div class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl">
+<p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Storage Usage</p>
+<div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full mb-2">
+<div class="bg-primary h-full rounded-full" style="width: 65%"></div>
+</div>
+<p class="text-[10px] text-slate-400 font-medium">6.5GB of 10GB used</p>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark">
+<div class="max-w-[1200px] mx-auto p-8">
+<!-- Breadcrumbs -->
+<div class="flex items-center gap-2 mb-4">
+<a class="text-slate-400 text-sm font-medium hover:text-primary" href="#">Admin</a>
+<span class="text-slate-300 text-sm font-medium">/</span>
+<a class="text-slate-400 text-sm font-medium hover:text-primary" href="#">Reports</a>
+<span class="text-slate-300 text-sm font-medium">/</span>
+<span class="text-primary text-sm font-bold">Statistical Generator</span>
+</div>
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+<div class="flex flex-col gap-2">
+<h1 class="text-[#0d141b] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Statistical Report Generator</h1>
+<p class="text-slate-500 dark:text-slate-400 text-base font-normal">Configure parameters to generate and export data-driven insights across clinical operations.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-white border border-slate-200 dark:border-slate-700 font-bold text-sm shadow-sm hover:bg-slate-50 transition-all">
+<span class="material-symbols-outlined text-[18px]">history</span>
+                            Saved Templates
+                        </button>
+<button class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-white font-bold text-sm shadow-lg shadow-primary/20 hover:brightness-110 transition-all">
+<span class="material-symbols-outlined text-[18px]">play_arrow</span>
+                            Generate Report
+                        </button>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-8">
+<!-- Left Column: Configuration -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+<h2 class="text-slate-900 dark:text-white text-lg font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">tune</span>
+                                Report Configuration
+                            </h2>
+<form class="flex flex-col gap-5">
+<!-- Report Type -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-bold text-slate-700 dark:text-slate-300">Report Category</label>
+<select class="form-select rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:border-primary focus:ring-primary w-full text-sm">
+<option>Appointment Trends</option>
+<option>Revenue Analysis</option>
+<option>Doctor Performance Metrics</option>
+<option>Patient Demographics</option>
+<option>Resource Utilization</option>
+</select>
+</div>
+<!-- Date Range -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-bold text-slate-700 dark:text-slate-300">Date Range Selection</label>
+<div class="grid grid-cols-2 gap-2 mb-2">
+<button class="text-xs py-2 rounded bg-primary/5 text-primary border border-primary/20 font-bold" type="button">Last 30 Days</button>
+<button class="text-xs py-2 rounded bg-slate-50 dark:bg-slate-800 text-slate-500 border border-slate-200 dark:border-slate-700 font-medium" type="button">This Quarter</button>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-2 px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg">
+<span class="material-symbols-outlined text-[18px] text-slate-400">calendar_month</span>
+<input class="bg-transparent border-none p-0 text-sm text-slate-700 dark:text-white w-full focus:ring-0" type="text" value="Oct 01, 2023 - Oct 31, 2023"/>
+</div>
+</div>
+</div>
+<!-- Department -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-bold text-slate-700 dark:text-slate-300">Specific Department</label>
+<select class="form-select rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:border-primary focus:ring-primary w-full text-sm">
+<option>All Departments</option>
+<option>Cardiology</option>
+<option>Neurology</option>
+<option>Pediatrics</option>
+<option>Radiology</option>
+</select>
+</div>
+<!-- Export Format -->
+<div class="flex flex-col gap-2 mt-2">
+<label class="text-sm font-bold text-slate-700 dark:text-slate-300">Export Format</label>
+<div class="flex items-center gap-2">
+<label class="flex-1 cursor-pointer group">
+<input checked="" class="hidden peer" name="format" type="radio"/>
+<div class="flex flex-col items-center justify-center p-3 border-2 border-slate-100 dark:border-slate-800 rounded-lg peer-checked:border-primary peer-checked:bg-primary/5 transition-all">
+<span class="material-symbols-outlined text-slate-400 group-peer-checked:text-primary">picture_as_pdf</span>
+<span class="text-[10px] font-bold mt-1 uppercase text-slate-500">PDF</span>
+</div>
+</label>
+<label class="flex-1 cursor-pointer group">
+<input class="hidden peer" name="format" type="radio"/>
+<div class="flex flex-col items-center justify-center p-3 border-2 border-slate-100 dark:border-slate-800 rounded-lg peer-checked:border-primary peer-checked:bg-primary/5 transition-all">
+<span class="material-symbols-outlined text-slate-400 group-peer-checked:text-primary">description</span>
+<span class="text-[10px] font-bold mt-1 uppercase text-slate-500">Excel</span>
+</div>
+</label>
+<label class="flex-1 cursor-pointer group">
+<input class="hidden peer" name="format" type="radio"/>
+<div class="flex flex-col items-center justify-center p-3 border-2 border-slate-100 dark:border-slate-800 rounded-lg peer-checked:border-primary peer-checked:bg-primary/5 transition-all">
+<span class="material-symbols-outlined text-slate-400 group-peer-checked:text-primary">csv</span>
+<span class="text-[10px] font-bold mt-1 uppercase text-slate-500">CSV</span>
+</div>
+</label>
+</div>
+</div>
+<div class="pt-4 mt-2 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-3">
+<button class="w-full bg-primary text-white py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">download</span>
+                                        Download Final Report
+                                    </button>
+<button class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 py-3 rounded-lg font-bold text-sm">
+                                        Reset Filters
+                                    </button>
+</div>
+</form>
+</div>
+</div>
+<!-- Right Column: Live Preview -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-6">
+<!-- Preview Container -->
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+<div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+<h2 class="text-slate-900 dark:text-white text-lg font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">visibility</span>
+                                    Live Data Preview
+                                </h2>
+<span class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-black uppercase rounded-full tracking-wider">Live Sync Active</span>
+</div>
+<div class="p-8">
+<!-- Summary Metrics -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+<p class="text-xs text-slate-500 dark:text-slate-400 font-medium mb-1">Total Appointments</p>
+<div class="flex items-end gap-2">
+<span class="text-2xl font-black text-slate-900 dark:text-white leading-none">2,842</span>
+<span class="text-xs font-bold text-green-600 flex items-center">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+                                                12%
+                                            </span>
+</div>
+</div>
+<div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+<p class="text-xs text-slate-500 dark:text-slate-400 font-medium mb-1">New Patients</p>
+<div class="flex items-end gap-2">
+<span class="text-2xl font-black text-slate-900 dark:text-white leading-none">412</span>
+<span class="text-xs font-bold text-green-600 flex items-center">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+                                                5%
+                                            </span>
+</div>
+</div>
+<div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+<p class="text-xs text-slate-500 dark:text-slate-400 font-medium mb-1">Average Wait Time</p>
+<div class="flex items-end gap-2">
+<span class="text-2xl font-black text-slate-900 dark:text-white leading-none">18.5m</span>
+<span class="text-xs font-bold text-red-600 flex items-center">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+                                                2m
+                                            </span>
+</div>
+</div>
+</div>
+<!-- Main Chart Preview (Abstract SVG visualization) -->
+<div class="mb-8 p-6 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-xl">
+<div class="flex justify-between items-center mb-6">
+<p class="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Volume Trend (Oct 2023)</p>
+<div class="flex gap-4">
+<div class="flex items-center gap-1.5">
+<span class="size-2 rounded-full bg-primary"></span>
+<span class="text-[10px] font-bold text-slate-400 uppercase">Booked</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="size-2 rounded-full bg-slate-300"></span>
+<span class="text-[10px] font-bold text-slate-400 uppercase">Canceled</span>
+</div>
+</div>
+</div>
+<div class="h-64 relative flex items-end gap-2">
+<!-- Mock Chart bars/lines -->
+<div class="flex-1 bg-primary/20 hover:bg-primary transition-all rounded-t-sm h-[40%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary transition-all rounded-t-sm h-[55%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary transition-all rounded-t-sm h-[45%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary transition-all rounded-t-sm h-[70%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary transition-all rounded-t-sm h-[85%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary transition-all rounded-t-sm h-[60%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary transition-all rounded-t-sm h-[95%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary transition-all rounded-t-sm h-[80%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary transition-all rounded-t-sm h-[75%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary transition-all rounded-t-sm h-[65%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary transition-all rounded-t-sm h-[50%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary transition-all rounded-t-sm h-[60%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary transition-all rounded-t-sm h-[70%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary transition-all rounded-t-sm h-[90%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary transition-all rounded-t-sm h-[80%]"></div>
+</div>
+<div class="flex justify-between mt-4 text-[10px] font-bold text-slate-400 px-2 uppercase tracking-tighter">
+<span>Oct 01</span>
+<span>Oct 07</span>
+<span>Oct 14</span>
+<span>Oct 21</span>
+<span>Oct 31</span>
+</div>
+</div>
+<!-- Data Table Snippet -->
+<div class="flex flex-col gap-3">
+<div class="flex justify-between items-center">
+<p class="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Raw Data Sample (Top 5 rows)</p>
+<button class="text-primary text-xs font-bold hover:underline">View All Data</button>
+</div>
+<div class="overflow-hidden border border-slate-100 dark:border-slate-800 rounded-lg">
+<table class="w-full text-left text-sm">
+<thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-bold">
+<tr>
+<th class="px-4 py-3">Date</th>
+<th class="px-4 py-3">Patient ID</th>
+<th class="px-4 py-3">Department</th>
+<th class="px-4 py-3">Status</th>
+<th class="px-4 py-3">Revenue</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<tr class="dark:text-slate-300">
+<td class="px-4 py-3">2023-10-31</td>
+<td class="px-4 py-3 font-mono">#P-9284</td>
+<td class="px-4 py-3">Cardiology</td>
+<td class="px-4 py-3">
+<span class="flex items-center gap-1.5 text-xs text-green-600 font-bold">
+<span class="size-1.5 rounded-full bg-green-600"></span>
+                                                            Completed
+                                                        </span>
+</td>
+<td class="px-4 py-3 font-bold">$450.00</td>
+</tr>
+<tr class="dark:text-slate-300">
+<td class="px-4 py-3">2023-10-31</td>
+<td class="px-4 py-3 font-mono">#P-3102</td>
+<td class="px-4 py-3">Neurology</td>
+<td class="px-4 py-3">
+<span class="flex items-center gap-1.5 text-xs text-green-600 font-bold">
+<span class="size-1.5 rounded-full bg-green-600"></span>
+                                                            Completed
+                                                        </span>
+</td>
+<td class="px-4 py-3 font-bold">$820.00</td>
+</tr>
+<tr class="dark:text-slate-300">
+<td class="px-4 py-3">2023-10-30</td>
+<td class="px-4 py-3 font-mono">#P-8842</td>
+<td class="px-4 py-3">Pediatrics</td>
+<td class="px-4 py-3">
+<span class="flex items-center gap-1.5 text-xs text-orange-600 font-bold">
+<span class="size-1.5 rounded-full bg-orange-600"></span>
+                                                            Pending
+                                                        </span>
+</td>
+<td class="px-4 py-3 font-bold">$120.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Export Tip -->
+<div class="px-8 py-4 bg-primary/5 border-t border-primary/10 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">info</span>
+<p class="text-xs text-primary/80 font-medium">Tip: You can schedule this report to be sent weekly to your email in the <a class="font-bold underline" href="#">Automations</a> settings.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
