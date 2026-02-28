@@ -1,0 +1,94 @@
+/* ============================================
+   MediConnect - Site Styles
+   ============================================ */
+
+:root {
+    --mc-primary: #0d6efd;
+    --mc-secondary: #6c757d;
+    --mc-success: #198754;
+    --mc-danger: #dc3545;
+    --mc-warning: #ffc107;
+    --mc-info: #0dcaf0;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+    font-size: 14px;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+main {
+    flex: 1;
+}
+
+/* Navbar */
+.navbar-brand i {
+    font-size: 1.4rem;
+}
+
+/* Cards */
+.card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.card-hover {
+    transition: all 0.3s ease;
+}
+
+/* Status badges */
+.badge-pending { background-color: var(--mc-warning); color: #000; }
+.badge-confirmed { background-color: var(--mc-success); }
+.badge-cancelled { background-color: var(--mc-danger); }
+.badge-completed { background-color: var(--mc-info); }
+
+/* Doctor card */
+.doctor-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--mc-primary);
+}
+
+/* Rating stars */
+.star-rating .bi-star-fill { color: #ffc107; }
+.star-rating .bi-star { color: #dee2e6; }
+
+/* Tables */
+.table th {
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+/* Form validation */
+.field-validation-error {
+    color: var(--mc-danger);
+    font-size: 0.85rem;
+}
+
+.input-validation-error {
+    border-color: var(--mc-danger);
+}
+
+/* Page headers */
+.page-header {
+    border-bottom: 2px solid var(--mc-primary);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Responsive tweaks */
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}

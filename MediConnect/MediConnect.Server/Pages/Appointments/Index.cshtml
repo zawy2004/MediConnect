@@ -1,0 +1,61 @@
+@page
+@model MediConnect.Server.Pages.Appointments.AppointmentListModel
+@{
+    ViewData["Title"] = "Lịch hẹn của tôi";
+}
+
+<h2 class="mb-4"><i class="bi bi-calendar-check"></i> Lịch hẹn của tôi</h2>
+
+@if (Model.Appointments.Count == 0)
+{
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Bạn chưa có lịch hẹn nào.
+        <a asp-page="/Doctors/Index">Tìm bác sĩ và đặt lịch ngay!</a>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Bác sĩ</th>
+                    <th>Chuyên khoa</th>
+                    <th>Ngày hẹn</th>
+                    <th>Giờ</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (var i = 0; i < Model.Appointments.Count; i++)
+                {
+                    var appt = Model.Appointments[i];
+                    var startTime = appt.StartTime.ToString("HH:mm");
+                    var endTime = appt.EndTime.ToString("HH:mm");
+                    var badgeClass = Model.GetBadgeClass(appt.Status ?? "");
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td>@appt.Doctor?.FullName</td>
+                        <td>@appt.Specialty?.SpecialtyName</td>
+                        <td>@appt.AppointmentDate.ToString("dd/MM/yyyy")</td>
+                        <td>@startTime - @endTime</td>
+                        <td><span class="badge @badgeClass">@appt.Status</span></td>
+                        <td>
+                            <a asp-page="Details" asp-route-id="@appt.AppointmentId" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> Chi tiết
+                            </a>
+                            @if (appt.Status == "PENDING" || appt.Status == "CONFIRMED")
+                            {
+                                <a asp-page="Cancel" asp-route-id="@appt.AppointmentId" class="btn btn-sm btn-outline-danger ms-1">
+                                    <i class="bi bi-x-circle"></i> Hủy
+                                </a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

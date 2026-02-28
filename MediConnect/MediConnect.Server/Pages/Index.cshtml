@@ -1,0 +1,88 @@
+@page
+@model MediConnect.Server.Pages.IndexModel
+@{
+    ViewData["Title"] = "Trang chủ";
+}
+
+<!-- Hero Section -->
+<div class="bg-primary text-white rounded-3 p-5 mb-4">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="display-5 fw-bold">
+                <i class="bi bi-hospital"></i> Chào mừng đến MediConnect
+            </h1>
+            <p class="lead mb-4">
+                Nền tảng đặt lịch khám bệnh trực tuyến — kết nối bệnh nhân với bác sĩ một cách nhanh chóng và tiện lợi.
+            </p>
+            <a asp-page="/Doctors/Index" class="btn btn-light btn-lg me-2">
+                <i class="bi bi-search"></i> Tìm bác sĩ
+            </a>
+            <a asp-page="/Appointments/Create" class="btn btn-outline-light btn-lg">
+                <i class="bi bi-calendar-plus"></i> Đặt lịch hẹn
+            </a>
+        </div>
+        <div class="col-md-4 text-center d-none d-md-block">
+            <i class="bi bi-heart-pulse" style="font-size: 8rem; opacity: 0.3;"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center card-hover border-0 shadow-sm">
+            <div class="card-body">
+                <i class="bi bi-people text-primary" style="font-size: 2.5rem;"></i>
+                <h3 class="mt-2">@Model.TotalPatients</h3>
+                <p class="text-muted">Bệnh nhân</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center card-hover border-0 shadow-sm">
+            <div class="card-body">
+                <i class="bi bi-person-badge text-success" style="font-size: 2.5rem;"></i>
+                <h3 class="mt-2">@Model.TotalDoctors</h3>
+                <p class="text-muted">Bác sĩ</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center card-hover border-0 shadow-sm">
+            <div class="card-body">
+                <i class="bi bi-calendar-check text-info" style="font-size: 2.5rem;"></i>
+                <h3 class="mt-2">@Model.TotalAppointments</h3>
+                <p class="text-muted">Lịch hẹn</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center card-hover border-0 shadow-sm">
+            <div class="card-body">
+                <i class="bi bi-heart-pulse text-danger" style="font-size: 2.5rem;"></i>
+                <h3 class="mt-2">@Model.TotalSpecialties</h3>
+                <p class="text-muted">Chuyên khoa</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Specialties Section -->
+<h2 class="page-header"><i class="bi bi-heart-pulse"></i> Chuyên khoa nổi bật</h2>
+<div class="row mb-4">
+    @foreach (var spec in Model.Specialties)
+    {
+        <div class="col-md-4 col-lg-3 mb-3">
+            <div class="card card-hover border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-activity text-primary" style="font-size: 2rem;"></i>
+                    <h6 class="mt-2">@spec.SpecialtyName</h6>
+                    <p class="text-muted small">@spec.Description</p>
+                    <a asp-page="/Doctors/Index" asp-route-specialtyId="@spec.SpecialtyId" class="btn btn-sm btn-outline-primary">
+                        Xem bác sĩ
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

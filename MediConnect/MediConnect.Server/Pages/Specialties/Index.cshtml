@@ -1,0 +1,33 @@
+@page
+@model MediConnect.Server.Pages.Specialties.IndexModel
+@{
+    ViewData["Title"] = "Chuyên khoa";
+}
+
+<h2 class="page-header"><i class="bi bi-heart-pulse"></i> Danh sách chuyên khoa</h2>
+
+<div class="row">
+    @foreach (var spec in Model.Specialties)
+    {
+        <div class="col-md-4 col-lg-3 mb-4">
+            <div class="card card-hover border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    @if (!string.IsNullOrEmpty(spec.IconUrl))
+                    {
+                        <img src="@spec.IconUrl" alt="@spec.SpecialtyName" style="width:60px;height:60px;" class="mb-2" />
+                    }
+                    else
+                    {
+                        <i class="bi bi-activity text-primary mb-2" style="font-size: 2.5rem;"></i>
+                    }
+                    <h5>@spec.SpecialtyName</h5>
+                    <p class="text-muted small">@spec.Description</p>
+                    <a asp-page="/Doctors/Index" asp-route-specialtyId="@spec.SpecialtyId"
+                       class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-search"></i> Tìm bác sĩ
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

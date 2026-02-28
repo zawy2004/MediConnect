@@ -1,0 +1,53 @@
+@page "{id:int}"
+@model MediConnect.Server.Pages.Appointments.CancelModel
+@{
+    ViewData["Title"] = "Hủy lịch hẹn";
+}
+
+<h2 class="page-header text-danger"><i class="bi bi-x-circle"></i> Hủy lịch hẹn</h2>
+
+@if (Model.Appointment == null)
+{
+    <div class="alert alert-warning">Không tìm thấy lịch hẹn.</div>
+}
+else
+{
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-danger shadow-sm">
+                <div class="card-body">
+                    <p>Bạn có chắc muốn hủy lịch hẹn sau?</p>
+                    <table class="table table-borderless">
+                        <tr>
+                            <th>Bác sĩ:</th>
+                            <td>@Model.Appointment.Doctor.FullName</td>
+                        </tr>
+                        <tr>
+                            <th>Ngày:</th>
+                            <td>@Model.Appointment.AppointmentDate.ToString("dd/MM/yyyy")</td>
+                        </tr>
+                        <tr>
+                            <th>Giờ:</th>
+                            <td>@Model.Appointment.StartTime.ToString("HH:mm") - @Model.Appointment.EndTime.ToString("HH:mm")</td>
+                        </tr>
+                    </table>
+
+                    <form method="post">
+                        <input type="hidden" asp-for="AppointmentId" />
+                        <div class="mb-3">
+                            <label asp-for="CancelReason" class="form-label">Lý do hủy</label>
+                            <textarea asp-for="CancelReason" class="form-control" rows="3"
+                                      placeholder="Nhập lý do hủy lịch hẹn..."></textarea>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-x-circle"></i> Xác nhận hủy
+                            </button>
+                            <a asp-page="/Appointments/Index" class="btn btn-secondary">Quay lại</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}

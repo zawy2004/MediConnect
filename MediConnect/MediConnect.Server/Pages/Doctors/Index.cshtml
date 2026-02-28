@@ -1,0 +1,95 @@
+@page
+@model MediConnect.Server.Pages.Doctors.IndexModel
+@{
+    ViewData["Title"] = "Danh sách bác sĩ";
+}
+
+<h2 class="page-header"><i class="bi bi-person-badge"></i> Danh sách bác sĩ</h2>
+
+<!-- Search & Filter -->
+<form method="get" class="row g-3 mb-4">
+    <div class="col-md-4">
+        <input asp-for="SearchTerm" class="form-control" placeholder="Tìm tên bác sĩ..." />
+    </div>
+    <div class="col-md-3">
+        <select asp-for="SpecialtyId" class="form-select" asp-items="Model.SpecialtyList">
+            <option value="">-- Tất cả chuyên khoa --</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select asp-for="DepartmentId" class="form-select" asp-items="Model.DepartmentList">
+            <option value="">-- Tất cả khoa --</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">
+            <i class="bi bi-search"></i> Tìm kiếm
+        </button>
+    </div>
+</form>
+
+<!-- Doctor Cards -->
+<div class="row">
+    @if (!Model.Doctors.Any())
+    {
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> Không tìm thấy bác sĩ nào.
+            </div>
+        </div>
+    }
+    @foreach (var doctor in Model.Doctors)
+    {
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card card-hover border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    @if (!string.IsNullOrEmpty(doctor.User.AvatarUrl))
+                    {
+                        <img src="@doctor.User.AvatarUrl" class="doctor-avatar mb-3" alt="@doctor.User.FullName" />
+                    }
+                    else
+                    {
+                        <div class="doctor-avatar bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3"
+                             style="width:80px;height:80px;border-radius:50%;font-size:2rem;">
+                            <i class="bi bi-person"></i>
+                        </div>
+                    }
+                    <h5>@doctor.User.FullName</h5>
+                    <p class="text-muted mb-1">
+                        @if (doctor.User.DoctorSpecialties.Any())
+                        {
+                            @string.Join(", ", doctor.User.DoctorSpecialties.Select(ds => ds.Specialty.SpecialtyName))
+                        }
+                    </p>
+                    <p class="text-muted small mb-2">
+                        <i class="bi bi-briefcase"></i> @doctor.YearsOfExperience năm kinh nghiệm
+                    </p>
+
+                    <!-- Rating -->
+                    <div class="star-rating mb-2">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= (int)doctor.AverageRating)
+                            {
+                                <i class="bi bi-star-fill"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-star"></i>
+                            }
+                        }
+                        <span class="text-muted small">(@doctor.TotalReviews đánh giá)</span>
+                    </div>
+
+                    <p class="text-primary fw-bold">
+                        @doctor.ConsultationFee.ToString("N0") VNĐ
+                    </p>
+
+                    <a asp-page="/Doctors/Details" asp-route-id="@doctor.DoctorProfileId" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-eye"></i> Xem chi tiết
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

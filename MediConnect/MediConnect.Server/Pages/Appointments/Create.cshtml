@@ -1,0 +1,66 @@
+@page
+@model MediConnect.Server.Pages.Appointments.CreateModel
+@{
+    ViewData["Title"] = "Đặt lịch hẹn";
+}
+
+<h2 class="page-header"><i class="bi bi-calendar-plus"></i> Đặt lịch hẹn mới</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="alert alert-danger">@Model.ErrorMessage</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+                {
+                    <div class="alert alert-success">@Model.SuccessMessage</div>
+                }
+
+                <form method="post">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="SpecialtyId" class="form-label">Chuyên khoa</label>
+                            <select asp-for="SpecialtyId" class="form-select" asp-items="Model.SpecialtyList">
+                                <option value="">-- Chọn chuyên khoa --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="DoctorId" class="form-label">Bác sĩ</label>
+                            <select asp-for="DoctorId" class="form-select" asp-items="Model.DoctorList">
+                                <option value="">-- Chọn bác sĩ --</option>
+                            </select>
+                            <span asp-validation-for="DoctorId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="AppointmentDate" class="form-label">Ngày hẹn</label>
+                            <input asp-for="AppointmentDate" type="date" class="form-control" />
+                            <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="SlotId" class="form-label">Khung giờ</label>
+                            <select asp-for="SlotId" class="form-select" asp-items="Model.SlotList">
+                                <option value="">-- Chọn khung giờ --</option>
+                            </select>
+                            <span asp-validation-for="SlotId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Reason" class="form-label">Lý do khám</label>
+                        <textarea asp-for="Reason" class="form-control" rows="3"
+                                  placeholder="Mô tả triệu chứng hoặc lý do khám..."></textarea>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-calendar-check"></i> Xác nhận đặt lịch
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

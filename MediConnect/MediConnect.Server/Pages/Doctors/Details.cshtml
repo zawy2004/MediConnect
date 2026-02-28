@@ -1,0 +1,139 @@
+@page "{id:int}"
+@model MediConnect.Server.Pages.Doctors.DetailsModel
+@{
+    ViewData["Title"] = Model.Doctor?.User.FullName ?? "Chi tiết bác sĩ";
+}
+
+@if (Model.Doctor == null)
+{
+    <div class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle"></i> Không tìm thấy bác sĩ.
+    </div>
+}
+else
+{
+    var doc = Model.Doctor;
+
+    <div class="row">
+        <!-- Doctor Info -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    @if (!string.IsNullOrEmpty(doc.User.AvatarUrl))
+                    {
+                        <img src="@doc.User.AvatarUrl" class="doctor-avatar mb-3" alt="@doc.User.FullName"
+                             style="width:120px;height:120px;" />
+                    }
+                    else
+                    {
+                        <div class="bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3"
+                             style="width:120px;height:120px;border-radius:50%;font-size:3rem;">
+                            <i class="bi bi-person"></i>
+                        </div>
+                    }
+                    <h3>@doc.User.FullName</h3>
+                    <p class="text-muted">Mã giấy phép: @doc.LicenseNumber</p>
+
+                    <div class="star-rating mb-2">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <i class="bi @(i <= (int)doc.AverageRating ? "bi-star-fill" : "bi-star")"></i>
+                        }
+                        <span class="text-muted">(@doc.TotalReviews)</span>
+                    </div>
+
+                    <a asp-page="/Appointments/Create" asp-route-doctorId="@doc.UserId" class="btn btn-primary w-100 mt-3">
+                        <i class="bi bi-calendar-plus"></i> Đặt lịch hẹn
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details -->
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-primary text-white">
+                    <i class="bi bi-info-circle"></i> Thông tin chi tiết
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th style="width:200px;">Chuyên khoa:</th>
+                            <td>
+                                @foreach (var ds in doc.User.DoctorSpecialties)
+                                {
+                                    <span class="badge bg-info me-1">@ds.Specialty.SpecialtyName</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Khoa:</th>
+                            <td>@(doc.Department?.DepartmentName ?? "—")</td>
+                        </tr>
+                        <tr>
+                            <th>Kinh nghiệm:</th>
+                            <td>@doc.YearsOfExperience năm</td>
+                        </tr>
+                        <tr>
+                            <th>Phí khám:</th>
+                            <td class="text-primary fw-bold">@doc.ConsultationFee.ToString("N0") VNĐ</td>
+                        </tr>
+                        <tr>
+                            <th>Bảo hiểm:</th>
+                            <td>@(doc.InsuranceAccepted ?? "—")</td>
+                        </tr>
+                        <tr>
+                            <th>Địa chỉ:</th>
+                            <td>@(doc.Location ?? "—")</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(doc.Education))
+            {
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-header bg-success text-white">
+                        <i class="bi bi-mortarboard"></i> Học vấn
+                    </div>
+                    <div class="card-body">@doc.Education</div>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(doc.Bio))
+            {
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-header bg-secondary text-white">
+                        <i class="bi bi-file-person"></i> Giới thiệu
+                    </div>
+                    <div class="card-body">@doc.Bio</div>
+                </div>
+            }
+
+            <!-- Reviews -->
+            @if (Model.Reviews.Any())
+            {
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-warning text-dark">
+                        <i class="bi bi-chat-dots"></i> Đánh giá (@Model.Reviews.Count)
+                    </div>
+                    <div class="card-body">
+                        @foreach (var review in Model.Reviews)
+                        {
+                            <div class="border-bottom pb-2 mb-2">
+                                <div class="star-rating">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <i class="bi @(i <= review.Rating ? "bi-star-fill" : "bi-star")"></i>
+                                    }
+                                    <span class="text-muted small ms-2">@review.CreatedAt.ToString("dd/MM/yyyy")</span>
+                                </div>
+                                <p class="mb-0 mt-1">@review.Comment</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
