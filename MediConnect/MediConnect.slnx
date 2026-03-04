@@ -1,7 +1,0 @@
-<Solution>
-  <Project Path="mediconnect.client/mediconnect.client.esproj">
-    <Build />
-    <Deploy />
-  </Project>
-  <Project Path="MediConnect.Server/MediConnect.Server.csproj" />
-</Solution>
