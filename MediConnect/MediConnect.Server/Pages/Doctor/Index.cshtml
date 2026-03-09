@@ -1,0 +1,150 @@
+@page
+@model MediConnect.Server.Pages.Doctor.IndexModel
+@{
+    ViewData["Title"] = "Bảng điều khiển Bác sĩ";
+    ViewData["UseSidebar"] = true;
+    ViewData["SidebarRole"] = "doctor";
+    ViewData["ActiveSidebar"] = "dashboard";
+}
+
+<div class="py-4 px-3">
+    <div class="mb-4">
+        <h1 class="fw-bold" style="font-size:1.5rem;">Xin chào, @Model.DoctorProfile?.User.FullName 👋</h1>
+        <p style="color:var(--mc-text-muted);">@(Model.DoctorProfile?.Department?.DepartmentName ?? "Đa khoa") · @DateTime.Now.ToString("dddd, dd/MM/yyyy")</p>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="mc-kpi-card">
+                <div class="mc-kpi-icon" style="background:var(--mc-primary-light);color:var(--mc-primary);"><i class="bi bi-people"></i></div>
+                <div>
+                    <div class="mc-kpi-value">@Model.TotalPatients</div>
+                    <div class="mc-kpi-label">Tổng bệnh nhân</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="mc-kpi-card">
+                <div class="mc-kpi-icon" style="background:rgba(22,163,74,0.1);color:#16a34a;"><i class="bi bi-star"></i></div>
+                <div>
+                    <div class="mc-kpi-value">@(Model.DoctorProfile?.AverageRating.ToString("F1") ?? "0")</div>
+                    <div class="mc-kpi-label">Đánh giá TB</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="mc-kpi-card">
+                <div class="mc-kpi-icon" style="background:rgba(245,158,11,0.1);color:#d97706;"><i class="bi bi-calendar-check"></i></div>
+                <div>
+                    <div class="mc-kpi-value">@Model.MonthlyAppointments</div>
+                    <div class="mc-kpi-label">Lịch hẹn tháng này</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="mc-kpi-card">
+                <div class="mc-kpi-icon" style="background:rgba(168,85,247,0.1);color:#a855f7;"><i class="bi bi-clock-history"></i></div>
+                <div>
+                    <div class="mc-kpi-value">@Model.TodayAppointments.Count</div>
+                    <div class="mc-kpi-label">Lịch khám hôm nay</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Today's Schedule -->
+        <div class="col-lg-8">
+            <div class="bg-white rounded-4 border p-4" style="border-color:var(--mc-border);">
+                <h5 class="fw-bold mb-3"><i class="bi bi-calendar-day"></i> Lịch khám hôm nay</h5>
+                @if (!Model.TodayAppointments.Any())
+                {
+                    <div class="text-center py-4">
+                        <i class="bi bi-calendar-check" style="font-size:2.5rem;color:var(--mc-border);"></i>
+                        <p class="mt-2" style="color:var(--mc-text-muted);">Hôm nay không có lịch khám.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex flex-column gap-3">
+                        @foreach (var appt in Model.TodayAppointments)
+                        {
+                            var statusColor = appt.Status switch {
+                                "CONFIRMED" => "#16a34a",
+                                "COMPLETED" => "var(--mc-primary)",
+                                "PENDING" => "#d97706",
+                                _ => "var(--mc-text-muted)"
+                            };
+                            <div class="d-flex gap-3 p-3 rounded-3" style="background:var(--mc-bg);">
+                                <div class="text-center flex-shrink-0" style="min-width:56px;">
+                                    <div class="fw-bold" style="color:var(--mc-primary);">@appt.StartTime.ToString("HH:mm")</div>
+                                    <div style="font-size:0.65rem;color:var(--mc-text-muted);">@appt.EndTime.ToString("HH:mm")</div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between">
+                                        <h6 class="fw-bold mb-1 small">@(appt.Patient?.FullName ?? "Bệnh nhân")</h6>
+                                        <span class="badge rounded-pill" style="background:@(statusColor)1a;color:@statusColor;font-size:0.6rem;">@appt.Status</span>
+                                    </div>
+                                    <p class="mb-0 small" style="color:var(--mc-text-muted);">@(appt.Reason ?? appt.Specialty?.SpecialtyName ?? "")</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Pending Approvals -->
+        <div class="col-lg-4">
+            <div class="bg-white rounded-4 border p-4" style="border-color:var(--mc-border);">
+                <h5 class="fw-bold mb-3"><i class="bi bi-clock"></i> Chờ phê duyệt</h5>
+                @if (!Model.PendingAppointments.Any())
+                {
+                    <div class="text-center py-3">
+                        <i class="bi bi-check-circle" style="font-size:2rem;color:var(--mc-border);"></i>
+                        <p class="mt-2 small" style="color:var(--mc-text-muted);">Không có yêu cầu nào.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex flex-column gap-3">
+                        @foreach (var appt in Model.PendingAppointments)
+                        {
+                            <div class="p-3 rounded-3 border" style="border-color:var(--mc-border);">
+                                <div class="fw-bold small mb-1">@(appt.Patient?.FullName ?? "Bệnh nhân")</div>
+                                <div class="small mb-2" style="color:var(--mc-text-muted);">
+                                    @appt.AppointmentDate.ToString("dd/MM") · @appt.StartTime.ToString("HH:mm")
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <form method="post" asp-page-handler="Approve" class="d-inline">
+                                        <input type="hidden" name="appointmentId" value="@appt.AppointmentId" />
+                                        <button type="submit" class="btn btn-sm btn-mc-primary px-3" style="font-size:0.7rem;">Duyệt</button>
+                                    </form>
+                                    <form method="post" asp-page-handler="Reject" class="d-inline">
+                                        <input type="hidden" name="appointmentId" value="@appt.AppointmentId" />
+                                        <button type="submit" class="btn btn-sm btn-mc-outline px-3" style="font-size:0.7rem;">Từ chối</button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Monthly Goal -->
+            <div class="mt-4 p-4 rounded-4 text-white" style="background:linear-gradient(135deg,var(--mc-primary),var(--mc-primary-dark));">
+                <h6 class="fw-bold"><i class="bi bi-trophy"></i> Mục tiêu tháng này</h6>
+                <p class="small mb-2" style="opacity:0.9;">Hoàn thành @Model.MonthlyAppointments lượt khám</p>
+                <div class="progress bg-white bg-opacity-25" style="height:8px;">
+                    @{ var pct = Model.MonthlyAppointments > 0 ? Math.Min(100, (int)(Model.MonthlyAppointments / 30.0 * 100)) : 0; }
+                    <div class="progress-bar bg-white" style="width:@pct%"></div>
+                </div>
+                <div class="d-flex justify-content-between mt-1" style="font-size:0.65rem;opacity:0.8;">
+                    <span>@pct%</span>
+                    <span>Mục tiêu: 30</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

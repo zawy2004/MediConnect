@@ -36,14 +36,27 @@ public class LoginModel : PageModel
             .Include(u => u.Role)
             .FirstOrDefaultAsync(u => u.Email == Email && u.IsActive);
 
-        if (user == null)
+        if (user == null || user.PasswordHash != Password)
         {
             ErrorMessage = "Email hoặc mật khẩu không đúng.";
             return Page();
         }
 
-        // TODO: Verify password hash and create authentication cookie/session
-        // For now, redirect to home
-        return RedirectToPage("/Index");
+        // Set session
+        HttpContext.Session.SetInt32("UserId", user.UserId);
+        HttpContext.Session.SetString("UserName", user.FullName);
+        HttpContext.Session.SetString("UserRole", user.Role?.RoleName ?? "PATIENT");
+
+        user.LastLoginAt = DateTime.Now;
+        await _context.SaveChangesAsync();
+
+        // Redirect based on role
+        var role = user.Role?.RoleName;
+        return role switch
+        {
+            "ADMIN" => RedirectToPage("/Admin/Index"),
+            "DOCTOR" => RedirectToPage("/Doctor/Index"),
+            _ => RedirectToPage("/Patient/Index")
+        };
     }
 }

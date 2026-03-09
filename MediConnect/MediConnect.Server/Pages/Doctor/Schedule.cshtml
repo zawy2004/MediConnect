@@ -1,0 +1,91 @@
+@page
+@model MediConnect.Server.Pages.Doctor.ScheduleModel
+@{
+    ViewData["Title"] = "Lịch trình";
+    ViewData["UseSidebar"] = true;
+    ViewData["SidebarRole"] = "doctor";
+    ViewData["ActiveSidebar"] = "schedule";
+    var dayNames = new[] { "CN", "T2", "T3", "T4", "T5", "T6", "T7" };
+}
+
+<div class="py-4 px-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold" style="font-size:1.5rem;">Lịch trình</h1>
+            <p style="color:var(--mc-text-muted);">Quản lý lịch khám và khung giờ làm việc.</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Weekly Schedule -->
+        <div class="col-lg-5">
+            <div class="bg-white rounded-4 border p-4" style="border-color:var(--mc-border);">
+                <h5 class="fw-bold mb-3"><i class="bi bi-clock-history"></i> Lịch làm việc hàng tuần</h5>
+                @if (!Model.WeeklySchedules.Any())
+                {
+                    <div class="text-center py-3">
+                        <i class="bi bi-calendar-x" style="font-size:2rem;color:var(--mc-border);"></i>
+                        <p class="mt-2 small" style="color:var(--mc-text-muted);">Chưa thiết lập lịch làm việc.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex flex-column gap-2">
+                        @foreach (var sched in Model.WeeklySchedules)
+                        {
+                            <div class="d-flex align-items-center gap-3 p-3 rounded-3" style="background:var(--mc-bg);">
+                                <div class="fw-bold text-center" style="min-width:36px;color:var(--mc-primary);">@dayNames[sched.DayOfWeek]</div>
+                                <div class="flex-grow-1 small">
+                                    <span class="fw-semibold">@sched.StartTime.ToString("HH:mm") - @sched.EndTime.ToString("HH:mm")</span>
+                                    <span style="color:var(--mc-text-muted);"> · @sched.SlotDurationMins phút/slot · @sched.MaxPatientsPerSlot BN/slot</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Upcoming Slots -->
+        <div class="col-lg-7">
+            <div class="bg-white rounded-4 border p-4" style="border-color:var(--mc-border);">
+                <h5 class="fw-bold mb-3"><i class="bi bi-calendar3"></i> Khung giờ sắp tới</h5>
+                @if (!Model.UpcomingSlots.Any())
+                {
+                    <div class="text-center py-3">
+                        <i class="bi bi-calendar-check" style="font-size:2rem;color:var(--mc-border);"></i>
+                        <p class="mt-2 small" style="color:var(--mc-text-muted);">Không có khung giờ nào sắp tới.</p>
+                    </div>
+                }
+                else
+                {
+                    var grouped = Model.UpcomingSlots.GroupBy(s => s.SlotDate).Take(7);
+                    @foreach (var day in grouped)
+                    {
+                        <h6 class="fw-bold mt-3 mb-2 small" style="color:var(--mc-text-muted);">@day.Key.ToString("dddd, dd/MM/yyyy")</h6>
+                        <div class="d-flex flex-wrap gap-2 mb-2">
+                            @foreach (var slot in day)
+                            {
+                                var booked = slot.Appointments.Any();
+                                var patientName = booked ? slot.Appointments.First().Patient?.FullName : null;
+                                <div class="p-2 rounded-3 border text-center" style="min-width:110px;border-color:@(booked ? "var(--mc-primary)" : "var(--mc-border)");background:@(booked ? "var(--mc-primary-light)" : "white");">
+                                    <div class="fw-bold small" style="color:@(booked ? "var(--mc-primary)" : "var(--mc-text)");">@slot.StartTime.ToString("HH:mm")</div>
+                                    <div style="font-size:0.65rem;color:var(--mc-text-muted);">
+                                        @if (booked)
+                                        {
+                                            <span class="fw-semibold" style="color:var(--mc-primary);">@patientName</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Trống (@slot.BookedCount/@slot.MaxCapacity)</span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

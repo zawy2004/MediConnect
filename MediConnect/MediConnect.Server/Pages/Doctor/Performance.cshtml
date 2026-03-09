@@ -1,0 +1,228 @@
+@page
+@model MediConnect.Server.Pages.Doctor.PerformanceModel
+@{
+    ViewData["Title"] = "Hiệu suất";
+    ViewData["UseSidebar"] = true;
+    ViewData["SidebarRole"] = "doctor";
+    ViewData["ActiveSidebar"] = "performance";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-1">Hiệu suất làm việc</h4>
+        <p class="text-muted mb-0">Thống kê và đánh giá hiệu suất khám bệnh</p>
+    </div>
+    <span class="text-muted"><i class="bi bi-calendar3 me-1"></i>@DateTime.Now.ToString("dd/MM/yyyy")</span>
+</div>
+
+<!-- KPI Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+        <div class="mc-kpi-card">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:var(--mc-primary-light)">
+                    <i class="bi bi-calendar-check" style="color:var(--mc-primary)"></i>
+                </div>
+                <span class="text-muted" style="font-size:.85rem">Tổng lịch hẹn</span>
+            </div>
+            <h3 class="fw-bold mb-0">@Model.TotalAppointments</h3>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="mc-kpi-card">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:#e6f9ee">
+                    <i class="bi bi-check-circle" style="color:#22c55e"></i>
+                </div>
+                <span class="text-muted" style="font-size:.85rem">Hoàn thành</span>
+            </div>
+            <h3 class="fw-bold mb-0">@Model.CompletedAppointments</h3>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="mc-kpi-card">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:#fef3c7">
+                    <i class="bi bi-graph-up-arrow" style="color:#f59e0b"></i>
+                </div>
+                <span class="text-muted" style="font-size:.85rem">Tỷ lệ hoàn thành</span>
+            </div>
+            <h3 class="fw-bold mb-0">@Model.CompletionRate.ToString("F1")%</h3>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="mc-kpi-card">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:#ede9fe">
+                    <i class="bi bi-cash-stack" style="color:#8b5cf6"></i>
+                </div>
+                <span class="text-muted" style="font-size:.85rem">Doanh thu</span>
+            </div>
+            <h3 class="fw-bold mb-0">@Model.TotalRevenue.ToString("N0")đ</h3>
+        </div>
+    </div>
+</div>
+
+<!-- Performance Overview -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-3">Tổng quan hiệu suất</h6>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="p-3 rounded-3" style="background:var(--mc-bg)">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted" style="font-size:.85rem">Hoàn thành</span>
+                                <span class="fw-semibold text-success">@Model.CompletedAppointments</span>
+                            </div>
+                            <div class="mc-progress" style="height:8px">
+                                @{
+                                    var completedPct = Model.TotalAppointments > 0 ? (double)Model.CompletedAppointments / Model.TotalAppointments * 100 : 0;
+                                }
+                                <div class="mc-progress-bar" style="width:@completedPct.ToString("F0")%;background:#22c55e"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 rounded-3" style="background:var(--mc-bg)">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted" style="font-size:.85rem">Đã hủy</span>
+                                <span class="fw-semibold text-danger">@Model.CancelledAppointments</span>
+                            </div>
+                            <div class="mc-progress" style="height:8px">
+                                @{
+                                    var cancelledPct = Model.TotalAppointments > 0 ? (double)Model.CancelledAppointments / Model.TotalAppointments * 100 : 0;
+                                }
+                                <div class="mc-progress-bar" style="width:@cancelledPct.ToString("F0")%;background:#ef4444"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="p-3 rounded-3" style="background:var(--mc-bg)">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted" style="font-size:.85rem">Đánh giá trung bình</span>
+                                <span class="fw-semibold" style="color:var(--mc-primary)">
+                                    @((Model.DoctorProfile?.AverageRating ?? 0m).ToString("F1")) / 5.0
+                                </span>
+                            </div>
+                            <div class="d-flex gap-1">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    var rating = (double)(Model.DoctorProfile?.AverageRating ?? 0);
+                                    if (i <= Math.Floor(rating))
+                                    {
+                                        <i class="bi bi-star-fill" style="color:#f59e0b;font-size:1.2rem"></i>
+                                    }
+                                    else if (i - 0.5 <= rating)
+                                    {
+                                        <i class="bi bi-star-half" style="color:#f59e0b;font-size:1.2rem"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-star" style="color:#f59e0b;font-size:1.2rem"></i>
+                                    }
+                                }
+                                <span class="ms-2 text-muted" style="font-size:.85rem">(@(Model.DoctorProfile?.TotalReviews ?? 0) đánh giá)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-3">Thống kê nhanh</h6>
+                <div class="d-flex flex-column gap-3">
+                    <div class="d-flex align-items-center justify-content-between p-3 rounded-3" style="background:var(--mc-bg)">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-person-check text-success"></i>
+                            <span style="font-size:.9rem">Bệnh nhân hài lòng</span>
+                        </div>
+                        <span class="fw-bold">@Model.RecentReviews.Count(r => r.Rating >= 4)</span>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between p-3 rounded-3" style="background:var(--mc-bg)">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-x-circle text-danger"></i>
+                            <span style="font-size:.9rem">Tỷ lệ hủy</span>
+                        </div>
+                        <span class="fw-bold">@cancelledPct.ToString("F1")%</span>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between p-3 rounded-3" style="background:var(--mc-bg)">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-currency-dollar" style="color:#8b5cf6"></i>
+                            <span style="font-size:.9rem">Phí khám</span>
+                        </div>
+                        <span class="fw-bold">@((Model.DoctorProfile?.ConsultationFee ?? 0m).ToString("N0"))đ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Reviews -->
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold mb-0">Đánh giá gần đây</h6>
+            <span class="text-muted" style="font-size:.85rem">@Model.RecentReviews.Count đánh giá mới nhất</span>
+        </div>
+        @if (Model.RecentReviews.Any())
+        {
+            <div class="d-flex flex-column gap-3">
+                @foreach (var review in Model.RecentReviews)
+                {
+                    <div class="p-3 rounded-3" style="background:var(--mc-bg)">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center fw-semibold text-white" style="width:36px;height:36px;background:var(--mc-primary);font-size:.8rem">
+                                    @(review.Patient?.FullName?.Substring(0, 1).ToUpper() ?? "?")
+                                </div>
+                                <div>
+                                    <div class="fw-semibold" style="font-size:.9rem">@(review.Patient?.FullName ?? "Bệnh nhân")</div>
+                                    <div class="text-muted" style="font-size:.75rem">@review.CreatedAt.ToString("dd/MM/yyyy HH:mm")</div>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-1">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <i class="bi @(i <= review.Rating ? "bi-star-fill" : "bi-star")" style="color:#f59e0b;font-size:.85rem"></i>
+                                }
+                            </div>
+                        </div>
+                        @if (!string.IsNullOrEmpty(review.Comment))
+                        {
+                            <p class="mb-0 text-muted" style="font-size:.85rem">@review.Comment</p>
+                        }
+                        @if (!string.IsNullOrEmpty(review.SentimentLabel))
+                        {
+                            var sentimentColor = review.SentimentLabel switch
+                            {
+                                "POSITIVE" => "#22c55e",
+                                "NEGATIVE" => "#ef4444",
+                                _ => "#f59e0b"
+                            };
+                            var sentimentText = review.SentimentLabel switch
+                            {
+                                "POSITIVE" => "Tích cực",
+                                "NEGATIVE" => "Tiêu cực",
+                                _ => "Trung lập"
+                            };
+                            <span class="badge mt-2" style="background:@(sentimentColor)20;color:@sentimentColor;font-size:.75rem">@sentimentText</span>
+                        }
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="text-center text-muted py-4">
+                <i class="bi bi-chat-square-text" style="font-size:2rem"></i>
+                <p class="mt-2 mb-0">Chưa có đánh giá nào</p>
+            </div>
+        }
+    </div>
+</div>

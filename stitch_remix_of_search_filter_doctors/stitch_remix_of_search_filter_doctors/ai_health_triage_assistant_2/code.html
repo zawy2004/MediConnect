@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MediConnect - Zalo Official Account</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "zalo-blue": "#0068ff",
+                        "zalo-bg": "#eef0f1",
+                        "zalo-header": "#f9fafb",
+                        "primary": "#137fec",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer components {
+            .zalo-bubble { @apply max-w-[85%] rounded-2xl p-4 shadow-sm text-sm relative; }
+            .zalo-bubble-in { @apply bg-white text-slate-800 rounded-tl-none self-start border border-slate-100; }
+            .zalo-bubble-zns { @apply bg-white border border-slate-200 overflow-hidden p-0 rounded-xl max-w-[400px]; }
+            .zalo-btn { @apply w-full py-2.5 text-center font-semibold text-[13px] border-t border-slate-100 hover:bg-slate-50 transition-colors; }
+        }
+    </style>
+</head>
+<body class="bg-slate-200 font-display min-h-screen flex items-center justify-center p-4">
+<div class="w-full max-w-[900px] h-[700px] bg-white rounded-xl shadow-2xl flex overflow-hidden border border-slate-300">
+<div class="w-[64px] bg-[#0091ff] flex flex-col items-center py-5 gap-6 text-white/80">
+<div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mb-2">
+<span class="material-symbols-outlined !text-[28px]">account_circle</span>
+</div>
+<span class="material-symbols-outlined !text-[24px] text-white">chat</span>
+<span class="material-symbols-outlined !text-[24px]">contact_page</span>
+<span class="material-symbols-outlined !text-[24px]">check_circle</span>
+<div class="mt-auto space-y-6">
+<span class="material-symbols-outlined !text-[24px]">cloud</span>
+<span class="material-symbols-outlined !text-[24px]">settings</span>
+</div>
+</div>
+<div class="w-[280px] border-r border-slate-200 flex flex-col">
+<div class="p-4 border-b border-slate-100">
+<div class="relative">
+<input class="w-full bg-slate-100 border-none rounded-md py-1.5 pl-8 text-xs focus:ring-1 focus:ring-zalo-blue" placeholder="Tìm kiếm" type="text"/>
+<span class="material-symbols-outlined absolute left-2 top-1.5 !text-[16px] text-slate-400">search</span>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto">
+<div class="flex items-center gap-3 p-3 bg-blue-50">
+<div class="relative">
+<div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white">
+<span class="material-symbols-outlined">medical_services</span>
+</div>
+<div class="absolute -bottom-0 -right-0 w-4 h-4 bg-white rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined !text-[12px] text-blue-500 fill-1">verified</span>
+</div>
+</div>
+<div class="flex-1 overflow-hidden">
+<div class="flex justify-between items-center">
+<h4 class="font-bold text-[13px] truncate">MediConnect - Chăm sóc sức khỏe</h4>
+<span class="text-[10px] text-slate-400">Vừa xong</span>
+</div>
+<p class="text-[12px] text-slate-500 truncate">Nhắc hẹn: BS Marcus Chen...</p>
+</div>
+</div>
+<div class="flex items-center gap-3 p-3 opacity-60">
+<div class="w-12 h-12 bg-slate-200 rounded-full"></div>
+<div class="flex-1"><div class="h-3 w-3/4 bg-slate-100 rounded"></div><div class="h-2 w-1/2 bg-slate-100 rounded mt-2"></div></div>
+</div>
+<div class="flex items-center gap-3 p-3 opacity-60 border-t border-slate-50">
+<div class="w-12 h-12 bg-slate-200 rounded-full"></div>
+<div class="flex-1"><div class="h-3 w-2/3 bg-slate-100 rounded"></div><div class="h-2 w-1/3 bg-slate-100 rounded mt-2"></div></div>
+</div>
+</div>
+</div>
+<div class="flex-1 flex flex-col bg-zalo-bg relative">
+<header class="h-16 bg-white border-b border-slate-200 px-4 flex items-center justify-between shadow-sm shrink-0">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white">
+<span class="material-symbols-outlined">medical_services</span>
+</div>
+<div>
+<div class="flex items-center gap-1">
+<h2 class="font-bold text-[15px]">MediConnect - Chăm sóc sức khỏe</h2>
+<span class="material-symbols-outlined !text-[16px] text-blue-500 fill-1">verified</span>
+</div>
+<p class="text-[11px] text-slate-500">Official Account • Hoạt động 24/7</p>
+</div>
+</div>
+<div class="flex items-center gap-4 text-slate-500">
+<span class="material-symbols-outlined cursor-pointer hover:text-zalo-blue">person_add</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-zalo-blue">search</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-zalo-blue">dock_to_left</span>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto p-6 space-y-6 flex flex-col">
+<div class="self-center bg-slate-200/50 px-3 py-1 rounded-full text-[11px] text-slate-500 font-medium">Hôm nay, 22 tháng 10</div>
+<div class="zalo-bubble zalo-bubble-zns">
+<div class="p-4">
+<div class="flex items-center gap-2 mb-3">
+<div class="bg-blue-50 p-1 rounded">
+<span class="material-symbols-outlined text-zalo-blue text-[20px]">event_upcoming</span>
+</div>
+<span class="text-[12px] font-bold text-slate-400 uppercase tracking-wider">Thông báo nhắc hẹn</span>
+</div>
+<p class="font-bold text-[15px] mb-2">Chào Minh Anh, bạn có lịch hẹn khám Nội hô hấp vào 08:30 ngày mai.</p>
+<div class="space-y-1.5 mt-4 p-3 bg-slate-50 rounded-lg">
+<div class="flex items-center gap-2 text-sm">
+<span class="material-symbols-outlined text-[18px] text-slate-400">person</span>
+<span class="text-slate-600 font-medium">BS Marcus Chen</span>
+</div>
+<div class="flex items-center gap-2 text-sm">
+<span class="material-symbols-outlined text-[18px] text-slate-400">location_on</span>
+<span class="text-slate-600 font-medium">Phòng khám MediConnect, Tầng 4</span>
+</div>
+</div>
+</div>
+<div class="flex border-t border-slate-100">
+<button class="zalo-btn text-zalo-blue border-r border-slate-100">Xác nhận tham gia</button>
+<button class="zalo-btn text-slate-600">Đổi lịch khám</button>
+</div>
+</div>
+<div class="zalo-bubble zalo-bubble-in">
+<div class="flex items-start gap-3">
+<div class="bg-red-50 p-2 rounded-lg text-red-500">
+<span class="material-symbols-outlined !text-[32px]">picture_as_pdf</span>
+</div>
+<div>
+<p class="font-medium text-slate-800">Kết quả xét nghiệm ngày 22/10 của bạn đã có.</p>
+<a class="text-zalo-blue font-bold text-[13px] hover:underline mt-1 inline-block" href="#">Nhấn để xem chi tiết PDF</a>
+</div>
+</div>
+</div>
+<div class="zalo-bubble zalo-bubble-in bg-[#f0f9ff]">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary text-[18px] fill-1">psychology</span>
+<span class="text-[11px] font-bold text-primary uppercase">Tư vấn từ AI MediConnect</span>
+</div>
+<p class="leading-relaxed">
+                        Dựa trên chỉ số huyết áp gần đây, MediConnect khuyên bạn nên giảm lượng muối trong bữa tối nay và uống thêm nước. Hãy nghỉ ngơi sớm nhé!
+                    </p>
+<span class="text-[10px] text-slate-400 mt-2 block text-right">14:20</span>
+</div>
+</div>
+<footer class="bg-white border-t border-slate-200 p-4 shrink-0">
+<div class="flex gap-2 mb-3 overflow-x-auto pb-1 no-scrollbar">
+<button class="px-4 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-[12px] rounded-full whitespace-nowrap transition-colors">Cảm ơn bác sĩ</button>
+<button class="px-4 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-[12px] rounded-full whitespace-nowrap transition-colors">Tôi sẽ đến đúng giờ</button>
+<button class="px-4 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-[12px] rounded-full whitespace-nowrap transition-colors">Gửi định vị cho tôi</button>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 text-slate-500">
+<span class="material-symbols-outlined cursor-pointer hover:text-zalo-blue">mood</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-zalo-blue">attach_file</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-zalo-blue">image</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-zalo-blue">alternate_email</span>
+</div>
+<div class="flex-1">
+<input class="w-full border-none focus:ring-0 text-[14px] placeholder:text-slate-400 px-0" placeholder="Nhập tin nhắn tới MediConnect..." type="text"/>
+</div>
+<button class="text-zalo-blue font-bold text-[14px] px-2 hover:opacity-80">GỬI</button>
+</div>
+</footer>
+<div class="absolute right-0 top-16 bottom-0 w-[240px] bg-white border-l border-slate-200 hidden xl:flex flex-col">
+<div class="p-6 text-center">
+<div class="w-20 h-20 bg-primary rounded-full flex items-center justify-center text-white mx-auto mb-4">
+<span class="material-symbols-outlined !text-[40px]">medical_services</span>
+</div>
+<h3 class="font-bold text-[15px]">MediConnect</h3>
+<p class="text-[12px] text-slate-500 mt-1">Hệ thống quản lý y tế thông minh</p>
+</div>
+<div class="px-4 space-y-4">
+<div class="p-3 bg-blue-50 rounded-xl">
+<p class="text-[11px] font-bold text-blue-600 uppercase mb-1">Trạng thái hồ sơ</p>
+<div class="flex items-center justify-between">
+<span class="text-[13px] font-medium">Hoàn thiện 85%</span>
+<span class="material-symbols-outlined text-[18px] text-blue-600">check_circle</span>
+</div>
+</div>
+<div>
+<p class="text-[11px] font-bold text-slate-400 uppercase mb-2 px-1">Tài liệu đã nhận</p>
+<div class="space-y-2">
+<div class="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer">
+<span class="material-symbols-outlined text-red-500 text-[20px]">description</span>
+<span class="text-[12px] truncate">Ket_qua_xet_nghiem_2210.pdf</span>
+</div>
+<div class="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer">
+<span class="material-symbols-outlined text-blue-500 text-[20px]">description</span>
+<span class="text-[12px] truncate">Don_thuoc_dien_tu.pdf</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</body></html>

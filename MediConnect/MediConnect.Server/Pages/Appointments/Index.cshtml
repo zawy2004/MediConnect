@@ -4,58 +4,74 @@
     ViewData["Title"] = "Lịch hẹn của tôi";
 }
 
-<h2 class="mb-4"><i class="bi bi-calendar-check"></i> Lịch hẹn của tôi</h2>
+<div class="container-fluid py-4 px-3 px-lg-4" style="max-width:1000px;margin:0 auto;">
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+        <div>
+            <h1 class="fw-bold mb-1" style="font-size:2rem;">Lịch hẹn của tôi</h1>
+            <p style="color:var(--mc-text-muted);">Quản lý các cuộc hẹn sắp tới và xem lịch sử y tế của bạn.</p>
+        </div>
+        <a asp-page="/Doctors/Index" class="btn btn-mc-primary d-flex align-items-center gap-2 px-4 py-3">
+            <i class="bi bi-plus-circle"></i> Đặt lịch mới
+        </a>
+    </div>
 
-@if (Model.Appointments.Count == 0)
-{
-    <div class="alert alert-info">
-        <i class="bi bi-info-circle"></i> Bạn chưa có lịch hẹn nào.
-        <a asp-page="/Doctors/Index">Tìm bác sĩ và đặt lịch ngay!</a>
+    <!-- Tabs -->
+    <div class="bg-white rounded-4 border overflow-hidden mb-4" style="border-color:var(--mc-border);">
+        <ul class="nav nav-tabs border-0 px-4 gap-5" id="apptTabs" role="tablist" style="border-bottom:1px solid var(--mc-border);">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active border-0 fw-bold py-3 px-0 small" id="upcoming-tab" data-bs-toggle="tab" data-bs-target="#upcoming" type="button" role="tab" style="border-bottom:3px solid var(--mc-primary)!important;color:var(--mc-primary);">
+                    Sắp tới (@Model.UpcomingAppointments.Count)
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link border-0 fw-bold py-3 px-0 small" id="past-tab" data-bs-toggle="tab" data-bs-target="#past" type="button" role="tab" style="color:var(--mc-text-muted);">
+                    Lịch hẹn cũ (@Model.PastAppointments.Count)
+                </button>
+            </li>
+        </ul>
     </div>
-}
-else
-{
-    <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead class="table-light">
-                <tr>
-                    <th>#</th>
-                    <th>Bác sĩ</th>
-                    <th>Chuyên khoa</th>
-                    <th>Ngày hẹn</th>
-                    <th>Giờ</th>
-                    <th>Trạng thái</th>
-                    <th>Hành động</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (var i = 0; i < Model.Appointments.Count; i++)
+
+    <div class="tab-content">
+        <!-- Upcoming -->
+        <div class="tab-pane fade show active" id="upcoming" role="tabpanel">
+            @if (!Model.UpcomingAppointments.Any())
+            {
+                <div class="bg-white rounded-4 border p-5 text-center" style="border-color:var(--mc-border);">
+                    <i class="bi bi-calendar-check" style="font-size:3rem;color:var(--mc-border);"></i>
+                    <h5 class="fw-bold mt-3">Chưa có lịch hẹn nào sắp tới</h5>
+                    <p style="color:var(--mc-text-muted);">Hãy tìm bác sĩ và đặt lịch hẹn đầu tiên!</p>
+                    <a asp-page="/Doctors/Index" class="btn btn-mc-primary mt-2">Tìm bác sĩ</a>
+                </div>
+            }
+            <div class="d-flex flex-column gap-3">
+                @foreach (var appt in Model.UpcomingAppointments)
                 {
-                    var appt = Model.Appointments[i];
-                    var startTime = appt.StartTime.ToString("HH:mm");
-                    var endTime = appt.EndTime.ToString("HH:mm");
-                    var badgeClass = Model.GetBadgeClass(appt.Status ?? "");
-                    <tr>
-                        <td>@(i + 1)</td>
-                        <td>@appt.Doctor?.FullName</td>
-                        <td>@appt.Specialty?.SpecialtyName</td>
-                        <td>@appt.AppointmentDate.ToString("dd/MM/yyyy")</td>
-                        <td>@startTime - @endTime</td>
-                        <td><span class="badge @badgeClass">@appt.Status</span></td>
-                        <td>
-                            <a asp-page="Details" asp-route-id="@appt.AppointmentId" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-eye"></i> Chi tiết
-                            </a>
-                            @if (appt.Status == "PENDING" || appt.Status == "CONFIRMED")
-                            {
-                                <a asp-page="Cancel" asp-route-id="@appt.AppointmentId" class="btn btn-sm btn-outline-danger ms-1">
-                                    <i class="bi bi-x-circle"></i> Hủy
-                                </a>
-                            }
-                        </td>
-                    </tr>
+                    @await Html.PartialAsync("_AppointmentCard", appt)
                 }
-            </tbody>
-        </table>
+            </div>
+        </div>
+
+        <!-- Past -->
+        <div class="tab-pane fade" id="past" role="tabpanel">
+            @if (!Model.PastAppointments.Any())
+            {
+                <div class="bg-white rounded-4 border p-5 text-center" style="border-color:var(--mc-border);">
+                    <i class="bi bi-clock-history" style="font-size:3rem;color:var(--mc-border);"></i>
+                    <h5 class="fw-bold mt-3">Chưa có lịch hẹn cũ</h5>
+                </div>
+            }
+            <div class="d-flex flex-column gap-3">
+                @foreach (var appt in Model.PastAppointments)
+                {
+                    @await Html.PartialAsync("_AppointmentCard", appt)
+                }
+            </div>
+        </div>
     </div>
-}
+</div>
+
+<style>
+    #apptTabs .nav-link:not(.active) { border-bottom: 3px solid transparent !important; }
+    #apptTabs .nav-link:hover:not(.active) { color: var(--mc-primary) !important; }
+</style>

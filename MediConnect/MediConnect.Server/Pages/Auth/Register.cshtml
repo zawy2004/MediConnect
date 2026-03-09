@@ -2,74 +2,234 @@
 @model MediConnect.Server.Pages.Auth.RegisterModel
 @{
     ViewData["Title"] = "Đăng ký";
+    ViewData["HideLayout"] = true;
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-4">
-                <h3 class="text-center mb-4"><i class="bi bi-person-plus text-primary"></i> Đăng ký tài khoản</h3>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng ký - MediConnect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body style="background:var(--mc-bg);">
+    <!-- Navbar -->
+    <nav class="navbar mc-navbar">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-shield-plus"></i> MediConnect
+            </a>
+            <a asp-page="/Auth/Login" class="btn btn-login">Đăng nhập</a>
+        </div>
+    </nav>
 
-                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-                {
-                    <div class="alert alert-danger">@Model.ErrorMessage</div>
-                }
-                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
-                {
-                    <div class="alert alert-success">@Model.SuccessMessage</div>
-                }
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-xl-6">
+                <div class="bg-white rounded-4 shadow-sm p-4 p-md-5">
+                    <h2 class="fw-bold mb-2" style="font-size:1.5rem;">Tạo tài khoản bệnh nhân</h2>
+                    <p style="color:var(--mc-text-muted);font-size:0.9rem;" class="mb-4">
+                        Tham gia cộng đồng y tế để quản lý lịch hẹn và hồ sơ sức khỏe an toàn.
+                    </p>
 
-                <form method="post">
-                    <div class="mb-3">
-                        <label asp-for="FullName" class="form-label">Họ và tên</label>
-                        <input asp-for="FullName" class="form-control" placeholder="Nguyễn Văn A" />
-                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    <!-- Step Indicator -->
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="fw-bold small" id="stepLabel">Thông tin cơ bản</span>
+                        <span class="small" style="color:var(--mc-text-muted);" id="stepCounter">Bước 1 / 3</span>
                     </div>
-                    <div class="mb-3">
-                        <label asp-for="Email" class="form-label">Email</label>
-                        <input asp-for="Email" class="form-control" placeholder="example@email.com" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
+                    <div class="mc-step-progress mb-2">
+                        <div class="step active" id="step1bar"></div>
+                        <div class="step" id="step2bar" style="margin-left:4px;"></div>
+                        <div class="step" id="step3bar" style="margin-left:4px;"></div>
                     </div>
-                    <div class="mb-3">
-                        <label asp-for="PhoneNumber" class="form-label">Số điện thoại</label>
-                        <input asp-for="PhoneNumber" class="form-control" placeholder="0901234567" />
-                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label asp-for="Gender" class="form-label">Giới tính</label>
-                            <select asp-for="Gender" class="form-select">
-                                <option value="">-- Chọn --</option>
-                                <option value="MALE">Nam</option>
-                                <option value="FEMALE">Nữ</option>
-                                <option value="OTHER">Khác</option>
-                            </select>
+                    <p class="small mb-4" style="color:var(--mc-primary);" id="nextStepHint">→ Tiếp: Thông tin cá nhân</p>
+
+                    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                    {
+                        <div class="alert alert-danger rounded-3 py-2 small"><i class="bi bi-exclamation-circle"></i> @Model.ErrorMessage</div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+                    {
+                        <div class="alert alert-success rounded-3 py-2 small"><i class="bi bi-check-circle"></i> @Model.SuccessMessage</div>
+                    }
+
+                    <form method="post" id="registerForm">
+                        <!-- Step 1: Contact Details -->
+                        <div id="step1" class="step-content">
+                            <h5 class="fw-bold mb-3">Bước 1: Thông tin liên hệ</h5>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small">Họ và tên</label>
+                                <input asp-for="FullName" class="form-control mc-form-control" placeholder="vd: Nguyễn Văn A" style="height:48px;" />
+                                <span asp-validation-for="FullName" class="text-danger small"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small">Địa chỉ Email</label>
+                                <input asp-for="Email" class="form-control mc-form-control" placeholder="vd: email@example.com" style="height:48px;" />
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small">Số điện thoại</label>
+                                <div class="input-group">
+                                    <span class="input-group-text" style="background:#f8fafc;border-color:var(--mc-border);font-size:0.875rem;">+84</span>
+                                    <input asp-for="PhoneNumber" class="form-control mc-form-control" placeholder="(0xx) xxx-xxxx" style="height:48px;" />
+                                </div>
+                                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Privacy Notice -->
+                            <div class="rounded-3 p-3 mb-4" style="background:#f0f9ff;border:1px solid #bae6fd;">
+                                <div class="d-flex gap-2">
+                                    <i class="bi bi-shield-check text-primary"></i>
+                                    <div>
+                                        <div class="fw-bold small">Quyền riêng tư là ưu tiên của chúng tôi</div>
+                                        <div class="small" style="color:var(--mc-text-muted);">Tất cả dữ liệu được mã hóa và quản lý theo tiêu chuẩn HIPAA.</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label asp-for="DateOfBirth" class="form-label">Ngày sinh</label>
-                            <input asp-for="DateOfBirth" type="date" class="form-control" />
+
+                        <!-- Step 2: Personal Details -->
+                        <div id="step2" class="step-content d-none">
+                            <h5 class="fw-bold mb-3">Bước 2: Thông tin cá nhân</h5>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small">Giới tính</label>
+                                    <select asp-for="Gender" class="form-select mc-form-control" style="height:48px;">
+                                        <option value="">-- Chọn --</option>
+                                        <option value="MALE">Nam</option>
+                                        <option value="FEMALE">Nữ</option>
+                                        <option value="OTHER">Khác</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small">Ngày sinh</label>
+                                    <input asp-for="DateOfBirth" type="date" class="form-control mc-form-control" style="height:48px;" />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small">Địa chỉ</label>
+                                <input asp-for="Address" class="form-control mc-form-control" placeholder="Số nhà, đường, quận/huyện, tỉnh/thành" style="height:48px;" />
+                            </div>
                         </div>
+
+                        <!-- Step 3: Security -->
+                        <div id="step3" class="step-content d-none">
+                            <h5 class="fw-bold mb-3">Bước 3: Bảo mật tài khoản</h5>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small">Mật khẩu</label>
+                                <div class="position-relative">
+                                    <input asp-for="Password" type="password" id="regPassword" class="form-control mc-form-control" style="height:48px;padding-right:2.5rem;" />
+                                    <button type="button" class="btn btn-link position-absolute top-50 translate-middle-y border-0 p-0" style="right:14px;color:var(--mc-text-muted);" onclick="togglePwd('regPassword',this)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <span asp-validation-for="Password" class="text-danger small"></span>
+                                <!-- Strength indicator -->
+                                <div class="d-flex gap-1 mt-2">
+                                    <div class="flex-grow-1 rounded" style="height:4px;background:#e2e8f0;" id="str1"></div>
+                                    <div class="flex-grow-1 rounded" style="height:4px;background:#e2e8f0;" id="str2"></div>
+                                    <div class="flex-grow-1 rounded" style="height:4px;background:#e2e8f0;" id="str3"></div>
+                                    <div class="flex-grow-1 rounded" style="height:4px;background:#e2e8f0;" id="str4"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small">Xác nhận mật khẩu</label>
+                                <input asp-for="ConfirmPassword" type="password" class="form-control mc-form-control" style="height:48px;" />
+                                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="agreeTerms" required />
+                                <label class="form-check-label small" for="agreeTerms" style="color:var(--mc-text-muted);">
+                                    Tôi đồng ý với <a href="#" class="text-decoration-none" style="color:var(--mc-primary);">Chính sách bảo mật</a> và <a href="#" class="text-decoration-none" style="color:var(--mc-primary);">Điều khoản dịch vụ</a>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Navigation Buttons -->
+                        <div class="d-flex gap-3 mt-4">
+                            <button type="button" id="btnBack" class="btn btn-mc-outline flex-grow-1 d-none" onclick="changeStep(-1)" style="height:48px;">
+                                Quay lại
+                            </button>
+                            <button type="button" id="btnNext" class="btn btn-mc-primary flex-grow-1" onclick="changeStep(1)" style="height:48px;">
+                                Tiếp tục Bước 2
+                            </button>
+                            <button type="submit" id="btnSubmit" class="btn btn-mc-primary flex-grow-1 d-none" style="height:48px;">
+                                <i class="bi bi-check-circle"></i> Hoàn tất đăng ký
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-4 small" style="color:var(--mc-text-muted);">
+                        Đã có tài khoản? <a asp-page="/Auth/Login" class="fw-bold text-decoration-none" style="color:var(--mc-primary);">Đăng nhập</a>
                     </div>
-                    <div class="mb-3">
-                        <label asp-for="Password" class="form-label">Mật khẩu</label>
-                        <input asp-for="Password" type="password" class="form-control" />
-                        <span asp-validation-for="Password" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="ConfirmPassword" class="form-label">Xác nhận mật khẩu</label>
-                        <input asp-for="ConfirmPassword" type="password" class="form-control" />
-                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                    </div>
-                    <div class="d-grid mb-3">
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="bi bi-person-plus"></i> Đăng ký
-                        </button>
-                    </div>
-                    <div class="text-center">
-                        <a asp-page="/Auth/Login">Đã có tài khoản? Đăng nhập</a>
-                    </div>
-                </form>
+                </div>
+
+                <!-- Footer badges -->
+                <div class="text-center mt-4">
+                    <span style="font-size:0.65rem;letter-spacing:0.1em;font-weight:700;color:var(--mc-text-muted);">
+                        <i class="bi bi-lock"></i> ĐĂNG KÝ ĐƯỢC MÃ HÓA ĐẦU CUỐI
+                    </span>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+<script>
+    let currentStep = 1;
+    const stepLabels = ['Thông tin cơ bản', 'Thông tin cá nhân', 'Bảo mật tài khoản'];
+    const nextHints = ['→ Tiếp: Thông tin cá nhân', '→ Tiếp: Bảo mật tài khoản', ''];
+
+    function changeStep(dir) {
+        const newStep = currentStep + dir;
+        if (newStep < 1 || newStep > 3) return;
+        document.getElementById('step' + currentStep).classList.add('d-none');
+        document.getElementById('step' + newStep).classList.remove('d-none');
+        currentStep = newStep;
+        updateStepUI();
+    }
+
+    function updateStepUI() {
+        document.getElementById('stepLabel').textContent = stepLabels[currentStep - 1];
+        document.getElementById('stepCounter').textContent = 'Bước ' + currentStep + ' / 3';
+        document.getElementById('nextStepHint').textContent = nextHints[currentStep - 1];
+        for (let i = 1; i <= 3; i++) {
+            const bar = document.getElementById('step' + i + 'bar');
+            bar.classList.toggle('active', i <= currentStep);
+        }
+        document.getElementById('btnBack').classList.toggle('d-none', currentStep === 1);
+        document.getElementById('btnNext').classList.toggle('d-none', currentStep === 3);
+        document.getElementById('btnSubmit').classList.toggle('d-none', currentStep !== 3);
+        if (currentStep < 3) {
+            document.getElementById('btnNext').textContent = 'Tiếp tục Bước ' + (currentStep + 1);
+        }
+    }
+
+    function togglePwd(id, btn) {
+        const input = document.getElementById(id);
+        const icon = btn.querySelector('i');
+        input.type = input.type === 'password' ? 'text' : 'password';
+        icon.classList.toggle('bi-eye');
+        icon.classList.toggle('bi-eye-slash');
+    }
+
+    // Password strength
+    document.getElementById('regPassword')?.addEventListener('input', function() {
+        const val = this.value;
+        let strength = 0;
+        if (val.length >= 6) strength++;
+        if (/[A-Z]/.test(val)) strength++;
+        if (/\d/.test(val)) strength++;
+        if (/[^A-Za-z0-9]/.test(val)) strength++;
+        const colors = ['#ef4444', '#f59e0b', '#06b6d4', '#10b981'];
+        for (let i = 1; i <= 4; i++) {
+            document.getElementById('str' + i).style.background = i <= strength ? colors[strength - 1] : '#e2e8f0';
+        }
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

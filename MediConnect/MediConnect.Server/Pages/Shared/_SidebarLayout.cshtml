@@ -1,0 +1,94 @@
+@{
+    var sidebarRole = ViewData["SidebarRole"]?.ToString() ?? "doctor";
+    var activePage = ViewData["ActiveSidebar"]?.ToString() ?? "";
+}
+
+@if (sidebarRole == "admin")
+{
+    <!-- Admin Sidebar -->
+    <div class="mc-sidebar">
+        <div class="px-4 mb-4">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-shield-plus text-primary fs-4"></i>
+                <span class="fw-bold fs-5" style="color:var(--mc-primary);">MEDIADMIN</span>
+            </div>
+        </div>
+        <nav class="nav flex-column">
+            <a class="nav-link @(activePage == "dashboard" ? "active" : "")" asp-page="/Admin/Index">
+                <i class="bi bi-grid-1x2"></i> Bảng điều khiển
+            </a>
+            <a class="nav-link @(activePage == "users" ? "active" : "")" asp-page="/Admin/Users">
+                <i class="bi bi-people"></i> Quản lý người dùng
+            </a>
+            <a class="nav-link @(activePage == "departments" ? "active" : "")" asp-page="/Admin/Departments">
+                <i class="bi bi-building"></i> Quản lý chuyên khoa
+            </a>
+            <a class="nav-link @(activePage == "reports" ? "active" : "")" asp-page="/Admin/Reports">
+                <i class="bi bi-bar-chart-line"></i> Thống kê báo cáo
+            </a>
+            <a class="nav-link @(activePage == "complaints" ? "active" : "")" asp-page="/Admin/Complaints">
+                <i class="bi bi-exclamation-triangle"></i> Khiếu nại
+            </a>
+            <a class="nav-link @(activePage == "system" ? "active" : "")" asp-page="/Admin/System">
+                <i class="bi bi-gear"></i> Theo dõi Log hệ thống
+            </a>
+        </nav>
+        <div class="position-absolute bottom-0 start-0 w-100 p-3 border-top">
+            <div class="d-flex align-items-center gap-2">
+                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:36px;height:36px;">
+                    <i class="bi bi-person"></i>
+                </div>
+                <div>
+                    <div class="fw-bold small">Admin</div>
+                    <div class="text-muted" style="font-size:0.7rem;">QUẢN TRỊ VIÊN</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mc-sidebar-content">
+        @RenderBody()
+    </div>
+}
+else
+{
+    <!-- Doctor Sidebar -->
+    <div class="mc-sidebar">
+        <div class="px-4 mb-4">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-shield-plus text-primary fs-4"></i>
+                <span class="fw-bold fs-5" style="color:var(--mc-primary);">MediConnect</span>
+            </div>
+        </div>
+        <nav class="nav flex-column">
+            <a class="nav-link @(activePage == "dashboard" ? "active" : "")" asp-page="/Doctor/Index">
+                <i class="bi bi-grid-1x2"></i> Bảng điều khiển
+            </a>
+            <a class="nav-link @(activePage == "patients" ? "active" : "")" asp-page="/Doctor/Patients">
+                <i class="bi bi-people"></i> Bệnh nhân
+            </a>
+            <a class="nav-link @(activePage == "schedule" ? "active" : "")" asp-page="/Doctor/Schedule">
+                <i class="bi bi-calendar3"></i> Lịch trình
+            </a>
+            <a class="nav-link @(activePage == "performance" ? "active" : "")" asp-page="/Doctor/Performance">
+                <i class="bi bi-graph-up"></i> Hiệu suất
+            </a>
+            <a class="nav-link @(activePage == "profile" ? "active" : "")" asp-page="/Doctor/Profile">
+                <i class="bi bi-person-badge"></i> Hồ sơ chuyên môn
+            </a>
+        </nav>
+        <div class="position-absolute bottom-0 start-0 w-100 p-3 border-top">
+            <div class="d-flex align-items-center gap-2">
+                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:36px;height:36px;">
+                    <i class="bi bi-person"></i>
+                </div>
+                <div>
+                    <div class="fw-bold small">BS. Doctor</div>
+                    <div class="text-muted" style="font-size:0.7rem;">KHOA TIM MẠCH</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mc-sidebar-content">
+        @RenderBody()
+    </div>
+}

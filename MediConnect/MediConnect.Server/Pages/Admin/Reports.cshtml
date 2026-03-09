@@ -1,0 +1,206 @@
+@page
+@model MediConnect.Server.Pages.Admin.ReportsModel
+@{
+    ViewData["Title"] = "Thống kê báo cáo";
+    ViewData["UseSidebar"] = true;
+    ViewData["SidebarRole"] = "admin";
+    ViewData["ActiveSidebar"] = "reports";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-1">Báo cáo & Phân tích</h4>
+        <p class="text-muted mb-0">Thống kê tổng quan hiệu suất hệ thống MediConnect</p>
+    </div>
+    <span class="text-muted"><i class="bi bi-calendar3 me-1"></i>@DateTime.Now.ToString("dd/MM/yyyy")</span>
+</div>
+
+<!-- KPI Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+        <div class="mc-kpi-card">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:var(--mc-primary-light)">
+                    <i class="bi bi-calendar-check-fill" style="color:var(--mc-primary)"></i>
+                </div>
+                <span class="text-muted" style="font-size:.85rem">Tổng lượt khám</span>
+            </div>
+            <h3 class="fw-bold mb-0">@Model.TotalVisits.ToString("N0")</h3>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="mc-kpi-card">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:#e6f9ee">
+                    <i class="bi bi-cash-stack" style="color:#22c55e"></i>
+                </div>
+                <span class="text-muted" style="font-size:.85rem">Doanh thu</span>
+            </div>
+            <h3 class="fw-bold mb-0">@(Model.TotalRevenue >= 1000000 ? (Model.TotalRevenue / 1000000).ToString("F1") + "M" : Model.TotalRevenue.ToString("N0"))đ</h3>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="mc-kpi-card">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:#fff7ed">
+                    <i class="bi bi-check2-circle" style="color:#f59e0b"></i>
+                </div>
+                <span class="text-muted" style="font-size:.85rem">Tỷ lệ hoàn thành</span>
+            </div>
+            <h3 class="fw-bold mb-0">@Model.CompletionRate.ToString("F1")%</h3>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="mc-kpi-card">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:#fef3c7">
+                    <i class="bi bi-star-fill" style="color:#f59e0b"></i>
+                </div>
+                <span class="text-muted" style="font-size:.85rem">Điểm hài lòng CSAT</span>
+            </div>
+            <h3 class="fw-bold mb-0">@Model.AverageSatisfaction.ToString("F2")/5</h3>
+        </div>
+    </div>
+</div>
+
+<!-- AI Feedback Analysis -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-3">Xu hướng đặt lịch & AI Anomaly Detection</h6>
+                <div class="text-center py-5" style="background:var(--mc-bg);border-radius:12px">
+                    <i class="bi bi-graph-up" style="font-size:3rem;color:var(--mc-primary);opacity:.3"></i>
+                    <p class="text-muted mt-2 mb-0" style="font-size:.85rem">Biểu đồ xu hướng đặt lịch theo thời gian<br/><span style="font-size:.75rem">(Cần tích hợp Chart.js hoặc ApexCharts)</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-3">AI Phân tích phản hồi</h6>
+                <div class="p-3 rounded-3 mb-3" style="background:var(--mc-bg)">
+                    <div class="d-flex flex-wrap gap-2 justify-content-center mb-3">
+                        <span class="fw-bold" style="font-size:1.2rem;color:var(--mc-primary)">tận tâm</span>
+                        <span style="font-size:.9rem;color:#ef4444">chờ lâu</span>
+                        <span style="font-size:1rem;color:#22c55e">hiệu quả</span>
+                        <span style="font-size:.85rem;color:#8b5cf6">nhiệt tình</span>
+                        <span style="font-size:.75rem;color:var(--mc-text-muted)">chuyên nghiệp</span>
+                        <span style="font-size:1.1rem;color:#22c55e">giỏi</span>
+                        <span style="font-size:.8rem;color:#f59e0b">phí cao</span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span style="font-size:.8rem;color:#22c55e"><i class="bi bi-emoji-smile me-1"></i>Tích cực</span>
+                        <span class="fw-semibold" style="font-size:.8rem">86%</span>
+                    </div>
+                    <div class="mc-progress" style="height:6px">
+                        <div class="mc-progress-bar" style="width:86%;background:#22c55e"></div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span style="font-size:.8rem;color:#f59e0b"><i class="bi bi-emoji-neutral me-1"></i>Trung lập</span>
+                        <span class="fw-semibold" style="font-size:.8rem">10%</span>
+                    </div>
+                    <div class="mc-progress" style="height:6px">
+                        <div class="mc-progress-bar" style="width:10%;background:#f59e0b"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span style="font-size:.8rem;color:#ef4444"><i class="bi bi-emoji-frown me-1"></i>Tiêu cực</span>
+                        <span class="fw-semibold" style="font-size:.8rem">4%</span>
+                    </div>
+                    <div class="mc-progress" style="height:6px">
+                        <div class="mc-progress-bar" style="width:4%;background:#ef4444"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Doctor Performance Table -->
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-4">
+        <h6 class="fw-bold mb-3">Hiệu suất Bác sĩ</h6>
+        @if (Model.DoctorPerformances.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-borderless align-middle mb-0">
+                    <thead>
+                        <tr style="font-size:.8rem;color:var(--mc-text-muted)">
+                            <th>Bác sĩ</th>
+                            <th>Tỷ lệ hoàn thành</th>
+                            <th>Đánh giá</th>
+                            <th>Tỷ lệ bỏ hẹn</th>
+                            <th>Doanh số</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var doc in Model.DoctorPerformances)
+                        {
+                            var completionColor = doc.CompletionRate >= 90 ? "#22c55e" : (doc.CompletionRate >= 70 ? "#137fec" : "#f59e0b");
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center fw-semibold text-white" style="width:36px;height:36px;background:var(--mc-primary);font-size:.8rem">
+                                            @doc.DoctorName.Substring(0, 1).ToUpper()
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold" style="font-size:.9rem">@doc.DoctorName</div>
+                                            @if (!string.IsNullOrEmpty(doc.Specialty))
+                                            {
+                                                <div class="text-muted" style="font-size:.75rem">@doc.Specialty</div>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="mc-progress" style="width:80px;height:6px">
+                                            <div class="mc-progress-bar" style="width:@doc.CompletionRate.ToString("F0")%;background:@completionColor"></div>
+                                        </div>
+                                        <span class="fw-semibold" style="font-size:.85rem;color:@completionColor">@doc.CompletionRate.ToString("F1")%</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (doc.AverageRating.HasValue)
+                                    {
+                                        <span style="font-size:.85rem"><i class="bi bi-star-fill me-1" style="color:#f59e0b"></i>@doc.AverageRating.Value.ToString("F1")</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted" style="font-size:.85rem">—</span>
+                                    }
+                                </td>
+                                <td>
+                                    @{
+                                        var noShowRate = doc.TotalAppointments > 0 ? (decimal)doc.NoShowCount / doc.TotalAppointments * 100 : 0;
+                                        var noShowColor = noShowRate <= 5 ? "#22c55e" : (noShowRate <= 15 ? "#f59e0b" : "#ef4444");
+                                    }
+                                    <span class="fw-semibold" style="font-size:.85rem;color:@noShowColor">@noShowRate.ToString("F1")%</span>
+                                </td>
+                                <td>
+                                    <span class="fw-semibold" style="font-size:.85rem">
+                                        @(doc.Revenue >= 1000000 ? (doc.Revenue / 1000000).ToString("F1") + "M" : doc.Revenue.ToString("N0"))đ
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center text-muted py-4">
+                <i class="bi bi-bar-chart" style="font-size:2rem"></i>
+                <p class="mt-2 mb-0">Chưa có dữ liệu hiệu suất</p>
+            </div>
+        }
+    </div>
+</div>

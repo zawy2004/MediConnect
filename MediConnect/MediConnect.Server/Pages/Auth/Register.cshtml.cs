@@ -38,6 +38,9 @@ public class RegisterModel : PageModel
     public DateTime? DateOfBirth { get; set; }
 
     [BindProperty]
+    public string? Address { get; set; }
+
+    [BindProperty]
     [Required(ErrorMessage = "Vui lòng nhập mật khẩu")]
     [StringLength(100, MinimumLength = 6, ErrorMessage = "Mật khẩu phải ít nhất 6 ký tự")]
     public string Password { get; set; } = string.Empty;
@@ -79,6 +82,7 @@ public class RegisterModel : PageModel
             PhoneNumber = PhoneNumber,
             Gender = Gender,
             DateOfBirth = DateOfBirth.HasValue ? DateOnly.FromDateTime(DateOfBirth.Value) : null,
+            Address = Address,
             IsActive = true,
             IsVerified = false,
             CreatedAt = DateTime.Now,

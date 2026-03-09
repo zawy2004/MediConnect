@@ -1,0 +1,71 @@
+@model MediConnect.Server.Models.Appointment
+@{
+    var statusText = Model.Status switch
+    {
+        "CONFIRMED" => "ĐÃ XÁC NHẬN",
+        "PENDING" => "CHỜ PHÊ DUYỆT",
+        "COMPLETED" => "HOÀN THÀNH",
+        "CANCELLED" => "ĐÃ HỦY",
+        _ => Model.Status ?? ""
+    };
+
+    var statusBg = Model.Status switch
+    {
+        "CONFIRMED" => "background:rgba(22,163,74,0.1);color:#16a34a;border:1px solid rgba(22,163,74,0.2);",
+        "PENDING" => "background:rgba(245,158,11,0.1);color:#d97706;border:1px solid rgba(245,158,11,0.2);",
+        "COMPLETED" => "background:rgba(19,127,236,0.1);color:#137fec;border:1px solid rgba(19,127,236,0.2);",
+        "CANCELLED" => "background:rgba(220,38,38,0.1);color:#dc2626;border:1px solid rgba(220,38,38,0.2);",
+        _ => "background:var(--mc-bg);color:var(--mc-text-muted);"
+    };
+
+    var isPast = Model.AppointmentDate < DateOnly.FromDateTime(DateTime.Today) || Model.Status == "CANCELLED" || Model.Status == "COMPLETED";
+}
+
+<div class="bg-white rounded-4 border p-4 d-flex flex-column flex-md-row gap-4 @(isPast ? "opacity-75" : "")" style="border-color:var(--mc-border);transition:border-color 0.2s;">
+    <div class="flex-shrink-0">
+        <div class="rounded-3 bg-light d-flex align-items-center justify-content-center" style="width:80px;height:80px;">
+            @if (!string.IsNullOrEmpty(Model.Doctor?.AvatarUrl))
+            {
+                <img src="@Model.Doctor.AvatarUrl" class="rounded-3" style="width:80px;height:80px;object-fit:cover;" alt="" />
+            }
+            else
+            {
+                <i class="bi bi-person" style="font-size:2rem;color:var(--mc-text-muted);"></i>
+            }
+        </div>
+    </div>
+    <div class="flex-grow-1">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+            <div>
+                <h5 class="fw-bold mb-1">@(Model.Doctor?.FullName ?? "Bác sĩ")</h5>
+                <p class="fw-semibold small mb-0" style="color:var(--mc-primary);">@(Model.Specialty?.SpecialtyName ?? "")</p>
+            </div>
+            <span class="badge rounded-pill fw-bold" style="@statusBg font-size:0.65rem;padding:5px 12px;">@statusText</span>
+        </div>
+        <div class="row g-2 mb-3 small" style="color:var(--mc-text-muted);">
+            <div class="col-sm-6 d-flex align-items-center gap-2">
+                <i class="bi bi-calendar3"></i> @Model.AppointmentDate.ToString("dd/MM/yyyy")
+            </div>
+            <div class="col-sm-6 d-flex align-items-center gap-2">
+                <i class="bi bi-clock"></i> @Model.StartTime.ToString("HH:mm") - @Model.EndTime.ToString("HH:mm")
+            </div>
+            @if (!string.IsNullOrEmpty(Model.Reason))
+            {
+                <div class="col-12 d-flex align-items-center gap-2">
+                    <i class="bi bi-chat-left-text"></i> @Model.Reason
+                </div>
+            }
+        </div>
+        @if (!isPast)
+        {
+            <div class="d-flex gap-2 flex-wrap">
+                <form method="post" asp-page="/Appointments/Index" asp-page-handler="Cancel" class="d-inline">
+                    <input type="hidden" name="appointmentId" value="@Model.AppointmentId" />
+                    <button type="submit" class="btn btn-sm rounded-3 fw-bold px-3" style="background:var(--mc-bg);color:var(--mc-text-muted);" onclick="return confirm('Bạn có chắc muốn hủy lịch hẹn này?')">
+                        Hủy lịch hẹn
+                    </button>
+                </form>
+            </div>
+        }
+    </div>
+</div>

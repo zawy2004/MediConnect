@@ -1,0 +1,136 @@
+@page
+@model MediConnect.Server.Pages.Admin.ComplaintsModel
+@{
+    ViewData["Title"] = "Khiếu nại";
+    ViewData["UseSidebar"] = true;
+    ViewData["SidebarRole"] = "admin";
+    ViewData["ActiveSidebar"] = "complaints";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-1">Quản lý Khiếu nại</h4>
+        <p class="text-muted mb-0">Xử lý và theo dõi khiếu nại từ bệnh nhân</p>
+    </div>
+</div>
+
+<!-- Search & Filter -->
+<form method="get" class="row g-2 mb-4">
+    <div class="col-md-4">
+        <div class="position-relative">
+            <i class="bi bi-search position-absolute" style="left:12px;top:50%;transform:translateY(-50%);color:var(--mc-text-muted)"></i>
+            <input type="text" name="SearchTerm" value="@Model.SearchTerm" class="mc-form-control" placeholder="Tìm theo tiêu đề, tên bệnh nhân..." style="padding-left:36px" />
+        </div>
+    </div>
+    <div class="col-md-3">
+        <select name="StatusFilter" class="mc-form-control" onchange="this.form.submit()">
+            <option value="">Tất cả trạng thái</option>
+            <option value="PENDING" selected="@(Model.StatusFilter == "PENDING")">Chờ xử lý</option>
+            <option value="IN_PROGRESS" selected="@(Model.StatusFilter == "IN_PROGRESS")">Đang xử lý</option>
+            <option value="RESOLVED" selected="@(Model.StatusFilter == "RESOLVED")">Đã giải quyết</option>
+            <option value="DISMISSED" selected="@(Model.StatusFilter == "DISMISSED")">Đã bác bỏ</option>
+        </select>
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-mc-primary"><i class="bi bi-search me-1"></i>Tìm</button>
+    </div>
+</form>
+
+@if (Model.Complaints.Any())
+{
+    <div class="d-flex flex-column gap-3">
+        @foreach (var complaint in Model.Complaints)
+        {
+            var statusColor = complaint.Status switch
+            {
+                "PENDING" => "#f59e0b",
+                "IN_PROGRESS" => "#137fec",
+                "RESOLVED" => "#22c55e",
+                "DISMISSED" => "#94a3b8",
+                _ => "#94a3b8"
+            };
+            var statusText = complaint.Status switch
+            {
+                "PENDING" => "Chờ xử lý",
+                "IN_PROGRESS" => "Đang xử lý",
+                "RESOLVED" => "Đã giải quyết",
+                "DISMISSED" => "Đã bác bỏ",
+                _ => complaint.Status
+            };
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center fw-semibold text-white" style="width:40px;height:40px;background:var(--mc-primary);font-size:.85rem;flex-shrink:0">
+                                @complaint.Patient.FullName.Substring(0, 1).ToUpper()
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">@complaint.Subject</h6>
+                                <div class="d-flex align-items-center gap-3 text-muted" style="font-size:.8rem">
+                                    <span><i class="bi bi-person me-1"></i>@complaint.Patient.FullName</span>
+                                    @if (complaint.Doctor != null)
+                                    {
+                                        <span><i class="bi bi-person-badge me-1"></i>BS. @complaint.Doctor.FullName</span>
+                                    }
+                                    <span><i class="bi bi-clock me-1"></i>@complaint.CreatedAt.ToString("HH:mm dd/MM/yyyy")</span>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="badge rounded-pill px-3 py-2" style="background:@(statusColor)15;color:@statusColor;font-size:.75rem">
+                            @statusText
+                        </span>
+                    </div>
+
+                    <p class="text-muted mb-3" style="font-size:.9rem">@complaint.Description</p>
+
+                    @if (!string.IsNullOrEmpty(complaint.ResolutionNote))
+                    {
+                        <div class="p-3 rounded-3 mb-3" style="background:#e6f9ee">
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <i class="bi bi-check-circle" style="color:#22c55e"></i>
+                                <span class="fw-semibold" style="font-size:.85rem;color:#22c55e">Ghi chú giải quyết</span>
+                            </div>
+                            <p class="mb-0 text-muted" style="font-size:.85rem">@complaint.ResolutionNote</p>
+                        </div>
+                    }
+
+                    @if (complaint.Status == "PENDING" || complaint.Status == "IN_PROGRESS")
+                    {
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-sm btn-mc-primary" data-bs-toggle="collapse" data-bs-target="#resolve-@complaint.ComplaintId">
+                                <i class="bi bi-check-lg me-1"></i>Giải quyết
+                            </button>
+                            <form method="post" class="d-inline">
+                                <input type="hidden" name="complaintId" value="@complaint.ComplaintId" />
+                                <button type="submit" asp-page-handler="Dismiss" class="btn btn-sm btn-mc-outline" onclick="return confirm('Bạn có chắc muốn bác bỏ khiếu nại này?')">
+                                    <i class="bi bi-x-lg me-1"></i>Bác bỏ
+                                </button>
+                            </form>
+                        </div>
+                        <div class="collapse mt-3" id="resolve-@complaint.ComplaintId">
+                            <form method="post">
+                                <input type="hidden" name="complaintId" value="@complaint.ComplaintId" />
+                                <div class="mb-2">
+                                    <textarea name="ResolutionNote" class="mc-form-control" rows="2" placeholder="Ghi chú giải quyết..."></textarea>
+                                </div>
+                                <button type="submit" asp-page-handler="Resolve" class="btn btn-sm btn-mc-primary">
+                                    <i class="bi bi-check-lg me-1"></i>Xác nhận giải quyết
+                                </button>
+                            </form>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-5 text-center">
+            <i class="bi bi-emoji-smile" style="font-size:3rem;color:#22c55e"></i>
+            <h6 class="fw-bold mt-3 mb-1">Không có khiếu nại nào</h6>
+            <p class="text-muted mb-0" style="font-size:.9rem">Hệ thống hiện không có khiếu nại nào cần xử lý</p>
+        </div>
+    </div>
+}

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Hiệu suất Bác sĩ - MediConnect AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a",
+                        "card-border": "#e2e8f0",
+                        "ai-purple": "#8b5cf6",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.375rem", "lg": "0.5rem", "xl": "1rem", "2xl": "1.5rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        .card-shadow {
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+        .chart-bar {
+            @apply bg-primary rounded-t-sm transition-all duration-300;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 transition-colors duration-200">
+<div class="flex h-screen overflow-hidden">
+<aside class="w-64 flex-shrink-0 bg-white dark:bg-slate-900 border-r border-card-border dark:border-slate-800 flex flex-col h-full">
+<div class="p-6 flex flex-col h-full">
+<div class="flex items-center gap-3 mb-10 px-2">
+<div class="size-9 bg-primary rounded-lg flex items-center justify-center text-white shadow-md shadow-primary/20">
+<span class="material-symbols-outlined fill-icon">shield_with_heart</span>
+</div>
+<h2 class="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">MediConnect</h2>
+</div>
+<nav class="flex flex-col gap-1.5 grow">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<p class="text-sm font-semibold">Bảng điều khiển</p>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined">group</span>
+<p class="text-sm font-semibold">Bệnh nhân</p>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<p class="text-sm font-semibold">Lịch trình</p>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-primary transition-all" href="#">
+<span class="material-symbols-outlined fill-icon">monitoring</span>
+<p class="text-sm font-bold">Hiệu suất</p>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800">
+<div class="flex items-center gap-3 px-2">
+<div class="aspect-square rounded-full size-10 border border-primary/20 p-0.5">
+<div class="w-full h-full rounded-full bg-center bg-no-repeat bg-cover" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCz__Z1hyr50RDlr5OZfUT-Q7tC42l5yoYY3p0rGKtnnl6wrXjwdUCl7dJ4gOd4k0_MYp_QFOlClUcUHXzDBgYQ8kmBDaEm4kD0Q-8A3sg9PwDTnVLJmZiboqQsNiOlexlgPpYhcnTF2vMCCtXAGwUKGoLqRcj6GO0fJfEE982drqihmbXaK7ARsQXHzn56372ckdMB6fqQGrwEtIvulgIZPhbRzyKOJAxOrDzZvR1X6guIx4KSl0sGiGNG1hButC4Ar4YmP84scdY8");'></div>
+</div>
+<div class="flex flex-col">
+<h1 class="text-slate-900 dark:text-white text-xs font-bold leading-tight">BS. James Smith</h1>
+<p class="text-slate-500 text-[10px] font-medium uppercase text-ellipsis overflow-hidden">Khoa Tim Mạch</p>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col overflow-y-auto custom-scrollbar">
+<header class="bg-white dark:bg-slate-900 border-b border-card-border dark:border-slate-800 px-8 py-6 sticky top-0 z-10">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+<div>
+<h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">Phân tích Hiệu suất</h2>
+<p class="text-sm font-medium text-slate-500 mt-1">Dữ liệu tổng hợp từ hệ thống MediConnect AI</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+<button class="px-4 py-1.5 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-white">Tháng này</button>
+<button class="px-4 py-1.5 text-xs font-bold rounded-lg text-slate-500 hover:text-slate-700">Quý này</button>
+</div>
+<button class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-xl">download</span>
+                        Xuất báo cáo
+                    </button>
+</div>
+</div>
+</header>
+<div class="p-8 space-y-8">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-card-border dark:border-slate-800 card-shadow">
+<div class="flex items-center justify-between mb-4">
+<div class="size-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">person_search</span>
+</div>
+<span class="text-green-500 text-xs font-bold">+12%</span>
+</div>
+<p class="text-sm font-semibold text-slate-500">Tổng bệnh nhân</p>
+<h3 class="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">1,284</h3>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-card-border dark:border-slate-800 card-shadow">
+<div class="flex items-center justify-between mb-4">
+<div class="size-10 rounded-xl bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center text-orange-600">
+<span class="material-symbols-outlined">replay</span>
+</div>
+<span class="text-green-500 text-xs font-bold">+5%</span>
+</div>
+<p class="text-sm font-semibold text-slate-500">Tỷ lệ quay lại</p>
+<h3 class="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">68.2%</h3>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-card-border dark:border-slate-800 card-shadow">
+<div class="flex items-center justify-between mb-4">
+<div class="size-10 rounded-xl bg-yellow-50 dark:bg-yellow-900/20 flex items-center justify-center text-yellow-600">
+<span class="material-symbols-outlined fill-icon">star</span>
+</div>
+<span class="text-slate-400 text-xs font-bold">Ổn định</span>
+</div>
+<p class="text-sm font-semibold text-slate-500">Đánh giá TB</p>
+<h3 class="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">4.9/5.0</h3>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-card-border dark:border-slate-800 card-shadow">
+<div class="flex items-center justify-between mb-4">
+<div class="size-10 rounded-xl bg-teal-50 dark:bg-teal-900/20 flex items-center justify-center text-teal-600">
+<span class="material-symbols-outlined">schedule</span>
+</div>
+<span class="text-red-500 text-xs font-bold">-2m</span>
+</div>
+<p class="text-sm font-semibold text-slate-500">Thời gian khám TB</p>
+<h3 class="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">18 phút</h3>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-2 space-y-8">
+<section class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-card-border dark:border-slate-800 card-shadow">
+<div class="flex items-center justify-between mb-8">
+<h3 class="font-bold text-slate-900 dark:text-white">Số lượng ca khám theo tuần</h3>
+<select class="text-xs font-bold bg-slate-50 dark:bg-slate-800 border-none rounded-lg focus:ring-0">
+<option>4 tuần gần nhất</option>
+</select>
+</div>
+<div class="h-64 flex items-end justify-between gap-4 px-2">
+<div class="flex flex-col items-center gap-2 w-full">
+<div class="w-full bg-primary/20 rounded-t-lg relative h-[40%]">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-lg h-full opacity-80 hover:opacity-100 transition-all"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-400">Tuần 1</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-full">
+<div class="w-full bg-primary/20 rounded-t-lg relative h-[65%]">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-lg h-full opacity-80 hover:opacity-100 transition-all"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-400">Tuần 2</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-full">
+<div class="w-full bg-primary/20 rounded-t-lg relative h-[85%]">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-lg h-full opacity-80 hover:opacity-100 transition-all"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-400">Tuần 3</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-full">
+<div class="w-full bg-primary/20 rounded-t-lg relative h-[55%]">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-lg h-full opacity-80 hover:opacity-100 transition-all"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-400">Tuần 4</span>
+</div>
+</div>
+</section>
+<section class="bg-gradient-to-br from-indigo-50/50 to-blue-50/50 dark:from-indigo-900/10 dark:to-blue-900/10 rounded-2xl border border-indigo-100 dark:border-indigo-900/30 p-8 relative overflow-hidden">
+<div class="absolute -top-12 -right-12 size-48 bg-indigo-500/5 rounded-full blur-3xl"></div>
+<div class="flex items-center gap-3 mb-6">
+<div class="size-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white">
+<span class="material-symbols-outlined fill-icon">auto_awesome</span>
+</div>
+<div>
+<h3 class="text-lg font-extrabold text-indigo-900 dark:text-indigo-300">MediConnect AI Insights</h3>
+<p class="text-xs text-indigo-500 font-bold uppercase tracking-wider">Phân tích hệ thống chuyên sâu</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-white/60 dark:bg-slate-900/60 p-5 rounded-xl border border-white dark:border-slate-800">
+<div class="flex items-center gap-2 mb-3 text-indigo-600 dark:text-indigo-400">
+<span class="material-symbols-outlined text-sm">verified</span>
+<h4 class="text-xs font-bold uppercase">Hiệu quả chẩn đoán</h4>
+</div>
+<p class="text-sm text-slate-700 dark:text-slate-300 font-medium">
+<span class="text-indigo-600 font-bold">95%</span> chẩn đoán của bác sĩ khớp hoàn toàn với kết quả cận lâm sàng.
+                                </p>
+</div>
+<div class="bg-white/60 dark:bg-slate-900/60 p-5 rounded-xl border border-white dark:border-slate-800">
+<div class="flex items-center gap-2 mb-3 text-indigo-600 dark:text-indigo-400">
+<span class="material-symbols-outlined text-sm">avg_time</span>
+<h4 class="text-xs font-bold uppercase">Quản lý thời gian</h4>
+</div>
+<p class="text-sm text-slate-700 dark:text-slate-300 font-medium">
+                                    Bác sĩ thường dành <span class="text-indigo-600 font-bold">+12p</span> cho các ca bệnh phức tạp về tim mạch.
+                                </p>
+</div>
+<div class="bg-white/60 dark:bg-slate-900/60 p-5 rounded-xl border border-white dark:border-slate-800">
+<div class="flex items-center gap-2 mb-3 text-indigo-600 dark:text-indigo-400">
+<span class="material-symbols-outlined text-sm">lightbulb</span>
+<h4 class="text-xs font-bold uppercase">Gợi ý chuyên môn</h4>
+</div>
+<p class="text-sm text-slate-700 dark:text-slate-300 font-medium">
+                                    Tối ưu quy trình kê đơn bằng các <span class="text-indigo-600 font-bold">mẫu đơn sẵn có</span> cho bệnh cao huyết áp.
+                                </p>
+</div>
+</div>
+</section>
+</div>
+<div class="space-y-8">
+<section class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-card-border dark:border-slate-800 card-shadow">
+<h3 class="font-bold text-slate-900 dark:text-white mb-6">Cơ cấu bệnh lý điều trị</h3>
+<div class="flex flex-col items-center">
+<div class="relative size-40 mb-6">
+<svg class="w-full h-full transform -rotate-90" viewBox="0 0 32 32">
+<circle cx="16" cy="16" fill="transparent" r="16" stroke="#e2e8f0" stroke-width="32"></circle>
+<circle cx="16" cy="16" fill="transparent" r="16" stroke="#137fec" stroke-dasharray="60 100" stroke-width="32"></circle>
+<circle cx="16" cy="16" fill="transparent" r="16" stroke="#8b5cf6" stroke-dasharray="25 100" stroke-dashoffset="-60" stroke-width="32"></circle>
+<circle cx="16" cy="16" fill="transparent" r="16" stroke="#fbbf24" stroke-dasharray="15 100" stroke-dashoffset="-85" stroke-width="32"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="size-24 bg-white dark:bg-slate-900 rounded-full flex items-center justify-center shadow-inner">
+<span class="text-lg font-extrabold">TOP 3</span>
+</div>
+</div>
+</div>
+<div class="w-full space-y-3">
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-primary"></div>
+<span class="text-slate-600 dark:text-slate-400 font-medium">Cao huyết áp</span>
+</div>
+<span class="font-bold">60%</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-ai-purple"></div>
+<span class="text-slate-600 dark:text-slate-400 font-medium">Bệnh mạch vành</span>
+</div>
+<span class="font-bold">25%</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-amber-400"></div>
+<span class="text-slate-600 dark:text-slate-400 font-medium">Khác</span>
+</div>
+<span class="font-bold">15%</span>
+</div>
+</div>
+</div>
+</section>
+<section class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-card-border dark:border-slate-800 card-shadow">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-bold text-slate-900 dark:text-white">Phản hồi gần đây</h3>
+<span class="px-2 py-0.5 bg-green-50 dark:bg-green-900/20 text-green-600 text-[10px] font-bold rounded uppercase">Tích cực</span>
+</div>
+<div class="space-y-6">
+<div class="space-y-2">
+<div class="flex items-center justify-between">
+<p class="text-xs font-bold text-slate-900 dark:text-white">Nguyễn Thùy Linh</p>
+<span class="text-[10px] text-slate-400">2 giờ trước</span>
+</div>
+<p class="text-xs text-slate-500 italic">"Bác sĩ tư vấn rất kỹ và dễ hiểu, tôi cảm thấy an tâm hơn nhiều."</p>
+<div class="flex items-center gap-2">
+<span class="text-[10px] px-2 py-0.5 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 rounded-full font-bold">AI Sentiment: 98% Tích cực</span>
+</div>
+</div>
+<div class="space-y-2 border-t border-slate-50 dark:border-slate-800 pt-4">
+<div class="flex items-center justify-between">
+<p class="text-xs font-bold text-slate-900 dark:text-white">Trần Minh Quân</p>
+<span class="text-[10px] text-slate-400">1 ngày trước</span>
+</div>
+<p class="text-xs text-slate-500 italic">"Quy trình nhanh gọn, bác sĩ nhiệt tình."</p>
+<div class="flex items-center gap-2">
+<span class="text-[10px] px-2 py-0.5 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 rounded-full font-bold">AI Sentiment: 92% Tích cực</span>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 py-2.5 text-xs font-bold text-primary border border-primary/20 rounded-xl hover:bg-primary/5 transition-all">
+                            Xem tất cả đánh giá
+                        </button>
+</section>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

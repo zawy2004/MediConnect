@@ -1,0 +1,236 @@
+@page
+@model MediConnect.Server.Pages.Admin.IndexModel
+@{
+    ViewData["Title"] = "Bảng điều khiển";
+    ViewData["UseSidebar"] = true;
+    ViewData["SidebarRole"] = "admin";
+    ViewData["ActiveSidebar"] = "dashboard";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-1">Tổng quan Hệ thống</h4>
+        <p class="text-muted mb-0">Quản lý và giám sát hệ thống MediConnect</p>
+    </div>
+    <span class="text-muted"><i class="bi bi-calendar3 me-1"></i>@DateTime.Now.ToString("dd/MM/yyyy")</span>
+</div>
+
+<!-- KPI Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="mc-kpi-card">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:40px;height:40px;background:var(--mc-primary-light)">
+                    <i class="bi bi-people-fill" style="color:var(--mc-primary)"></i>
+                </div>
+                <span class="text-muted" style="font-size:.85rem">Tổng người dùng</span>
+            </div>
+            <h3 class="fw-bold mb-1">@Model.TotalUsers.ToString("N0")</h3>
+            <span class="text-muted" style="font-size:.8rem">(@Model.TotalPatients.ToString("N0") BN / @Model.TotalDoctors.ToString("N0") BS)</span>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="mc-kpi-card">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:40px;height:40px;background:#ede9fe">
+                    <i class="bi bi-calendar-check-fill" style="color:#8b5cf6"></i>
+                </div>
+                <span class="text-muted" style="font-size:.85rem">Lịch hẹn hôm nay</span>
+            </div>
+            <h3 class="fw-bold mb-1">@Model.TodayAppointments.ToString("N0")</h3>
+            <span class="badge rounded-pill px-2 py-1" style="background:var(--mc-primary-light);color:var(--mc-primary);font-size:.75rem">
+                Đang xử lý: @Model.ProcessingAppointments
+            </span>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="mc-kpi-card">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:40px;height:40px;background:#e6f9ee">
+                    <i class="bi bi-activity" style="color:#22c55e"></i>
+                </div>
+                <span class="text-muted" style="font-size:.85rem">Sức khỏe hệ thống</span>
+            </div>
+            <h3 class="fw-bold mb-1">Uptime: @Model.SystemUptime%</h3>
+            <span class="badge rounded-pill px-2 py-1" style="background:#e6f9ee;color:#22c55e;font-size:.75rem">
+                <i class="bi bi-circle-fill me-1" style="font-size:.4rem"></i>Stable
+            </span>
+        </div>
+    </div>
+</div>
+
+<!-- AI Forecast Banner -->
+<div class="rounded-4 p-4 mb-4" style="background:linear-gradient(135deg,#1e293b,#312e81);color:white">
+    <div class="d-flex align-items-center gap-2 mb-3">
+        <i class="bi bi-stars" style="color:#a78bfa;font-size:1.2rem"></i>
+        <span class="fw-bold">AI Dự báo & Gợi ý</span>
+    </div>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="p-3 rounded-3" style="background:rgba(255,255,255,0.08);backdrop-filter:blur(10px)">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi bi-exclamation-triangle-fill" style="color:#f87171"></i>
+                    <span class="fw-semibold" style="font-size:.9rem">Cảnh báo</span>
+                </div>
+                <p class="mb-0" style="font-size:.85rem;opacity:.9">Chuyên khoa Tim mạch dự kiến quá tải 20% vào tuần tới. Đề xuất tăng cường bác sĩ hỗ trợ.</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="p-3 rounded-3" style="background:rgba(255,255,255,0.08);backdrop-filter:blur(10px)">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi bi-lightbulb-fill" style="color:#4ade80"></i>
+                    <span class="fw-semibold" style="font-size:.9rem">Gợi ý</span>
+                </div>
+                <p class="mb-0" style="font-size:.85rem;opacity:.9">Gợi ý mở thêm 2 ca khám buổi sáng cho khoa Nội tổng quát để giảm thời gian chờ.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Doctor Approvals -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold mb-0">Phê duyệt Bác sĩ mới</h6>
+                    <span class="badge rounded-pill px-2 py-1" style="background:#fef3c7;color:#f59e0b">@Model.PendingDoctors.Count chờ duyệt</span>
+                </div>
+                @if (Model.PendingDoctors.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-borderless align-middle mb-0">
+                            <thead>
+                                <tr style="font-size:.8rem;color:var(--mc-text-muted)">
+                                    <th>Bác sĩ</th>
+                                    <th>Email</th>
+                                    <th>Ngày đăng ký</th>
+                                    <th class="text-end">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var doc in Model.PendingDoctors)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="rounded-circle d-flex align-items-center justify-content-center fw-semibold text-white" style="width:36px;height:36px;background:var(--mc-primary);font-size:.8rem">
+                                                    @doc.User.FullName.Substring(0, 1).ToUpper()
+                                                </div>
+                                                <span class="fw-semibold" style="font-size:.9rem">@doc.User.FullName</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-muted" style="font-size:.85rem">@doc.User.Email</td>
+                                        <td class="text-muted" style="font-size:.85rem">@doc.User.CreatedAt.ToString("dd/MM/yyyy")</td>
+                                        <td class="text-end">
+                                            <form method="post" class="d-inline">
+                                                <input type="hidden" name="doctorProfileId" value="@doc.DoctorProfileId" />
+                                                <button type="submit" asp-page-handler="Reject" class="btn btn-sm rounded-pill px-3" style="background:#fee2e2;color:#ef4444;border:none;font-size:.8rem">
+                                                    <i class="bi bi-x-lg me-1"></i>Từ chối
+                                                </button>
+                                                <button type="submit" asp-page-handler="Approve" class="btn btn-sm rounded-pill px-3 ms-1" style="background:#e6f9ee;color:#22c55e;border:none;font-size:.8rem">
+                                                    <i class="bi bi-check-lg me-1"></i>Duyệt
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-person-check" style="font-size:2rem"></i>
+                        <p class="mt-2 mb-0">Không có bác sĩ nào chờ duyệt</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions + Activity Log -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-3">Thao tác nhanh</h6>
+                <div class="d-flex flex-column gap-2">
+                    <a asp-page="/Admin/Users" class="d-flex align-items-center justify-content-between p-3 rounded-3 text-decoration-none" style="background:var(--mc-bg);color:var(--mc-text)">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-people" style="color:var(--mc-primary)"></i>
+                            <span style="font-size:.9rem">Quản lý người dùng</span>
+                        </div>
+                        <i class="bi bi-chevron-right text-muted"></i>
+                    </a>
+                    <a asp-page="/Admin/Departments" class="d-flex align-items-center justify-content-between p-3 rounded-3 text-decoration-none" style="background:var(--mc-bg);color:var(--mc-text)">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-building" style="color:#8b5cf6"></i>
+                            <span style="font-size:.9rem">Cấu hình chuyên khoa</span>
+                        </div>
+                        <i class="bi bi-chevron-right text-muted"></i>
+                    </a>
+                    <a asp-page="/Admin/Reports" class="d-flex align-items-center justify-content-between p-3 rounded-3 text-decoration-none" style="background:var(--mc-bg);color:var(--mc-text)">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-bar-chart-line" style="color:#22c55e"></i>
+                            <span style="font-size:.9rem">Xuất báo cáo thống kê</span>
+                        </div>
+                        <i class="bi bi-chevron-right text-muted"></i>
+                    </a>
+                    <a asp-page="/Admin/System" class="d-flex align-items-center justify-content-between p-3 rounded-3 text-decoration-none" style="background:var(--mc-bg);color:var(--mc-text)">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-gear" style="color:#f59e0b"></i>
+                            <span style="font-size:.9rem">Theo dõi Log hệ thống</span>
+                        </div>
+                        <i class="bi bi-chevron-right text-muted"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-3">Hoạt động gần đây</h6>
+                @if (Model.RecentLogs.Any())
+                {
+                    <div class="d-flex flex-column gap-3">
+                        @foreach (var log in Model.RecentLogs)
+                        {
+                            var dotColor = log.Severity switch
+                            {
+                                "INFO" => "#22c55e",
+                                "WARNING" => "#f59e0b",
+                                "ERROR" => "#ef4444",
+                                _ => "#94a3b8"
+                            };
+                            <div class="d-flex gap-3">
+                                <div class="d-flex flex-column align-items-center">
+                                    <div class="rounded-circle" style="width:10px;height:10px;background:@dotColor;margin-top:5px"></div>
+                                    <div style="width:2px;flex:1;background:var(--mc-border)"></div>
+                                </div>
+                                <div class="pb-2">
+                                    <div class="fw-semibold" style="font-size:.85rem">@log.Action</div>
+                                    <div class="text-muted" style="font-size:.75rem">
+                                        @log.CreatedAt.ToString("HH:mm dd/MM")
+                                        @if (log.User != null)
+                                        {
+                                            <span>— @log.User.FullName</span>
+                                        }
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(log.Description))
+                                    {
+                                        <div class="text-muted" style="font-size:.8rem">@log.Description</div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted text-center mb-0" style="font-size:.85rem">Chưa có hoạt động nào</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -25,41 +25,46 @@ public class IndexModel : PageModel
     [BindProperty(SupportsGet = true)]
     public int? DepartmentId { get; set; }
 
+    [BindProperty(SupportsGet = true)]
+    public int? MinRating { get; set; }
+
+    [BindProperty(SupportsGet = true)]
+    public decimal? MaxFee { get; set; }
+
     public List<DoctorProfile> Doctors { get; set; } = new();
     public SelectList SpecialtyList { get; set; } = default!;
     public SelectList DepartmentList { get; set; } = default!;
 
     public async Task OnGetAsync()
     {
-        // Load filter dropdowns
         var specialties = await _context.Specialties.Where(s => s.IsActive).OrderBy(s => s.SpecialtyName).ToListAsync();
         SpecialtyList = new SelectList(specialties, "SpecialtyId", "SpecialtyName");
 
         var departments = await _context.Departments.Where(d => d.IsActive).OrderBy(d => d.DepartmentName).ToListAsync();
         DepartmentList = new SelectList(departments, "DepartmentId", "DepartmentName");
 
-        // Build query
         var query = _context.DoctorProfiles
             .Include(d => d.User)
                 .ThenInclude(u => u.DoctorSpecialties)
                     .ThenInclude(ds => ds.Specialty)
+            .Include(d => d.Department)
             .Where(d => d.ApprovalStatus == "APPROVED");
 
         if (!string.IsNullOrWhiteSpace(SearchTerm))
-        {
             query = query.Where(d => d.User.FullName.Contains(SearchTerm));
-        }
 
         if (SpecialtyId.HasValue)
-        {
             query = query.Where(d => d.User.DoctorSpecialties.Any(ds => ds.SpecialtyId == SpecialtyId));
-        }
 
         if (DepartmentId.HasValue)
-        {
             query = query.Where(d => d.DepartmentId == DepartmentId);
-        }
 
-        Doctors = await query.OrderBy(d => d.User.FullName).ToListAsync();
+        if (MinRating.HasValue)
+            query = query.Where(d => d.AverageRating >= MinRating.Value);
+
+        if (MaxFee.HasValue)
+            query = query.Where(d => d.ConsultationFee <= MaxFee.Value);
+
+        Doctors = await query.OrderByDescending(d => d.AverageRating).ThenBy(d => d.User.FullName).ToListAsync();
     }
 }

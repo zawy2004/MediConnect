@@ -6,134 +6,290 @@
 
 @if (Model.Doctor == null)
 {
-    <div class="alert alert-warning">
-        <i class="bi bi-exclamation-triangle"></i> Không tìm thấy bác sĩ.
+    <div class="container py-5 text-center">
+        <i class="bi bi-exclamation-triangle" style="font-size:3rem;color:var(--mc-text-muted);"></i>
+        <h4 class="fw-bold mt-3">Không tìm thấy bác sĩ</h4>
+        <a asp-page="/Doctors/Index" class="btn btn-mc-primary mt-3">Quay lại danh sách</a>
     </div>
 }
 else
 {
     var doc = Model.Doctor;
+    var specialties = doc.User.DoctorSpecialties.Select(ds => ds.Specialty.SpecialtyName).ToList();
 
-    <div class="row">
-        <!-- Doctor Info -->
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center">
-                    @if (!string.IsNullOrEmpty(doc.User.AvatarUrl))
+    <div class="container-fluid py-4 px-3 px-lg-4">
+        <!-- Breadcrumb -->
+        <nav class="mb-4">
+            <ol class="breadcrumb small" style="--bs-breadcrumb-divider:'/';">
+                <li class="breadcrumb-item"><a href="/" style="color:var(--mc-text-muted);text-decoration:none;">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a asp-page="/Doctors/Index" style="color:var(--mc-text-muted);text-decoration:none;">Bác sĩ</a></li>
+                <li class="breadcrumb-item active fw-bold">@doc.User.FullName</li>
+            </ol>
+        </nav>
+
+        <div class="row g-4">
+            <!-- Left Content -->
+            <div class="col-lg-8">
+                <!-- Profile Header Card -->
+                <div class="bg-white rounded-4 border p-4 mb-4" style="border-color:var(--mc-border);">
+                    <div class="d-flex flex-column flex-md-row gap-4">
+                        <div class="position-relative flex-shrink-0">
+                            <div class="rounded-3 bg-light d-flex align-items-center justify-content-center" style="width:140px;height:140px;">
+                                @if (!string.IsNullOrEmpty(doc.User.AvatarUrl))
+                                {
+                                    <img src="@doc.User.AvatarUrl" class="rounded-3" style="width:140px;height:140px;object-fit:cover;" alt="" />
+                                }
+                                else
+                                {
+                                    <i class="bi bi-person" style="font-size:3.5rem;color:var(--mc-text-muted);"></i>
+                                }
+                            </div>
+                            <div class="position-absolute bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width:28px;height:28px;bottom:-4px;right:-4px;border:3px solid #fff;">
+                                <i class="bi bi-check" style="font-size:0.75rem;"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-start justify-content-between">
+                                <div>
+                                    <h1 class="fw-bold mb-1" style="font-size:1.6rem;">@doc.User.FullName</h1>
+                                    <p class="fw-semibold mb-1" style="color:var(--mc-primary);">@(specialties.Any() ? specialties.First() : "Đa khoa")</p>
+                                    @if (!string.IsNullOrEmpty(doc.Location))
+                                    {
+                                        <p class="small mb-0" style="color:var(--mc-text-muted);">
+                                            <i class="bi bi-geo-alt"></i> @doc.Location
+                                        </p>
+                                    }
+                                    else if (doc.Department != null)
+                                    {
+                                        <p class="small mb-0" style="color:var(--mc-text-muted);">
+                                            <i class="bi bi-building"></i> @doc.Department.DepartmentName
+                                        </p>
+                                    }
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-1 mt-3">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <i class="bi @(i <= (int)doc.AverageRating ? "bi-star-fill" : "bi-star")" style="color:#eab308;font-size:0.9rem;"></i>
+                                }
+                                <span class="fw-bold ms-1">@doc.AverageRating.ToString("F1")</span>
+                                <span class="small" style="color:var(--mc-text-muted);">(@doc.TotalReviews đánh giá)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-md-3">
+                        <div class="bg-white rounded-4 border p-3 text-center" style="border-color:var(--mc-border);">
+                            <p class="fw-bold mb-0" style="color:var(--mc-primary);font-size:1.5rem;">@doc.YearsOfExperience+</p>
+                            <p class="small mb-0 text-uppercase fw-bold" style="color:var(--mc-text-muted);font-size:0.65rem;letter-spacing:0.05em;">Năm kinh nghiệm</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="bg-white rounded-4 border p-3 text-center" style="border-color:var(--mc-border);">
+                            <p class="fw-bold mb-0" style="color:var(--mc-primary);font-size:1.5rem;">@doc.TotalReviews</p>
+                            <p class="small mb-0 text-uppercase fw-bold" style="color:var(--mc-text-muted);font-size:0.65rem;letter-spacing:0.05em;">Lượt đánh giá</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="bg-white rounded-4 border p-3 text-center" style="border-color:var(--mc-border);">
+                            <p class="fw-bold mb-0" style="color:var(--mc-primary);font-size:1.5rem;">@doc.ConsultationFee.ToString("N0")đ</p>
+                            <p class="small mb-0 text-uppercase fw-bold" style="color:var(--mc-text-muted);font-size:0.65rem;letter-spacing:0.05em;">Phí khám</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="bg-white rounded-4 border p-3 text-center" style="border-color:var(--mc-border);">
+                            <p class="fw-bold mb-0" style="color:var(--mc-primary);font-size:1.5rem;">
+                                @(doc.InsuranceAccepted != null ? "Có" : "Không")
+                            </p>
+                            <p class="small mb-0 text-uppercase fw-bold" style="color:var(--mc-text-muted);font-size:0.65rem;letter-spacing:0.05em;">Bảo hiểm</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="bg-white rounded-4 border overflow-hidden mb-4" style="border-color:var(--mc-border);">
+                    <ul class="nav nav-tabs border-0 px-4 gap-4" id="profileTabs" role="tablist" style="border-bottom:1px solid var(--mc-border);">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active border-0 fw-bold py-3 px-0 small" id="about-tab" data-bs-toggle="tab" data-bs-target="#about" type="button" role="tab" style="border-bottom:3px solid var(--mc-primary)!important;color:var(--mc-primary);">Giới thiệu</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link border-0 fw-bold py-3 px-0 small" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" style="color:var(--mc-text-muted);">Đánh giá (@Model.Reviews.Count)</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content p-4">
+                        <!-- About Tab -->
+                        <div class="tab-pane fade show active" id="about" role="tabpanel">
+                            @if (!string.IsNullOrEmpty(doc.Bio))
+                            {
+                                <div class="mb-4">
+                                    <h5 class="fw-bold mb-3">Tiểu sử</h5>
+                                    <p style="color:var(--mc-text-muted);line-height:1.7;">@doc.Bio</p>
+                                </div>
+                            }
+
+                            <div class="row g-4">
+                                @if (!string.IsNullOrEmpty(doc.Education))
+                                {
+                                    <div class="col-md-6">
+                                        <h6 class="fw-bold mb-3"><i class="bi bi-mortarboard" style="color:var(--mc-primary);"></i> Học vấn</h6>
+                                        <p style="color:var(--mc-text-muted);">@doc.Education</p>
+                                    </div>
+                                }
+                                @if (specialties.Any())
+                                {
+                                    <div class="col-md-6">
+                                        <h6 class="fw-bold mb-3"><i class="bi bi-heart-pulse" style="color:var(--mc-primary);"></i> Chuyên môn</h6>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            @foreach (var s in specialties)
+                                            {
+                                                <span class="badge rounded-pill fw-bold" style="background:var(--mc-primary-light);color:var(--mc-primary);font-size:0.75rem;padding:6px 14px;">@s</span>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(doc.LicenseNumber))
+                            {
+                                <div class="mt-4 pt-4 border-top" style="border-color:var(--mc-border)!important;">
+                                    <h6 class="fw-bold mb-2"><i class="bi bi-shield-check" style="color:var(--mc-primary);"></i> Giấy phép hành nghề</h6>
+                                    <p class="mb-0" style="color:var(--mc-text-muted);">@doc.LicenseNumber</p>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Reviews Tab -->
+                        <div class="tab-pane fade" id="reviews" role="tabpanel">
+                            @if (!Model.Reviews.Any())
+                            {
+                                <div class="text-center py-4">
+                                    <i class="bi bi-chat-left-dots" style="font-size:2rem;color:var(--mc-border);"></i>
+                                    <p class="mt-2" style="color:var(--mc-text-muted);">Chưa có đánh giá nào.</p>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="d-flex flex-column gap-4">
+                                    @foreach (var review in Model.Reviews)
+                                    {
+                                        <div class="pb-4 border-bottom" style="border-color:var(--mc-border)!important;">
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <div class="d-flex align-items-center gap-3">
+                                                    <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width:40px;height:40px;background:var(--mc-primary-light);color:var(--mc-primary);font-size:0.75rem;">
+                                                        @(review.Patient?.FullName?.Substring(0, Math.Min(2, review.Patient.FullName.Length)).ToUpper() ?? "?")
+                                                    </div>
+                                                    <div>
+                                                        <p class="fw-bold mb-0 small">@(review.Patient?.FullName ?? "Bệnh nhân")</p>
+                                                        <p class="mb-0" style="font-size:0.7rem;color:var(--mc-text-muted);">@review.CreatedAt.ToString("dd/MM/yyyy")</p>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex" style="color:#eab308;">
+                                                    @for (int i = 1; i <= 5; i++)
+                                                    {
+                                                        <i class="bi @(i <= review.Rating ? "bi-star-fill" : "bi-star")" style="font-size:0.7rem;"></i>
+                                                    }
+                                                </div>
+                                            </div>
+                                            @if (!string.IsNullOrEmpty(review.Comment))
+                                            {
+                                                <p class="mb-0 fst-italic small" style="color:var(--mc-text-muted);">"@review.Comment"</p>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar - Booking Widget -->
+            <div class="col-lg-4">
+                <div class="sticky-top" style="top:80px;">
+                    <div class="bg-white rounded-4 border overflow-hidden mb-4" style="border-color:rgba(19,127,236,0.3);box-shadow:0 8px 24px rgba(19,127,236,0.1);">
+                        <div class="p-4 text-white" style="background:var(--mc-primary);">
+                            <h5 class="fw-bold mb-1">Đặt lịch khám</h5>
+                            <p class="mb-0 small" style="opacity:0.9;">Khả dụng theo thời gian thực</p>
+                        </div>
+                        <form method="post" asp-page-handler="Book" asp-route-id="@doc.DoctorProfileId">
+                            <div class="p-4">
+                                @if (Model.AvailableSlots.Any())
+                                {
+                                    <p class="small fw-bold mb-3">Khung giờ trống</p>
+                                    <div class="row g-2 mb-4">
+                                        @foreach (var slot in Model.AvailableSlots)
+                                        {
+                                            <div class="col-4">
+                                                <input type="radio" name="SelectedSlotId" value="@slot.SlotId" id="slot_@slot.SlotId" class="btn-check" />
+                                                <label for="slot_@slot.SlotId" class="btn w-100 py-2 rounded-3 fw-bold" style="font-size:0.7rem;border:1px solid var(--mc-border);">
+                                                    @slot.SlotDate.ToString("dd/MM")<br />@slot.StartTime.ToString("HH:mm")
+                                                </label>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-center py-3 mb-3">
+                                        <i class="bi bi-calendar-x" style="font-size:1.5rem;color:var(--mc-border);"></i>
+                                        <p class="small mt-2" style="color:var(--mc-text-muted);">Hiện chưa có lịch trống.</p>
+                                    </div>
+                                }
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Lý do khám</label>
+                                    <textarea asp-for="Reason" class="form-control mc-form-control" rows="2" placeholder="Mô tả triệu chứng..."></textarea>
+                                </div>
+
+                                <div class="pt-3 border-top" style="border-color:var(--mc-border)!important;">
+                                    <div class="d-flex justify-content-between small mb-2">
+                                        <span style="color:var(--mc-text-muted);">Phí khám</span>
+                                        <span class="fw-bold">@doc.ConsultationFee.ToString("N0")đ</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between fw-bold mt-2 pt-2 border-top" style="border-color:var(--mc-border)!important;">
+                                        <span>Tổng cộng</span>
+                                        <span style="color:var(--mc-primary);font-size:1.1rem;">@doc.ConsultationFee.ToString("N0")đ</span>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-mc-primary w-100 mt-3 py-3 fw-bold d-flex align-items-center justify-content-center gap-2" @(Model.AvailableSlots.Any() ? "" : "disabled")>
+                                    Tiến hành đặt lịch <i class="bi bi-arrow-right"></i>
+                                </button>
+                                <p class="text-center mt-2" style="font-size:0.65rem;color:var(--mc-text-muted);">Hủy lịch miễn phí trước 24 giờ diễn ra cuộc hẹn</p>
+                            </div>
+                        </form>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(doc.Location))
                     {
-                        <img src="@doc.User.AvatarUrl" class="doctor-avatar mb-3" alt="@doc.User.FullName"
-                             style="width:120px;height:120px;" />
-                    }
-                    else
-                    {
-                        <div class="bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3"
-                             style="width:120px;height:120px;border-radius:50%;font-size:3rem;">
-                            <i class="bi bi-person"></i>
+                        <div class="bg-white rounded-4 border p-4" style="border-color:var(--mc-border);">
+                            <p class="fw-bold small mb-2">Vị trí bệnh viện</p>
+                            <div class="rounded-3 d-flex align-items-center justify-content-center" style="height:120px;background:var(--mc-bg);">
+                                <i class="bi bi-geo-alt" style="font-size:2rem;color:var(--mc-text-muted);"></i>
+                            </div>
+                            <p class="small fw-bold mt-2 mb-0">@(doc.Department?.DepartmentName ?? "")</p>
+                            <p class="mb-0" style="font-size:0.7rem;color:var(--mc-text-muted);">@doc.Location</p>
                         </div>
                     }
-                    <h3>@doc.User.FullName</h3>
-                    <p class="text-muted">Mã giấy phép: @doc.LicenseNumber</p>
-
-                    <div class="star-rating mb-2">
-                        @for (int i = 1; i <= 5; i++)
-                        {
-                            <i class="bi @(i <= (int)doc.AverageRating ? "bi-star-fill" : "bi-star")"></i>
-                        }
-                        <span class="text-muted">(@doc.TotalReviews)</span>
-                    </div>
-
-                    <a asp-page="/Appointments/Create" asp-route-doctorId="@doc.UserId" class="btn btn-primary w-100 mt-3">
-                        <i class="bi bi-calendar-plus"></i> Đặt lịch hẹn
-                    </a>
                 </div>
             </div>
-        </div>
-
-        <!-- Details -->
-        <div class="col-md-8">
-            <div class="card border-0 shadow-sm mb-3">
-                <div class="card-header bg-primary text-white">
-                    <i class="bi bi-info-circle"></i> Thông tin chi tiết
-                </div>
-                <div class="card-body">
-                    <table class="table table-borderless">
-                        <tr>
-                            <th style="width:200px;">Chuyên khoa:</th>
-                            <td>
-                                @foreach (var ds in doc.User.DoctorSpecialties)
-                                {
-                                    <span class="badge bg-info me-1">@ds.Specialty.SpecialtyName</span>
-                                }
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Khoa:</th>
-                            <td>@(doc.Department?.DepartmentName ?? "—")</td>
-                        </tr>
-                        <tr>
-                            <th>Kinh nghiệm:</th>
-                            <td>@doc.YearsOfExperience năm</td>
-                        </tr>
-                        <tr>
-                            <th>Phí khám:</th>
-                            <td class="text-primary fw-bold">@doc.ConsultationFee.ToString("N0") VNĐ</td>
-                        </tr>
-                        <tr>
-                            <th>Bảo hiểm:</th>
-                            <td>@(doc.InsuranceAccepted ?? "—")</td>
-                        </tr>
-                        <tr>
-                            <th>Địa chỉ:</th>
-                            <td>@(doc.Location ?? "—")</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-
-            @if (!string.IsNullOrEmpty(doc.Education))
-            {
-                <div class="card border-0 shadow-sm mb-3">
-                    <div class="card-header bg-success text-white">
-                        <i class="bi bi-mortarboard"></i> Học vấn
-                    </div>
-                    <div class="card-body">@doc.Education</div>
-                </div>
-            }
-
-            @if (!string.IsNullOrEmpty(doc.Bio))
-            {
-                <div class="card border-0 shadow-sm mb-3">
-                    <div class="card-header bg-secondary text-white">
-                        <i class="bi bi-file-person"></i> Giới thiệu
-                    </div>
-                    <div class="card-body">@doc.Bio</div>
-                </div>
-            }
-
-            <!-- Reviews -->
-            @if (Model.Reviews.Any())
-            {
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-warning text-dark">
-                        <i class="bi bi-chat-dots"></i> Đánh giá (@Model.Reviews.Count)
-                    </div>
-                    <div class="card-body">
-                        @foreach (var review in Model.Reviews)
-                        {
-                            <div class="border-bottom pb-2 mb-2">
-                                <div class="star-rating">
-                                    @for (int i = 1; i <= 5; i++)
-                                    {
-                                        <i class="bi @(i <= review.Rating ? "bi-star-fill" : "bi-star")"></i>
-                                    }
-                                    <span class="text-muted small ms-2">@review.CreatedAt.ToString("dd/MM/yyyy")</span>
-                                </div>
-                                <p class="mb-0 mt-1">@review.Comment</p>
-                            </div>
-                        }
-                    </div>
-                </div>
-            }
         </div>
     </div>
+
+    <style>
+        .btn-check:checked + .btn {
+            background: rgba(19,127,236,0.05);
+            border-color: var(--mc-primary) !important;
+            color: var(--mc-primary);
+        }
+        #profileTabs .nav-link:not(.active) {
+            border-bottom: 3px solid transparent !important;
+        }
+        #profileTabs .nav-link:hover:not(.active) {
+            color: var(--mc-primary) !important;
+        }
+    </style>
 }

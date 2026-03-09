@@ -1,0 +1,176 @@
+@page
+@model MediConnect.Server.Pages.Admin.SystemModel
+@{
+    ViewData["Title"] = "Theo dõi Log hệ thống";
+    ViewData["UseSidebar"] = true;
+    ViewData["SidebarRole"] = "admin";
+    ViewData["ActiveSidebar"] = "system";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-1">Theo dõi Log Hệ thống</h4>
+        <p class="text-muted mb-0">Giám sát hoạt động và sự kiện hệ thống</p>
+    </div>
+    <span class="text-muted"><i class="bi bi-calendar3 me-1"></i>@DateTime.Now.ToString("dd/MM/yyyy HH:mm")</span>
+</div>
+
+<!-- Summary Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+        <div class="mc-kpi-card">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:var(--mc-primary-light)">
+                    <i class="bi bi-journal-text" style="color:var(--mc-primary)"></i>
+                </div>
+                <span class="text-muted" style="font-size:.85rem">Tổng log</span>
+            </div>
+            <h3 class="fw-bold mb-0">@Model.TotalLogs.ToString("N0")</h3>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="mc-kpi-card">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:#e6f9ee">
+                    <i class="bi bi-info-circle" style="color:#22c55e"></i>
+                </div>
+                <span class="text-muted" style="font-size:.85rem">Info</span>
+            </div>
+            <h3 class="fw-bold mb-0" style="color:#22c55e">@Model.InfoCount.ToString("N0")</h3>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="mc-kpi-card">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:#fef3c7">
+                    <i class="bi bi-exclamation-triangle" style="color:#f59e0b"></i>
+                </div>
+                <span class="text-muted" style="font-size:.85rem">Warning</span>
+            </div>
+            <h3 class="fw-bold mb-0" style="color:#f59e0b">@Model.WarningCount.ToString("N0")</h3>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="mc-kpi-card">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:#fee2e2">
+                    <i class="bi bi-x-octagon" style="color:#ef4444"></i>
+                </div>
+                <span class="text-muted" style="font-size:.85rem">Error</span>
+            </div>
+            <h3 class="fw-bold mb-0" style="color:#ef4444">@Model.ErrorCount.ToString("N0")</h3>
+        </div>
+    </div>
+</div>
+
+<!-- Search & Filter -->
+<form method="get" class="row g-2 mb-4">
+    <div class="col-md-4">
+        <div class="position-relative">
+            <i class="bi bi-search position-absolute" style="left:12px;top:50%;transform:translateY(-50%);color:var(--mc-text-muted)"></i>
+            <input type="text" name="SearchTerm" value="@Model.SearchTerm" class="mc-form-control" placeholder="Tìm theo hành động, mô tả..." style="padding-left:36px" />
+        </div>
+    </div>
+    <div class="col-md-3">
+        <select name="SeverityFilter" class="mc-form-control" onchange="this.form.submit()">
+            <option value="">Tất cả mức độ</option>
+            <option value="INFO" selected="@(Model.SeverityFilter == "INFO")">Info</option>
+            <option value="WARNING" selected="@(Model.SeverityFilter == "WARNING")">Warning</option>
+            <option value="ERROR" selected="@(Model.SeverityFilter == "ERROR")">Error</option>
+        </select>
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-mc-primary"><i class="bi bi-search me-1"></i>Lọc</button>
+    </div>
+</form>
+
+<!-- Log Table -->
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold mb-0">Nhật ký hệ thống</h6>
+            <span class="text-muted" style="font-size:.85rem">Hiển thị @Model.Logs.Count bản ghi</span>
+        </div>
+        @if (Model.Logs.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-borderless align-middle mb-0">
+                    <thead>
+                        <tr style="font-size:.8rem;color:var(--mc-text-muted)">
+                            <th style="width:40px"></th>
+                            <th>Thời gian</th>
+                            <th>Hành động</th>
+                            <th>Người dùng</th>
+                            <th>Mô tả</th>
+                            <th>IP</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var log in Model.Logs)
+                        {
+                            var severityColor = log.Severity switch
+                            {
+                                "INFO" => "#22c55e",
+                                "WARNING" => "#f59e0b",
+                                "ERROR" => "#ef4444",
+                                _ => "#94a3b8"
+                            };
+                            var severityBg = log.Severity switch
+                            {
+                                "INFO" => "#e6f9ee",
+                                "WARNING" => "#fef3c7",
+                                "ERROR" => "#fee2e2",
+                                _ => "#f1f5f9"
+                            };
+                            <tr style="@(log.Severity == "ERROR" ? "background:#fff5f5" : "")">
+                                <td>
+                                    <span class="badge rounded-pill px-2 py-1" style="background:@severityBg;color:@severityColor;font-size:.65rem">
+                                        @log.Severity
+                                    </span>
+                                </td>
+                                <td style="font-size:.8rem;white-space:nowrap;color:var(--mc-text-muted)">
+                                    @log.CreatedAt.ToString("HH:mm:ss")
+                                    <br/>
+                                    <span style="font-size:.7rem">@log.CreatedAt.ToString("dd/MM/yyyy")</span>
+                                </td>
+                                <td>
+                                    <span class="fw-semibold" style="font-size:.85rem">@log.Action</span>
+                                    @if (!string.IsNullOrEmpty(log.EntityType))
+                                    {
+                                        <br/><span class="text-muted" style="font-size:.75rem">@log.EntityType @(log.EntityId != null ? $"#{log.EntityId}" : "")</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (log.User != null)
+                                    {
+                                        <span style="font-size:.85rem">@log.User.FullName</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted" style="font-size:.85rem">System</span>
+                                    }
+                                </td>
+                                <td class="text-muted" style="font-size:.85rem;max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+                                    @(log.Description ?? "—")
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(log.IpAddress))
+                                    {
+                                        <code style="font-size:.75rem;background:var(--mc-bg);padding:2px 6px;border-radius:4px">@log.IpAddress</code>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center text-muted py-4">
+                <i class="bi bi-journal-text" style="font-size:2rem"></i>
+                <p class="mt-2 mb-0">Không tìm thấy bản ghi nào</p>
+            </div>
+        }
+    </div>
+</div>
