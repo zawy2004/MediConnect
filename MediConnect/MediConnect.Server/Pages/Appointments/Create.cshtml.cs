@@ -1,20 +1,24 @@
 using System.ComponentModel.DataAnnotations;
-using MediConnect.Server.Data;
-using MediConnect.Server.Models;
+using System.Security.Claims;
+using MediConnect.Application.DTOs;
+using MediConnect.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace MediConnect.Server.Pages.Appointments;
 
+[Authorize]
 public class CreateModel : PageModel
 {
-    private readonly MediconnectContext _context;
+    private readonly IAppointmentService _appointmentService;
+    private readonly IDoctorService _doctorService;
 
-    public CreateModel(MediconnectContext context)
+    public CreateModel(IAppointmentService appointmentService, IDoctorService doctorService)
     {
-        _context = context;
+        _appointmentService = appointmentService;
+        _doctorService = doctorService;
     }
 
     [BindProperty]
@@ -57,39 +61,23 @@ public class CreateModel : PageModel
 
         if (!ModelState.IsValid) return Page();
 
-        var slot = await _context.TimeSlots.FindAsync(SlotId);
-        if (slot == null || !slot.IsAvailable || slot.BookedCount >= slot.MaxCapacity)
-        {
-            ErrorMessage = "Khung giờ này không còn trống.";
-            return Page();
-        }
+        var patientId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-        // TODO: Get actual patient ID from authentication
-        var appointment = new Appointment
+        var result = await _appointmentService.CreateAppointmentAsync(new CreateAppointmentDto
         {
-            PatientId = 1, // Placeholder — replace with auth user
+            PatientId = patientId,
             DoctorId = DoctorId,
             SlotId = SlotId,
             SpecialtyId = SpecialtyId,
-            AppointmentDate = DateOnly.FromDateTime(AppointmentDate),
-            StartTime = slot.StartTime,
-            EndTime = slot.EndTime,
-            Reason = Reason,
-            Status = "PENDING",
-            CreatedAt = DateTime.Now,
-            UpdatedAt = DateTime.Now
-        };
+            AppointmentDate = AppointmentDate,
+            Reason = Reason
+        });
 
-        _context.Appointments.Add(appointment);
-
-        // Update slot booked count
-        slot.BookedCount++;
-        if (slot.BookedCount >= slot.MaxCapacity)
+        if (!result.Success)
         {
-            slot.IsAvailable = false;
+            ErrorMessage = result.ErrorMessage;
+            return Page();
         }
-
-        await _context.SaveChangesAsync();
 
         SuccessMessage = "Đặt lịch hẹn thành công! Vui lòng chờ bác sĩ xác nhận.";
         return Page();
@@ -97,27 +85,13 @@ public class CreateModel : PageModel
 
     private async Task LoadDropdowns()
     {
-        var specialties = await _context.Specialties.Where(s => s.IsActive).OrderBy(s => s.SpecialtyName).ToListAsync();
+        var specialties = await _doctorService.GetActiveSpecialtiesAsync();
         SpecialtyList = new SelectList(specialties, "SpecialtyId", "SpecialtyName");
 
-        var doctors = await _context.DoctorProfiles
-            .Include(d => d.User)
-            .Where(d => d.ApprovalStatus == "APPROVED")
-            .Select(d => new { d.UserId, d.User.FullName })
-            .ToListAsync();
+        var doctors = await _doctorService.SearchDoctorsAsync(new DoctorSearchFilterDto());
         DoctorList = new SelectList(doctors, "UserId", "FullName");
 
-        var slotsRaw = await _context.TimeSlots
-            .Where(s => s.IsAvailable && s.SlotDate >= DateOnly.FromDateTime(DateTime.Today))
-            .OrderBy(s => s.SlotDate)
-            .ThenBy(s => s.StartTime)
-            .ToListAsync();
-        SlotList = new SelectList(
-            slotsRaw.Select(s => new
-            {
-                s.SlotId,
-                Display = s.SlotDate.ToString("dd/MM") + " | " + s.StartTime.ToString(@"hh\:mm") + " - " + s.EndTime.ToString(@"hh\:mm")
-            }),
-            "SlotId", "Display");
+        var slots = await _appointmentService.GetAvailableSlotsAsync();
+        SlotList = new SelectList(slots, "SlotId", "Display");
     }
 }

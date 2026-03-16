@@ -1,0 +1,20 @@
+using MediConnect.Application.Interfaces;
+using MediConnect.Application.Services;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace MediConnect.Application;
+
+public static class DependencyInjection
+{
+    public static IServiceCollection AddApplication(this IServiceCollection services)
+    {
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IDoctorService, DoctorService>();
+        services.AddScoped<IAppointmentService, AppointmentService>();
+        services.AddScoped<ISpecialtyService, SpecialtyService>();
+        services.AddScoped<IDepartmentService, DepartmentService>();
+        services.AddScoped<IDashboardService, DashboardService>();
+
+        return services;
+    }
+}

@@ -69,9 +69,9 @@
                 <div class="bg-white border border-slate-200 rounded-xl p-6 flex flex-col md:flex-row gap-6 hover:shadow-lg transition-shadow card-hover-effect">
                     <!-- Doctor Avatar -->
                     <div class="relative flex-shrink-0">
-                        @if (!string.IsNullOrEmpty(doctor.User.AvatarUrl))
+                        @if (!string.IsNullOrEmpty(doctor.AvatarUrl))
                         {
-                            <div class="w-32 h-32 rounded-xl bg-cover bg-center border border-slate-100" style="background-image: url('@doctor.User.AvatarUrl');"></div>
+                            <div class="w-32 h-32 rounded-xl bg-cover bg-center border border-slate-100" style="background-image: url('@doctor.AvatarUrl');"></div>
                         }
                         else
                         {
@@ -85,11 +85,11 @@
                     <div class="flex-1 space-y-2">
                         <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
                             <div>
-                                <h3 class="text-[#0d141b] text-xl font-bold">@doctor.User.FullName</h3>
+                                <h3 class="text-[#0d141b] text-xl font-bold">@doctor.FullName</h3>
                                 <p class="text-primary text-sm font-bold">
-                                    @if (doctor.User.DoctorSpecialties.Any())
+                                    @if (doctor.Specialties.Any())
                                     {
-                                        @string.Join(", ", doctor.User.DoctorSpecialties.Select(ds => ds.Specialty.SpecialtyName))
+                                        @string.Join(", ", doctor.Specialties)
                                     }
                                 </p>
                             </div>
@@ -97,7 +97,7 @@
                                 <div class="flex text-amber-400">
                                     @for (int i = 1; i <= 5; i++)
                                     {
-                                        <span class="material-symbols-outlined text-lg @(i <= (int)doctor.AverageRating ? "star-filled" : "text-slate-300")">star</span>
+                                <span class="material-symbols-outlined text-lg @(i <= (int)doctor.AverageRating ? "star-filled" : "text-slate-300")">star</span>
                                     }
                                 </div>
                                 <span class="text-slate-600 text-sm font-bold">(@doctor.TotalReviews đánh giá)</span>

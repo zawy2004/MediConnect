@@ -1,0 +1,10 @@
+namespace MediConnect.Application.DTOs;
+
+public class ReviewDto
+{
+    public int ReviewId { get; set; }
+    public string PatientName { get; set; } = null!;
+    public byte Rating { get; set; }
+    public string? Comment { get; set; }
+    public DateTime CreatedAt { get; set; }
+}

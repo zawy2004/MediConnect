@@ -1,18 +1,21 @@
 using System.ComponentModel.DataAnnotations;
-using MediConnect.Server.Data;
+using System.Security.Claims;
+using MediConnect.Application.DTOs;
+using MediConnect.Application.Interfaces;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace MediConnect.Server.Pages.Auth;
 
 public class LoginModel : PageModel
 {
-    private readonly MediconnectContext _context;
+    private readonly IAuthService _authService;
 
-    public LoginModel(MediconnectContext context)
+    public LoginModel(IAuthService authService)
     {
-        _context = context;
+        _authService = authService;
     }
 
     [BindProperty]
@@ -32,18 +35,33 @@ public class LoginModel : PageModel
     {
         if (!ModelState.IsValid) return Page();
 
-        var user = await _context.Users
-            .Include(u => u.Role)
-            .FirstOrDefaultAsync(u => u.Email == Email && u.IsActive);
-
-        if (user == null)
+        var result = await _authService.LoginAsync(new LoginDto
         {
-            ErrorMessage = "Email hoặc mật khẩu không đúng.";
+            Email = Email,
+            Password = Password
+        });
+
+        if (!result.Success)
+        {
+            ErrorMessage = result.ErrorMessage;
             return Page();
         }
 
-        // TODO: Verify password hash and create authentication cookie/session
-        // For now, redirect to home
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, result.UserId.ToString()!),
+            new(ClaimTypes.Name, result.FullName ?? string.Empty),
+            new(ClaimTypes.Email, result.Email ?? string.Empty),
+            new(ClaimTypes.Role, result.RoleName ?? string.Empty)
+        };
+
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var principal = new ClaimsPrincipal(identity);
+
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            principal);
+
         return RedirectToPage("/Index");
     }
 }

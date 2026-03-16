@@ -5,6 +5,12 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediConnect.Server", "MediConnect.Server\MediConnect.Server.csproj", "{390DDB01-BEBD-4C35-AC44-BB350835BB6D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediConnect.Domain", "MediConnect.Domain\MediConnect.Domain.csproj", "{45E72F81-55C0-4F32-B288-74F81AF64BC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediConnect.Application", "MediConnect.Application\MediConnect.Application.csproj", "{0E65BDC0-B7A9-4AE0-934B-9E9C986B0A90}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediConnect.Infrastructure", "MediConnect.Infrastructure\MediConnect.Infrastructure.csproj", "{598C7F4F-AC53-494E-83E0-13B5CFBA33FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +33,42 @@ Global
 		{390DDB01-BEBD-4C35-AC44-BB350835BB6D}.Release|x64.Build.0 = Release|Any CPU
 		{390DDB01-BEBD-4C35-AC44-BB350835BB6D}.Release|x86.ActiveCfg = Release|Any CPU
 		{390DDB01-BEBD-4C35-AC44-BB350835BB6D}.Release|x86.Build.0 = Release|Any CPU
+		{45E72F81-55C0-4F32-B288-74F81AF64BC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45E72F81-55C0-4F32-B288-74F81AF64BC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45E72F81-55C0-4F32-B288-74F81AF64BC0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{45E72F81-55C0-4F32-B288-74F81AF64BC0}.Debug|x64.Build.0 = Debug|Any CPU
+		{45E72F81-55C0-4F32-B288-74F81AF64BC0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{45E72F81-55C0-4F32-B288-74F81AF64BC0}.Debug|x86.Build.0 = Debug|Any CPU
+		{45E72F81-55C0-4F32-B288-74F81AF64BC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45E72F81-55C0-4F32-B288-74F81AF64BC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45E72F81-55C0-4F32-B288-74F81AF64BC0}.Release|x64.ActiveCfg = Release|Any CPU
+		{45E72F81-55C0-4F32-B288-74F81AF64BC0}.Release|x64.Build.0 = Release|Any CPU
+		{45E72F81-55C0-4F32-B288-74F81AF64BC0}.Release|x86.ActiveCfg = Release|Any CPU
+		{45E72F81-55C0-4F32-B288-74F81AF64BC0}.Release|x86.Build.0 = Release|Any CPU
+		{0E65BDC0-B7A9-4AE0-934B-9E9C986B0A90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E65BDC0-B7A9-4AE0-934B-9E9C986B0A90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E65BDC0-B7A9-4AE0-934B-9E9C986B0A90}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0E65BDC0-B7A9-4AE0-934B-9E9C986B0A90}.Debug|x64.Build.0 = Debug|Any CPU
+		{0E65BDC0-B7A9-4AE0-934B-9E9C986B0A90}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0E65BDC0-B7A9-4AE0-934B-9E9C986B0A90}.Debug|x86.Build.0 = Debug|Any CPU
+		{0E65BDC0-B7A9-4AE0-934B-9E9C986B0A90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E65BDC0-B7A9-4AE0-934B-9E9C986B0A90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E65BDC0-B7A9-4AE0-934B-9E9C986B0A90}.Release|x64.ActiveCfg = Release|Any CPU
+		{0E65BDC0-B7A9-4AE0-934B-9E9C986B0A90}.Release|x64.Build.0 = Release|Any CPU
+		{0E65BDC0-B7A9-4AE0-934B-9E9C986B0A90}.Release|x86.ActiveCfg = Release|Any CPU
+		{0E65BDC0-B7A9-4AE0-934B-9E9C986B0A90}.Release|x86.Build.0 = Release|Any CPU
+		{598C7F4F-AC53-494E-83E0-13B5CFBA33FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{598C7F4F-AC53-494E-83E0-13B5CFBA33FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{598C7F4F-AC53-494E-83E0-13B5CFBA33FC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{598C7F4F-AC53-494E-83E0-13B5CFBA33FC}.Debug|x64.Build.0 = Debug|Any CPU
+		{598C7F4F-AC53-494E-83E0-13B5CFBA33FC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{598C7F4F-AC53-494E-83E0-13B5CFBA33FC}.Debug|x86.Build.0 = Debug|Any CPU
+		{598C7F4F-AC53-494E-83E0-13B5CFBA33FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{598C7F4F-AC53-494E-83E0-13B5CFBA33FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{598C7F4F-AC53-494E-83E0-13B5CFBA33FC}.Release|x64.ActiveCfg = Release|Any CPU
+		{598C7F4F-AC53-494E-83E0-13B5CFBA33FC}.Release|x64.Build.0 = Release|Any CPU
+		{598C7F4F-AC53-494E-83E0-13B5CFBA33FC}.Release|x86.ActiveCfg = Release|Any CPU
+		{598C7F4F-AC53-494E-83E0-13B5CFBA33FC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

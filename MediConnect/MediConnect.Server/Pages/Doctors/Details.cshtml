@@ -1,7 +1,7 @@
 @page "{id:int}"
 @model MediConnect.Server.Pages.Doctors.DetailsModel
 @{
-    ViewData["Title"] = Model.Doctor?.User.FullName ?? "Chi tiết bác sĩ";
+    ViewData["Title"] = Model.Doctor?.FullName ?? "Chi tiết bác sĩ";
 }
 
 @if (Model.Doctor == null)
@@ -24,7 +24,7 @@ else
             <span class="text-slate-300">/</span>
             <a class="text-slate-500 hover:text-primary no-underline" asp-page="/Doctors/Index">Bác sĩ</a>
             <span class="text-slate-300">/</span>
-            <span class="text-[#0d141b] font-bold">@doc.User.FullName</span>
+            <span class="text-[#0d141b] font-bold">@doc.FullName</span>
         </nav>
 
         <div class="flex flex-col lg:flex-row gap-8">
@@ -34,9 +34,9 @@ else
                 <div class="bg-white rounded-xl p-6 border border-[#cfdbe7] shadow-sm">
                     <div class="flex flex-col md:flex-row gap-6">
                         <div class="relative">
-                            @if (!string.IsNullOrEmpty(doc.User.AvatarUrl))
+                            @if (!string.IsNullOrEmpty(doc.AvatarUrl))
                             {
-                                <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-xl min-h-40 w-40" style="background-image: url('@doc.User.AvatarUrl');"></div>
+                                <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-xl min-h-40 w-40" style="background-image: url('@doc.AvatarUrl');"></div>
                             }
                             else
                             {
@@ -49,11 +49,11 @@ else
                             </div>
                         </div>
                         <div class="flex flex-col justify-center flex-1">
-                            <h1 class="text-[#0d141b] text-3xl font-extrabold tracking-tight">@doc.User.FullName</h1>
+                            <h1 class="text-[#0d141b] text-3xl font-extrabold tracking-tight">@doc.FullName</h1>
                             <p class="text-primary font-semibold text-lg">
-                                @if (doc.User.DoctorSpecialties.Any())
+                                @if (doc.Specialties.Any())
                                 {
-                                    @string.Join(", ", doc.User.DoctorSpecialties.Select(ds => ds.Specialty.SpecialtyName))
+                                    @string.Join(", ", doc.Specialties)
                                 }
                             </p>
                             @if (!string.IsNullOrEmpty(doc.Location))
@@ -110,7 +110,7 @@ else
                             <span class="material-symbols-outlined text-primary">local_hospital</span>
                             <div>
                                 <p class="text-[#0d141b] font-semibold text-sm">Khoa</p>
-                                <p class="text-[#4c739a] text-sm">@(doc.Department?.DepartmentName ?? "—")</p>
+                                <p class="text-[#4c739a] text-sm">@(doc.DepartmentName ?? "—")</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-4">
@@ -118,9 +118,9 @@ else
                             <div>
                                 <p class="text-[#0d141b] font-semibold text-sm">Chuyên khoa</p>
                                 <div class="flex flex-wrap gap-2 mt-1">
-                                    @foreach (var ds in doc.User.DoctorSpecialties)
+                                    @foreach (var specialtyName in doc.Specialties)
                                     {
-                                        <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold border border-primary/20">@ds.Specialty.SpecialtyName</span>
+                                        <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold border border-primary/20">@specialtyName</span>
                                     }
                                 </div>
                             </div>
@@ -163,14 +163,14 @@ else
                 }
 
                 <!-- Reviews -->
-                @if (Model.Reviews.Any())
+                @if (doc.RecentReviews.Any())
                 {
                     <div class="bg-white rounded-xl border border-[#cfdbe7] overflow-hidden shadow-sm">
                         <div class="border-b border-[#cfdbe7] px-6 py-4 flex items-center justify-between">
-                            <h2 class="text-[#0d141b] text-lg font-bold">Đánh giá (@Model.Reviews.Count)</h2>
+                            <h2 class="text-[#0d141b] text-lg font-bold">Đánh giá (@doc.RecentReviews.Count)</h2>
                         </div>
                         <div class="p-6 space-y-4">
-                            @foreach (var review in Model.Reviews)
+                            @foreach (var review in doc.RecentReviews)
                             {
                                 <div class="border-b border-slate-100 pb-4 last:border-0">
                                     <div class="flex items-center gap-2 mb-2">

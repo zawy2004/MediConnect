@@ -1,40 +1,33 @@
-using MediConnect.Server.Data;
-using MediConnect.Server.Models;
+using System.Security.Claims;
+using MediConnect.Application.DTOs;
+using MediConnect.Application.Interfaces;
+using MediConnect.Server.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace MediConnect.Server.Pages.Appointments;
 
+[Authorize]
 public class AppointmentListModel : PageModel
 {
-    private readonly MediconnectContext _context;
+    private readonly IAppointmentService _appointmentService;
 
-    public AppointmentListModel(MediconnectContext context)
+    public AppointmentListModel(IAppointmentService appointmentService)
     {
-        _context = context;
+        _appointmentService = appointmentService;
     }
 
-    public List<Appointment> Appointments { get; set; } = new();
+    public List<AppointmentListDto> Appointments { get; set; } = new();
 
-    public string GetBadgeClass(string status)
-    {
-        if (status == "PENDING") return "badge-pending";
-        if (status == "CONFIRMED") return "badge-confirmed";
-        if (status == "COMPLETED") return "badge-completed";
-        if (status.StartsWith("CANCELLED")) return "badge-cancelled";
-        return "bg-secondary";
-    }
+    public string GetBadgeClass(string status) => StatusHelper.GetBadgeClass(status);
 
     public async Task OnGetAsync()
     {
-        // TODO: Replace with actual logged-in user ID from authentication
-        // For now, load all appointments for demo
-        Appointments = await _context.Appointments
-            .Include(a => a.Doctor)
-            .Include(a => a.Patient)
-            .Include(a => a.Specialty)
-            .OrderByDescending(a => a.AppointmentDate)
-            .ThenByDescending(a => a.StartTime)
-            .ToListAsync();
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var role = User.FindFirstValue(ClaimTypes.Role);
+
+        Appointments = role == "DOCTOR"
+            ? await _appointmentService.GetAppointmentsByDoctorAsync(userId)
+            : await _appointmentService.GetAppointmentsByPatientAsync(userId);
     }
 }

@@ -39,21 +39,21 @@ else
                             <span class="material-symbols-outlined text-primary">person</span>
                             <div>
                                 <p class="text-[#4c739a] text-xs font-bold uppercase tracking-wider">Bác sĩ</p>
-                                <p class="text-[#0d141b] font-semibold">@appt.Doctor.FullName</p>
+                                <p class="text-[#0d141b] font-semibold">@appt.DoctorName</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-4">
                             <span class="material-symbols-outlined text-primary">personal_injury</span>
                             <div>
                                 <p class="text-[#4c739a] text-xs font-bold uppercase tracking-wider">Bệnh nhân</p>
-                                <p class="text-[#0d141b] font-semibold">@appt.Patient.FullName</p>
+                                <p class="text-[#0d141b] font-semibold">@appt.PatientName</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-4">
                             <span class="material-symbols-outlined text-primary">medical_services</span>
                             <div>
                                 <p class="text-[#4c739a] text-xs font-bold uppercase tracking-wider">Chuyên khoa</p>
-                                <p class="text-[#0d141b] font-semibold">@(appt.Specialty?.SpecialtyName ?? "—")</p>
+                                <p class="text-[#0d141b] font-semibold">@(appt.SpecialtyName ?? "—")</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-4">
