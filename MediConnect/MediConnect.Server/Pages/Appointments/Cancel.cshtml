@@ -4,50 +4,67 @@
     ViewData["Title"] = "Hủy lịch hẹn";
 }
 
-<h2 class="page-header text-danger"><i class="bi bi-x-circle"></i> Hủy lịch hẹn</h2>
+<div class="max-w-[600px] mx-auto px-4 py-8">
+    <h1 class="text-red-600 text-3xl font-black tracking-tight mb-6 flex items-center gap-2">
+        <span class="material-symbols-outlined text-red-500">cancel</span> Hủy lịch hẹn
+    </h1>
 
-@if (Model.Appointment == null)
-{
-    <div class="alert alert-warning">Không tìm thấy lịch hẹn.</div>
-}
-else
-{
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card border-danger shadow-sm">
-                <div class="card-body">
-                    <p>Bạn có chắc muốn hủy lịch hẹn sau?</p>
-                    <table class="table table-borderless">
-                        <tr>
-                            <th>Bác sĩ:</th>
-                            <td>@Model.Appointment.Doctor.FullName</td>
-                        </tr>
-                        <tr>
-                            <th>Ngày:</th>
-                            <td>@Model.Appointment.AppointmentDate.ToString("dd/MM/yyyy")</td>
-                        </tr>
-                        <tr>
-                            <th>Giờ:</th>
-                            <td>@Model.Appointment.StartTime.ToString("HH:mm") - @Model.Appointment.EndTime.ToString("HH:mm")</td>
-                        </tr>
-                    </table>
-
-                    <form method="post">
-                        <input type="hidden" asp-for="AppointmentId" />
-                        <div class="mb-3">
-                            <label asp-for="CancelReason" class="form-label">Lý do hủy</label>
-                            <textarea asp-for="CancelReason" class="form-control" rows="3"
-                                      placeholder="Nhập lý do hủy lịch hẹn..."></textarea>
-                        </div>
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-danger">
-                                <i class="bi bi-x-circle"></i> Xác nhận hủy
-                            </button>
-                            <a asp-page="/Appointments/Index" class="btn btn-secondary">Quay lại</a>
-                        </div>
-                    </form>
+    @if (Model.Appointment == null)
+    {
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-6 text-center">
+            <p class="text-[#0d141b] font-semibold">Không tìm thấy lịch hẹn.</p>
+        </div>
+    }
+    else
+    {
+        <div class="bg-white rounded-xl border border-red-200 shadow-sm overflow-hidden">
+            <div class="p-6">
+                <div class="bg-red-50 rounded-lg p-4 mb-6 border border-red-100">
+                    <p class="text-red-700 font-semibold text-sm">Bạn có chắc muốn hủy lịch hẹn sau?</p>
                 </div>
+
+                <div class="space-y-3 mb-6">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-[#4c739a]">person</span>
+                        <div>
+                            <span class="text-[#4c739a] text-xs font-bold uppercase">Bác sĩ</span>
+                            <p class="text-[#0d141b] font-semibold">@Model.Appointment.Doctor.FullName</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-[#4c739a]">calendar_today</span>
+                        <div>
+                            <span class="text-[#4c739a] text-xs font-bold uppercase">Ngày</span>
+                            <p class="text-[#0d141b] font-semibold">@Model.Appointment.AppointmentDate.ToString("dd/MM/yyyy")</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-[#4c739a]">schedule</span>
+                        <div>
+                            <span class="text-[#4c739a] text-xs font-bold uppercase">Giờ</span>
+                            <p class="text-[#0d141b] font-semibold">@Model.Appointment.StartTime.ToString("HH:mm") - @Model.Appointment.EndTime.ToString("HH:mm")</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form method="post">
+                    <input type="hidden" asp-for="AppointmentId" />
+                    <div class="flex flex-col gap-2 mb-6">
+                        <label class="text-[#0d141b] text-sm font-semibold">Lý do hủy
+                            <textarea asp-for="CancelReason" class="mt-1 w-full rounded-lg border-[#cfdbe7] bg-slate-50 text-base focus:ring-primary focus:border-primary p-4" rows="3"
+                                      placeholder="Nhập lý do hủy lịch hẹn..."></textarea>
+                        </label>
+                    </div>
+                    <div class="flex gap-3">
+                        <button type="submit" class="flex-1 flex items-center justify-center gap-2 rounded-lg h-12 bg-red-600 text-white font-bold hover:bg-red-700 transition-all">
+                            <span class="material-symbols-outlined text-sm">cancel</span> Xác nhận hủy
+                        </button>
+                        <a asp-page="/Appointments/Index" class="flex-1 flex items-center justify-center rounded-lg h-12 border border-[#cfdbe7] text-[#0d141b] font-bold hover:bg-slate-50 transition-colors no-underline">
+                            Quay lại
+                        </a>
+                    </div>
+                </form>
             </div>
         </div>
-    </div>
-}
+    }
+</div>

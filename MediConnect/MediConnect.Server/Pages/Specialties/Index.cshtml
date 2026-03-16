@@ -4,30 +4,36 @@
     ViewData["Title"] = "Chuyên khoa";
 }
 
-<h2 class="page-header"><i class="bi bi-heart-pulse"></i> Danh sách chuyên khoa</h2>
+<div class="max-w-[1280px] mx-auto px-6 py-8">
+    <div class="mb-8">
+        <h1 class="text-[#0d141b] text-3xl font-extrabold tracking-tight">
+            <span class="material-symbols-outlined text-primary align-middle mr-2">cardiology</span>
+            Danh sách chuyên khoa
+        </h1>
+        <p class="text-[#4c739a] mt-1">Tìm bác sĩ theo chuyên khoa phù hợp</p>
+    </div>
 
-<div class="row">
-    @foreach (var spec in Model.Specialties)
-    {
-        <div class="col-md-4 col-lg-3 mb-4">
-            <div class="card card-hover border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    @if (!string.IsNullOrEmpty(spec.IconUrl))
-                    {
-                        <img src="@spec.IconUrl" alt="@spec.SpecialtyName" style="width:60px;height:60px;" class="mb-2" />
-                    }
-                    else
-                    {
-                        <i class="bi bi-activity text-primary mb-2" style="font-size: 2.5rem;"></i>
-                    }
-                    <h5>@spec.SpecialtyName</h5>
-                    <p class="text-muted small">@spec.Description</p>
-                    <a asp-page="/Doctors/Index" asp-route-specialtyId="@spec.SpecialtyId"
-                       class="btn btn-sm btn-outline-primary">
-                        <i class="bi bi-search"></i> Tìm bác sĩ
-                    </a>
-                </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        @foreach (var spec in Model.Specialties)
+        {
+            <div class="bg-white rounded-xl border border-[#cfdbe7] p-6 shadow-sm text-center card-hover-effect">
+                @if (!string.IsNullOrEmpty(spec.IconUrl))
+                {
+                    <img src="@spec.IconUrl" alt="@spec.SpecialtyName" class="w-14 h-14 mx-auto mb-3" />
+                }
+                else
+                {
+                    <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                        <span class="material-symbols-outlined text-primary text-2xl">medical_services</span>
+                    </div>
+                }
+                <h3 class="text-[#0d141b] text-base font-bold mb-2">@spec.SpecialtyName</h3>
+                <p class="text-[#4c739a] text-xs mb-4">@spec.Description</p>
+                <a asp-page="/Doctors/Index" asp-route-specialtyId="@spec.SpecialtyId"
+                   class="inline-flex items-center gap-1 px-4 py-2 bg-primary/10 text-primary rounded-lg text-xs font-bold border border-primary/20 hover:bg-primary hover:text-white transition-all no-underline">
+                    <span class="material-symbols-outlined text-sm">search</span> Tìm bác sĩ
+                </a>
             </div>
-        </div>
-    }
+        }
+    </div>
 </div>

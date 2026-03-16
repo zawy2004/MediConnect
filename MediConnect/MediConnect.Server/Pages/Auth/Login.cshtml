@@ -2,39 +2,148 @@
 @model MediConnect.Server.Pages.Auth.LoginModel
 @{
     ViewData["Title"] = "Đăng nhập";
+    ViewData["HideLayout"] = true;
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-5">
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-4">
-                <h3 class="text-center mb-4"><i class="bi bi-box-arrow-in-right text-primary"></i> Đăng nhập</h3>
+<div class="flex h-screen w-full overflow-hidden">
+    <!-- Left Side: Branding -->
+    <div class="hidden lg:flex lg:w-3/5 relative bg-primary/10 flex-col items-center justify-center p-12 overflow-hidden">
+        <div class="absolute inset-0 z-0 opacity-20">
+            <div class="absolute top-[-10%] left-[-10%] w-72 h-72 bg-primary rounded-full blur-[120px]"></div>
+            <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-primary rounded-full blur-[120px]"></div>
+        </div>
+        <div class="relative z-10 w-full max-w-2xl">
+            <div class="mb-12">
+                <div class="flex items-center gap-3 text-primary mb-6">
+                    <span class="material-symbols-outlined text-5xl">health_and_safety</span>
+                    <h1 class="text-3xl font-extrabold tracking-tight">MediConnect</h1>
+                </div>
+                <h2 class="text-5xl font-black leading-tight tracking-tight text-[#0d141b] mb-6">
+                    Kết nối y tế, chăm sóc sức khỏe.
+                </h2>
+                <p class="text-xl text-[#4c739a] max-w-lg leading-relaxed">
+                    Nền tảng thống nhất cho bệnh nhân và chuyên gia y tế để quản lý lịch hẹn, hồ sơ sức khỏe và giao tiếp liền mạch.
+                </p>
+            </div>
+            <div class="w-full aspect-[4/3] rounded-3xl shadow-2xl overflow-hidden border-8 border-white/50 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary/30" style="font-size: 8rem;">stethoscope</span>
+            </div>
+        </div>
+    </div>
 
-                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-                {
-                    <div class="alert alert-danger">@Model.ErrorMessage</div>
-                }
+    <!-- Right Side: Login Form -->
+    <div class="w-full lg:w-2/5 flex flex-col items-center justify-center p-8 lg:p-16 bg-white shadow-[-10px_0_30px_rgba(0,0,0,0.05)] relative z-20">
+        <div class="w-full max-w-[420px]">
+            <!-- Mobile branding -->
+            <div class="lg:hidden flex items-center gap-2 text-primary mb-10">
+                <span class="material-symbols-outlined text-3xl">health_and_safety</span>
+                <h2 class="text-xl font-bold">MediConnect</h2>
+            </div>
 
-                <form method="post">
-                    <div class="mb-3">
-                        <label asp-for="Email" class="form-label">Email</label>
-                        <input asp-for="Email" class="form-control" placeholder="example@email.com" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
+            <div class="mb-10">
+                <h3 class="text-3xl font-black text-[#0d141b] mb-2">Chào mừng trở lại</h3>
+                <p class="text-[#4c739a]">Vui lòng nhập thông tin để đăng nhập.</p>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                    @Model.ErrorMessage
+                </div>
+            }
+
+            <!-- Role Toggle -->
+            <div class="mb-8">
+                <p class="text-[#0d141b] text-sm font-semibold mb-3">Đăng nhập với vai trò:</p>
+                <div class="flex h-12 w-full items-center justify-center rounded-xl bg-slate-100 p-1.5">
+                    <label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white has-[:checked]:shadow-sm has-[:checked]:text-primary text-[#4c739a] text-sm font-bold transition-all">
+                        <span>Bệnh nhân</span>
+                        <input checked class="invisible w-0" name="user-role" type="radio" value="Patient" />
+                    </label>
+                    <label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white has-[:checked]:shadow-sm has-[:checked]:text-primary text-[#4c739a] text-sm font-bold transition-all">
+                        <span>Bác sĩ</span>
+                        <input class="invisible w-0" name="user-role" type="radio" value="Doctor" />
+                    </label>
+                </div>
+            </div>
+
+            <form method="post" class="flex flex-col gap-5">
+                <div class="flex flex-col gap-2">
+                    <label class="text-[#0d141b] text-sm font-semibold">Email
+                        <div class="relative group mt-1">
+                            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#4c739a] group-focus-within:text-primary">mail</span>
+                            <input asp-for="Email" class="w-full pl-12 pr-4 rounded-xl text-[#0d141b] focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-[#cfdbe7] bg-slate-50 focus:border-primary h-14 placeholder:text-[#4c739a] transition-all" placeholder="example@mediconnect.com" type="email" />
+                        </div>
+                    </label>
+                    <span asp-validation-for="Email" class="text-red-500 text-xs"></span>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="text-[#0d141b] text-sm font-semibold">Mật khẩu
+                        <div class="relative group mt-1">
+                            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#4c739a] group-focus-within:text-primary">lock</span>
+                            <input asp-for="Password" class="w-full pl-12 pr-12 rounded-xl text-[#0d141b] focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-[#cfdbe7] bg-slate-50 focus:border-primary h-14 placeholder:text-slate-400 transition-all" placeholder="••••••••" type="password" />
+                        </div>
+                    </label>
+                    <span asp-validation-for="Password" class="text-red-500 text-xs"></span>
+                </div>
+
+                <div class="flex items-center justify-between py-1">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input class="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary" type="checkbox" />
+                        <span class="text-sm text-[#4c739a] font-medium">Ghi nhớ</span>
+                    </label>
+                    <a class="text-sm font-bold text-primary hover:underline" href="#">Quên mật khẩu?</a>
+                </div>
+
+                <button class="flex w-full items-center justify-center rounded-xl h-14 bg-primary text-white text-base font-bold shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all active:scale-[0.98] mt-4" type="submit">
+                    Đăng nhập
+                </button>
+
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-slate-200"></div>
                     </div>
-                    <div class="mb-3">
-                        <label asp-for="Password" class="form-label">Mật khẩu</label>
-                        <input asp-for="Password" type="password" class="form-control" />
-                        <span asp-validation-for="Password" class="text-danger"></span>
+                    <div class="relative flex justify-center text-xs uppercase">
+                        <span class="bg-white px-2 text-slate-400">Hoặc tiếp tục với</span>
                     </div>
-                    <div class="d-grid mb-3">
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="bi bi-box-arrow-in-right"></i> Đăng nhập
-                        </button>
-                    </div>
-                    <div class="text-center">
-                        <a asp-page="/Auth/Register">Chưa có tài khoản? Đăng ký</a>
-                    </div>
-                </form>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <button class="flex items-center justify-center gap-2 h-12 rounded-xl border border-[#cfdbe7] bg-white hover:bg-slate-50 transition-colors" type="button">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+                        </svg>
+                        <span class="text-sm font-bold text-[#0d141b]">Google</span>
+                    </button>
+                    <button class="flex items-center justify-center gap-2 h-12 rounded-xl border border-[#cfdbe7] bg-white hover:bg-slate-50 transition-colors" type="button">
+                        <svg class="w-5 h-5 text-[#0d141b]" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.51 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2.116-.169-3.435 1.091-4.293 1.091zM15.53 4.654c.87-1.053 1.467-2.506 1.306-3.96-1.247.052-2.753.831-3.65 1.883-.805.935-1.507 2.415-1.319 3.844 1.385.104 2.793-.714 3.663-1.767z"></path>
+                        </svg>
+                        <span class="text-sm font-bold text-[#0d141b]">Apple</span>
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-10 text-center">
+                <p class="text-sm text-[#4c739a]">
+                    Chưa có tài khoản?
+                    <a class="text-primary font-bold hover:underline ml-1" asp-page="/Auth/Register">Đăng ký ngay</a>
+                </p>
+            </div>
+
+            <div class="mt-12 pt-8 border-t border-slate-100 flex justify-center gap-6">
+                <div class="flex items-center gap-1 opacity-50">
+                    <span class="material-symbols-outlined text-xs">verified</span>
+                    <span class="text-[10px] uppercase tracking-widest font-bold">HIPAA Compliant</span>
+                </div>
+                <div class="flex items-center gap-1 opacity-50">
+                    <span class="material-symbols-outlined text-xs">lock</span>
+                    <span class="text-[10px] uppercase tracking-widest font-bold">256-bit SSL</span>
+                </div>
             </div>
         </div>
     </div>

@@ -4,72 +4,134 @@
     ViewData["Title"] = "Đăng ký";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-4">
-                <h3 class="text-center mb-4"><i class="bi bi-person-plus text-primary"></i> Đăng ký tài khoản</h3>
+<div class="flex flex-1 justify-center py-10 px-4">
+    <div class="flex flex-col max-w-[640px] flex-1 bg-white rounded-xl shadow-sm border border-[#cfdbe7] overflow-hidden">
+        <!-- Page Heading -->
+        <div class="flex flex-wrap justify-between gap-3 p-8 pb-4">
+            <div class="flex min-w-72 flex-col gap-2">
+                <p class="text-[#0d141b] text-3xl font-black leading-tight tracking-tight">Tạo tài khoản bệnh nhân</p>
+                <p class="text-[#4c739a] text-base font-normal">Tham gia cộng đồng y tế để quản lý lịch hẹn và hồ sơ sức khỏe một cách an toàn.</p>
+            </div>
+        </div>
 
-                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-                {
-                    <div class="alert alert-danger">@Model.ErrorMessage</div>
-                }
-                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
-                {
-                    <div class="alert alert-success">@Model.SuccessMessage</div>
-                }
+        <!-- Progress Bar -->
+        <div class="flex flex-col gap-3 px-8 py-4">
+            <div class="flex gap-6 justify-between">
+                <p class="text-[#0d141b] text-base font-medium">Thông tin cơ bản</p>
+                <p class="text-[#0d141b] text-sm font-normal">Bước 1 / 1</p>
+            </div>
+            <div class="rounded-full bg-[#cfdbe7] h-2.5">
+                <div class="h-2.5 rounded-full bg-primary" style="width: 100%;"></div>
+            </div>
+        </div>
 
-                <form method="post">
-                    <div class="mb-3">
-                        <label asp-for="FullName" class="form-label">Họ và tên</label>
-                        <input asp-for="FullName" class="form-control" placeholder="Nguyễn Văn A" />
-                        <span asp-validation-for="FullName" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="Email" class="form-label">Email</label>
-                        <input asp-for="Email" class="form-control" placeholder="example@email.com" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="PhoneNumber" class="form-label">Số điện thoại</label>
-                        <input asp-for="PhoneNumber" class="form-control" placeholder="0901234567" />
-                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label asp-for="Gender" class="form-label">Giới tính</label>
-                            <select asp-for="Gender" class="form-select">
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="mx-8 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                @Model.ErrorMessage
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+        {
+            <div class="mx-8 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+                @Model.SuccessMessage
+            </div>
+        }
+
+        <!-- Form Content -->
+        <div class="flex flex-col px-8 py-4">
+            <h2 class="text-[#0d141b] text-[22px] font-bold leading-tight pb-6">Thông tin đăng ký</h2>
+
+            <form method="post" class="space-y-5">
+                <!-- Full Name -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-[#0d141b] text-sm font-semibold">Họ và tên
+                        <input asp-for="FullName" class="mt-1 w-full rounded-lg text-[#0d141b] focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#cfdbe7] bg-slate-50 h-14 placeholder:text-[#4c739a] p-4 text-base" placeholder="Nguyễn Văn A" />
+                    </label>
+                    <span asp-validation-for="FullName" class="text-red-500 text-xs"></span>
+                </div>
+
+                <!-- Email -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-[#0d141b] text-sm font-semibold">Email
+                        <input asp-for="Email" class="mt-1 w-full rounded-lg text-[#0d141b] focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#cfdbe7] bg-slate-50 h-14 placeholder:text-[#4c739a] p-4 text-base" placeholder="example@email.com" type="email" />
+                    </label>
+                    <span asp-validation-for="Email" class="text-red-500 text-xs"></span>
+                </div>
+
+                <!-- Phone Number -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-[#0d141b] text-sm font-semibold">Số điện thoại
+                        <div class="flex gap-2 mt-1">
+                            <div class="flex items-center justify-center px-3 rounded-lg border border-[#cfdbe7] bg-slate-100 text-slate-500">+84</div>
+                            <input asp-for="PhoneNumber" class="w-full rounded-lg text-[#0d141b] focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#cfdbe7] bg-slate-50 h-14 placeholder:text-[#4c739a] p-4 text-base" placeholder="0901234567" type="tel" />
+                        </div>
+                    </label>
+                    <span asp-validation-for="PhoneNumber" class="text-red-500 text-xs"></span>
+                </div>
+
+                <!-- Gender & DOB -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex flex-col gap-2">
+                        <label class="text-[#0d141b] text-sm font-semibold">Giới tính
+                            <select asp-for="Gender" class="mt-1 w-full rounded-lg text-[#0d141b] focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#cfdbe7] bg-slate-50 h-14 p-4 text-base">
                                 <option value="">-- Chọn --</option>
                                 <option value="MALE">Nam</option>
                                 <option value="FEMALE">Nữ</option>
                                 <option value="OTHER">Khác</option>
                             </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label asp-for="DateOfBirth" class="form-label">Ngày sinh</label>
-                            <input asp-for="DateOfBirth" type="date" class="form-control" />
-                        </div>
+                        </label>
                     </div>
-                    <div class="mb-3">
-                        <label asp-for="Password" class="form-label">Mật khẩu</label>
-                        <input asp-for="Password" type="password" class="form-control" />
-                        <span asp-validation-for="Password" class="text-danger"></span>
+                    <div class="flex flex-col gap-2">
+                        <label class="text-[#0d141b] text-sm font-semibold">Ngày sinh
+                            <input asp-for="DateOfBirth" type="date" class="mt-1 w-full rounded-lg text-[#0d141b] focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#cfdbe7] bg-slate-50 h-14 p-4 text-base" />
+                        </label>
                     </div>
-                    <div class="mb-3">
-                        <label asp-for="ConfirmPassword" class="form-label">Xác nhận mật khẩu</label>
-                        <input asp-for="ConfirmPassword" type="password" class="form-control" />
-                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+
+                <!-- Password -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-[#0d141b] text-sm font-semibold">Mật khẩu
+                        <input asp-for="Password" type="password" class="mt-1 w-full rounded-lg text-[#0d141b] focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#cfdbe7] bg-slate-50 h-14 placeholder:text-[#4c739a] p-4 text-base" placeholder="••••••••" />
+                    </label>
+                    <span asp-validation-for="Password" class="text-red-500 text-xs"></span>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-[#0d141b] text-sm font-semibold">Xác nhận mật khẩu
+                        <input asp-for="ConfirmPassword" type="password" class="mt-1 w-full rounded-lg text-[#0d141b] focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#cfdbe7] bg-slate-50 h-14 placeholder:text-[#4c739a] p-4 text-base" placeholder="••••••••" />
+                    </label>
+                    <span asp-validation-for="ConfirmPassword" class="text-red-500 text-xs"></span>
+                </div>
+
+                <!-- Security Notice -->
+                <div class="mt-6 p-4 bg-primary/5 rounded-xl border border-primary/20 flex gap-4 items-start">
+                    <span class="material-symbols-outlined text-primary">shield</span>
+                    <div class="flex flex-col gap-1">
+                        <p class="text-[#0d141b] text-sm font-bold">Quyền riêng tư là ưu tiên hàng đầu</p>
+                        <p class="text-[#4c739a] text-xs">Tất cả dữ liệu sức khỏe của bạn được mã hóa và quản lý theo tiêu chuẩn HIPAA.</p>
                     </div>
-                    <div class="d-grid mb-3">
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="bi bi-person-plus"></i> Đăng ký
-                        </button>
-                    </div>
-                    <div class="text-center">
-                        <a asp-page="/Auth/Login">Đã có tài khoản? Đăng nhập</a>
-                    </div>
-                </form>
-            </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center justify-between mt-8 mb-6 gap-4">
+                    <a asp-page="/Auth/Login" class="flex-1 flex h-14 items-center justify-center rounded-lg border border-[#cfdbe7] text-[#0d141b] font-bold hover:bg-slate-50 transition-colors no-underline">
+                        Đã có tài khoản
+                    </a>
+                    <button type="submit" class="flex-[2] flex h-14 items-center justify-center rounded-lg bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:brightness-110 transition-all">
+                        Đăng ký
+                    </button>
+                </div>
+
+                <div class="flex flex-col items-center gap-2 mb-4">
+                    <p class="text-[#4c739a] text-xs text-center px-4">
+                        Bằng việc tiếp tục, bạn đồng ý với
+                        <a class="text-primary hover:underline" href="#">Chính sách bảo mật</a> và
+                        <a class="text-primary hover:underline" href="#">Điều khoản sử dụng</a>.
+                    </p>
+                </div>
+            </form>
         </div>
     </div>
 </div>

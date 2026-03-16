@@ -4,58 +4,98 @@
     ViewData["Title"] = "Lịch hẹn của tôi";
 }
 
-<h2 class="mb-4"><i class="bi bi-calendar-check"></i> Lịch hẹn của tôi</h2>
-
-@if (Model.Appointments.Count == 0)
-{
-    <div class="alert alert-info">
-        <i class="bi bi-info-circle"></i> Bạn chưa có lịch hẹn nào.
-        <a asp-page="/Doctors/Index">Tìm bác sĩ và đặt lịch ngay!</a>
+<div class="max-w-[1000px] mx-auto px-4 py-8">
+    <!-- Page Heading -->
+    <div class="flex flex-wrap justify-between items-end gap-3 pb-6">
+        <div class="flex min-w-72 flex-col gap-2">
+            <h1 class="text-[#0d141b] text-4xl font-black leading-tight tracking-tight">Lịch hẹn của tôi</h1>
+            <p class="text-[#4c739a] text-lg font-normal">Quản lý các cuộc hẹn sắp tới và xem lịch sử khám bệnh.</p>
+        </div>
+        <a asp-page="/Appointments/Create" class="bg-primary text-white font-bold py-3 px-6 rounded-lg flex items-center gap-2 hover:bg-blue-600 shadow-lg shadow-primary/20 transition-all no-underline">
+            <span class="material-symbols-outlined">add_circle</span>
+            Đặt lịch hẹn mới
+        </a>
     </div>
-}
-else
-{
-    <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead class="table-light">
-                <tr>
-                    <th>#</th>
-                    <th>Bác sĩ</th>
-                    <th>Chuyên khoa</th>
-                    <th>Ngày hẹn</th>
-                    <th>Giờ</th>
-                    <th>Trạng thái</th>
-                    <th>Hành động</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (var i = 0; i < Model.Appointments.Count; i++)
+
+    <!-- Tabs -->
+    <div class="pb-6">
+        <div class="flex border-b border-[#cfdbe7] px-4 gap-12">
+            <a class="flex flex-col items-center justify-center border-b-[3px] border-primary text-[#0d141b] pb-3 pt-4 no-underline" href="#">
+                <p class="text-sm font-bold tracking-wide">Sắp tới (@Model.Appointments.Count)</p>
+            </a>
+            <a class="flex flex-col items-center justify-center border-b-[3px] border-transparent text-[#4c739a] pb-3 pt-4 hover:text-primary transition-colors no-underline" href="#">
+                <p class="text-sm font-bold tracking-wide">Đã qua</p>
+            </a>
+        </div>
+    </div>
+
+    @if (Model.Appointments.Count == 0)
+    {
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-8 text-center">
+            <span class="material-symbols-outlined text-primary text-5xl mb-3">calendar_month</span>
+            <p class="text-[#0d141b] font-semibold text-lg">Bạn chưa có lịch hẹn nào.</p>
+            <p class="text-slate-500 text-sm mb-4">Tìm bác sĩ và đặt lịch ngay!</p>
+            <a asp-page="/Doctors/Index" class="inline-flex items-center gap-2 bg-primary text-white font-bold py-2.5 px-6 rounded-lg hover:bg-blue-600 transition-all no-underline">
+                <span class="material-symbols-outlined text-sm">search</span> Tìm bác sĩ
+            </a>
+        </div>
+    }
+    else
+    {
+        <!-- Appointment Cards -->
+        <div class="flex flex-col gap-4">
+            @for (var i = 0; i < Model.Appointments.Count; i++)
+            {
+                var appt = Model.Appointments[i];
+                var startTime = appt.StartTime.ToString("HH:mm");
+                var endTime = appt.EndTime.ToString("HH:mm");
+                var statusClass = appt.Status switch
                 {
-                    var appt = Model.Appointments[i];
-                    var startTime = appt.StartTime.ToString("HH:mm");
-                    var endTime = appt.EndTime.ToString("HH:mm");
-                    var badgeClass = Model.GetBadgeClass(appt.Status ?? "");
-                    <tr>
-                        <td>@(i + 1)</td>
-                        <td>@appt.Doctor?.FullName</td>
-                        <td>@appt.Specialty?.SpecialtyName</td>
-                        <td>@appt.AppointmentDate.ToString("dd/MM/yyyy")</td>
-                        <td>@startTime - @endTime</td>
-                        <td><span class="badge @badgeClass">@appt.Status</span></td>
-                        <td>
-                            <a asp-page="Details" asp-route-id="@appt.AppointmentId" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-eye"></i> Chi tiết
+                    "CONFIRMED" => "bg-green-100 text-green-700 border-green-200",
+                    "PENDING" => "bg-amber-100 text-amber-700 border-amber-200",
+                    "CANCELLED" => "bg-red-100 text-red-700 border-red-200",
+                    "COMPLETED" => "bg-blue-100 text-blue-700 border-blue-200",
+                    _ => "bg-slate-100 text-slate-700 border-slate-200"
+                };
+
+                <div class="bg-white rounded-xl p-5 border border-slate-200 flex flex-col md:flex-row gap-6 hover:border-primary/50 transition-all shadow-sm">
+                    <div class="flex-shrink-0">
+                        <div class="w-24 h-24 rounded-lg bg-primary/10 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary text-4xl">person</span>
+                        </div>
+                    </div>
+                    <div class="flex-grow">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h3 class="text-xl font-bold text-[#0d141b]">@appt.Doctor?.FullName</h3>
+                                <p class="text-primary font-semibold text-sm">@appt.Specialty?.SpecialtyName</p>
+                            </div>
+                            <span class="text-xs font-bold px-3 py-1 rounded-full border @statusClass">@appt.Status</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 text-sm text-[#4c739a]">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-lg">calendar_today</span>
+                                @appt.AppointmentDate.ToString("dd/MM/yyyy")
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-lg">schedule</span>
+                                @startTime - @endTime
+                            </div>
+                        </div>
+                        <div class="flex gap-3 flex-wrap">
+                            <a asp-page="Details" asp-route-id="@appt.AppointmentId" class="bg-primary/10 text-primary hover:bg-primary hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-all no-underline">
+                                Chi tiết
                             </a>
                             @if (appt.Status == "PENDING" || appt.Status == "CONFIRMED")
                             {
-                                <a asp-page="Cancel" asp-route-id="@appt.AppointmentId" class="btn btn-sm btn-outline-danger ms-1">
-                                    <i class="bi bi-x-circle"></i> Hủy
+                                <a asp-page="Cancel" asp-route-id="@appt.AppointmentId" class="bg-slate-100 text-slate-600 hover:bg-red-50 hover:text-red-600 px-4 py-2 rounded-lg text-sm font-bold transition-all no-underline">
+                                    Hủy lịch hẹn
                                 </a>
                             }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-}
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

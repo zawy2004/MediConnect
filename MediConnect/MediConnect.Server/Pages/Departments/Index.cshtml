@@ -4,25 +4,34 @@
     ViewData["Title"] = "Khoa / Phòng ban";
 }
 
-<h2 class="page-header"><i class="bi bi-building"></i> Danh sách khoa</h2>
+<div class="max-w-[1280px] mx-auto px-6 py-8">
+    <div class="mb-8">
+        <h1 class="text-[#0d141b] text-3xl font-extrabold tracking-tight">
+            <span class="material-symbols-outlined text-primary align-middle mr-2">domain</span>
+            Danh sách khoa
+        </h1>
+        <p class="text-[#4c739a] mt-1">Tổ chức và quản lý các khoa trong hệ thống</p>
+    </div>
 
-<div class="row">
-    @foreach (var dept in Model.Departments)
-    {
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card card-hover border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <h5><i class="bi bi-building text-primary"></i> @dept.DepartmentName</h5>
-                    <p class="text-muted">@dept.Description</p>
-                    @if (!string.IsNullOrEmpty(dept.Location))
-                    {
-                        <p class="mb-0">
-                            <i class="bi bi-geo-alt text-danger"></i>
-                            <small class="text-muted">@dept.Location</small>
-                        </p>
-                    }
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @foreach (var dept in Model.Departments)
+        {
+            <div class="bg-white rounded-xl border border-[#cfdbe7] p-6 shadow-sm card-hover-effect">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-primary">domain</span>
+                    </div>
+                    <h3 class="text-[#0d141b] text-lg font-bold">@dept.DepartmentName</h3>
                 </div>
+                <p class="text-[#4c739a] text-sm mb-3">@dept.Description</p>
+                @if (!string.IsNullOrEmpty(dept.Location))
+                {
+                    <div class="flex items-center gap-2 text-sm text-slate-500">
+                        <span class="material-symbols-outlined text-sm text-red-400">location_on</span>
+                        <span>@dept.Location</span>
+                    </div>
+                }
             </div>
-        </div>
-    }
+        }
+    </div>
 </div>

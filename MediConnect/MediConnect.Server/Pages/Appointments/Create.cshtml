@@ -4,63 +4,76 @@
     ViewData["Title"] = "Đặt lịch hẹn";
 }
 
-<h2 class="page-header"><i class="bi bi-calendar-plus"></i> Đặt lịch hẹn mới</h2>
+<div class="max-w-[800px] mx-auto px-4 py-8">
+    <div class="mb-8">
+        <h1 class="text-[#0d141b] text-3xl font-black tracking-tight">
+            <span class="material-symbols-outlined text-primary align-middle mr-2">calendar_month</span>
+            Đặt lịch hẹn mới
+        </h1>
+    </div>
 
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card border-0 shadow-sm">
-            <div class="card-body p-4">
-                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-                {
-                    <div class="alert alert-danger">@Model.ErrorMessage</div>
-                }
-                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
-                {
-                    <div class="alert alert-success">@Model.SuccessMessage</div>
-                }
+    <div class="bg-white rounded-xl border border-[#cfdbe7] shadow-sm overflow-hidden">
+        <div class="p-8">
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                    @Model.ErrorMessage
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+            {
+                <div class="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+                    @Model.SuccessMessage
+                </div>
+            }
 
-                <form method="post">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label asp-for="SpecialtyId" class="form-label">Chuyên khoa</label>
-                            <select asp-for="SpecialtyId" class="form-select" asp-items="Model.SpecialtyList">
+            <form method="post" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex flex-col gap-2">
+                        <label class="text-[#0d141b] text-sm font-semibold">Chuyên khoa
+                            <select asp-for="SpecialtyId" class="mt-1 w-full rounded-lg border-[#cfdbe7] bg-slate-50 h-14 text-base focus:ring-primary focus:border-primary" asp-items="Model.SpecialtyList">
                                 <option value="">-- Chọn chuyên khoa --</option>
                             </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label asp-for="DoctorId" class="form-label">Bác sĩ</label>
-                            <select asp-for="DoctorId" class="form-select" asp-items="Model.DoctorList">
+                        </label>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label class="text-[#0d141b] text-sm font-semibold">Bác sĩ
+                            <select asp-for="DoctorId" class="mt-1 w-full rounded-lg border-[#cfdbe7] bg-slate-50 h-14 text-base focus:ring-primary focus:border-primary" asp-items="Model.DoctorList">
                                 <option value="">-- Chọn bác sĩ --</option>
                             </select>
-                            <span asp-validation-for="DoctorId" class="text-danger"></span>
-                        </div>
+                        </label>
+                        <span asp-validation-for="DoctorId" class="text-red-500 text-xs"></span>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label asp-for="AppointmentDate" class="form-label">Ngày hẹn</label>
-                            <input asp-for="AppointmentDate" type="date" class="form-control" />
-                            <span asp-validation-for="AppointmentDate" class="text-danger"></span>
-                        </div>
-                        <div class="col-md-6">
-                            <label asp-for="SlotId" class="form-label">Khung giờ</label>
-                            <select asp-for="SlotId" class="form-select" asp-items="Model.SlotList">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex flex-col gap-2">
+                        <label class="text-[#0d141b] text-sm font-semibold">Ngày hẹn
+                            <input asp-for="AppointmentDate" type="date" class="mt-1 w-full rounded-lg border-[#cfdbe7] bg-slate-50 h-14 text-base focus:ring-primary focus:border-primary px-4" />
+                        </label>
+                        <span asp-validation-for="AppointmentDate" class="text-red-500 text-xs"></span>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label class="text-[#0d141b] text-sm font-semibold">Khung giờ
+                            <select asp-for="SlotId" class="mt-1 w-full rounded-lg border-[#cfdbe7] bg-slate-50 h-14 text-base focus:ring-primary focus:border-primary" asp-items="Model.SlotList">
                                 <option value="">-- Chọn khung giờ --</option>
                             </select>
-                            <span asp-validation-for="SlotId" class="text-danger"></span>
-                        </div>
+                        </label>
+                        <span asp-validation-for="SlotId" class="text-red-500 text-xs"></span>
                     </div>
-                    <div class="mb-3">
-                        <label asp-for="Reason" class="form-label">Lý do khám</label>
-                        <textarea asp-for="Reason" class="form-control" rows="3"
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="text-[#0d141b] text-sm font-semibold">Lý do khám
+                        <textarea asp-for="Reason" class="mt-1 w-full rounded-lg border-[#cfdbe7] bg-slate-50 text-base focus:ring-primary focus:border-primary p-4" rows="3"
                                   placeholder="Mô tả triệu chứng hoặc lý do khám..."></textarea>
-                    </div>
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="bi bi-calendar-check"></i> Xác nhận đặt lịch
-                        </button>
-                    </div>
-                </form>
-            </div>
+                    </label>
+                </div>
+
+                <button type="submit" class="w-full flex items-center justify-center rounded-lg h-14 bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all">
+                    <span class="material-symbols-outlined mr-2">calendar_month</span> Xác nhận đặt lịch
+                </button>
+            </form>
         </div>
     </div>
 </div>
