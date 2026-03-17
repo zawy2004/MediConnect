@@ -48,12 +48,45 @@
                     <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Departments/Index">Khoa</a>
                 </nav>
                 <div class="flex items-center gap-4">
-                    <a asp-page="/Auth/Login" class="flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-all no-underline">
-                        Đăng nhập
-                    </a>
-                    <a asp-page="/Auth/Register" class="flex items-center justify-center gap-2 rounded-lg h-10 px-4 border border-slate-200 text-[#0d141b] text-sm font-bold hover:bg-slate-50 transition-all no-underline">
-                        Đăng ký
-                    </a>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        var userName = User.Identity.Name ?? "User";
+                        var initials = string.Join("", userName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(w => w[0])).ToUpper();
+                        <div class="relative group">
+                            <button class="flex items-center gap-3 rounded-full hover:bg-slate-50 px-3 py-1.5 transition-all cursor-pointer">
+                                <div class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold">
+                                    @initials
+                                </div>
+                                <span class="text-sm font-semibold text-[#0d141b] hidden sm:inline">@userName</span>
+                                <span class="material-symbols-outlined text-slate-400 text-lg">expand_more</span>
+                            </button>
+                            <div class="absolute right-0 top-full mt-1 w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                                <div class="px-4 py-2 border-b border-slate-100">
+                                    <p class="text-sm font-semibold text-[#0d141b]">@userName</p>
+                                    <p class="text-xs text-slate-500">@User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value</p>
+                                </div>
+                                <a asp-page="/Appointments/Index" class="flex items-center gap-3 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 no-underline">
+                                    <span class="material-symbols-outlined text-lg">calendar_month</span>
+                                    Lịch hẹn của tôi
+                                </a>
+                                <div class="border-t border-slate-100 mt-1 pt-1">
+                                    <a asp-page="/Auth/Logout" class="flex items-center gap-3 px-4 py-2 text-sm text-red-500 hover:bg-red-50 no-underline">
+                                        <span class="material-symbols-outlined text-lg">logout</span>
+                                        Đăng xuất
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <a asp-page="/Auth/Login" class="flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-all no-underline">
+                            Đăng nhập
+                        </a>
+                        <a asp-page="/Auth/Register" class="flex items-center justify-center gap-2 rounded-lg h-10 px-4 border border-slate-200 text-[#0d141b] text-sm font-bold hover:bg-slate-50 transition-all no-underline">
+                            Đăng ký
+                        </a>
+                    }
                 </div>
             </div>
         </header>
