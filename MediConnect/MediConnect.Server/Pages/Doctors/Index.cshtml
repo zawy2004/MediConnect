@@ -1,158 +1,145 @@
 @page
 @model MediConnect.Server.Pages.Doctors.IndexModel
 @{
-    ViewData["Title"] = "Tìm bác sĩ";
+    ViewData["Title"] = "Danh sách bác sĩ";
 }
 
-<div class="container-fluid py-4 px-3 px-lg-4">
-    <!-- Header -->
-    <div class="mb-4">
-        <h1 class="fw-bold mb-1" style="font-size:1.75rem;">Tìm kiếm Bác sĩ</h1>
-        <p style="color:var(--mc-text-muted);">Tìm bác sĩ phù hợp nhất dựa trên chuyên khoa, đánh giá và lịch khám.</p>
-    </div>
+<div class="max-w-[1440px] mx-auto flex flex-col lg:flex-row gap-8 px-6 lg:px-10 py-8">
+    <!-- Sidebar Filters -->
+    <aside class="w-full lg:w-64 flex-shrink-0">
+        <div class="sticky top-24 bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-[#0d141b] text-lg font-bold">Bộ lọc</h2>
+                <a asp-page="/Doctors/Index" class="text-primary text-xs font-bold uppercase tracking-wider hover:underline no-underline">Đặt lại</a>
+            </div>
 
-    <div class="row g-4">
-        <!-- Sidebar Filters -->
-        <div class="col-lg-3">
-            <form method="get">
-                <div class="bg-white rounded-4 border p-4 sticky-top" style="border-color:var(--mc-border);top:80px;">
-                    <h6 class="fw-bold mb-3"><i class="bi bi-funnel"></i> Bộ lọc</h6>
-
-                    <!-- Search -->
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Tên bác sĩ</label>
-                        <div class="position-relative">
-                            <i class="bi bi-search position-absolute" style="left:12px;top:50%;transform:translateY(-50%);color:var(--mc-text-muted);"></i>
-                            <input asp-for="SearchTerm" class="form-control mc-form-control" placeholder="Tìm kiếm..." style="padding-left:2.5rem;height:44px;" />
-                        </div>
-                    </div>
-
-                    <!-- Specialty -->
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Chuyên khoa</label>
-                        <select asp-for="SpecialtyId" class="form-select mc-form-control" asp-items="Model.SpecialtyList" style="height:44px;">
-                            <option value="">Tất cả chuyên khoa</option>
-                        </select>
-                    </div>
-
-                    <!-- Department -->
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Khoa / Bệnh viện</label>
-                        <select asp-for="DepartmentId" class="form-select mc-form-control" asp-items="Model.DepartmentList" style="height:44px;">
-                            <option value="">Tất cả khoa</option>
-                        </select>
-                    </div>
-
-                    <!-- Rating Filter -->
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Đánh giá tối thiểu</label>
-                        <select asp-for="MinRating" class="form-select mc-form-control" style="height:44px;">
-                            <option value="">Tất cả</option>
-                            <option value="4">4+ sao</option>
-                            <option value="3">3+ sao</option>
-                        </select>
-                    </div>
-
-                    <!-- Price Range -->
-                    <div class="mb-4">
-                        <label class="form-label small fw-bold">Phí tư vấn tối đa</label>
-                        <select asp-for="MaxFee" class="form-select mc-form-control" style="height:44px;">
-                            <option value="">Không giới hạn</option>
-                            <option value="200000">200.000đ</option>
-                            <option value="500000">500.000đ</option>
-                            <option value="1000000">1.000.000đ</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="btn btn-mc-primary w-100" style="height:44px;">
-                        <i class="bi bi-search"></i> Tìm kiếm
-                    </button>
-                    <a asp-page="/Doctors/Index" class="btn btn-mc-outline w-100 mt-2" style="height:44px;">
-                        Xóa bộ lọc
-                    </a>
+            <form method="get" class="space-y-6">
+                <!-- Search -->
+                <div>
+                    <p class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-3">Tìm kiếm</p>
+                    <input asp-for="SearchTerm" class="w-full rounded-lg border-slate-200 bg-slate-50 text-sm focus:ring-primary py-2.5 px-3" placeholder="Tên bác sĩ..." />
                 </div>
-            </form>
-        </div>
 
-        <!-- Doctor List -->
-        <div class="col-lg-9">
-            <!-- Results count -->
-            <div class="d-flex align-items-center justify-content-between mb-3">
-                <span class="fw-semibold" style="color:var(--mc-text-muted);">
-                    Tìm thấy <strong style="color:var(--mc-text);">@Model.Doctors.Count</strong> bác sĩ
-                </span>
-                <div class="d-flex gap-2">
-                    <select class="form-select mc-form-control" style="height:40px;width:auto;font-size:0.85rem;">
-                        <option>Sắp xếp: Đánh giá cao</option>
-                        <option>Phí thấp nhất</option>
-                        <option>Kinh nghiệm nhiều nhất</option>
+                <!-- Specialty -->
+                <div>
+                    <p class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-3">Chuyên khoa</p>
+                    <select asp-for="SpecialtyId" class="w-full rounded-lg border-slate-200 bg-slate-50 text-sm focus:ring-primary" asp-items="Model.SpecialtyList">
+                        <option value="">-- Tất cả chuyên khoa --</option>
                     </select>
                 </div>
-            </div>
 
-            @if (!Model.Doctors.Any())
-            {
-                <div class="bg-white rounded-4 border p-5 text-center" style="border-color:var(--mc-border);">
-                    <i class="bi bi-search" style="font-size:3rem;color:var(--mc-border);"></i>
-                    <h5 class="fw-bold mt-3">Không tìm thấy bác sĩ nào</h5>
-                    <p style="color:var(--mc-text-muted);">Hãy thử thay đổi bộ lọc hoặc tìm kiếm với từ khóa khác.</p>
+                <!-- Department -->
+                <div>
+                    <p class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-3">Khoa</p>
+                    <select asp-for="DepartmentId" class="w-full rounded-lg border-slate-200 bg-slate-50 text-sm focus:ring-primary" asp-items="Model.DepartmentList">
+                        <option value="">-- Tất cả khoa --</option>
+                    </select>
                 </div>
-            }
 
-            <div class="row g-3">
-                @foreach (var doctor in Model.Doctors)
-                {
-                    <div class="col-md-6">
-                        <div class="bg-white rounded-4 border p-4 h-100 position-relative" style="border-color:var(--mc-border);transition:box-shadow 0.2s;">
-                            <div class="d-flex gap-3 mb-3">
-                                <div class="position-relative flex-shrink-0">
-                                    <div class="rounded-3 bg-light d-flex align-items-center justify-content-center" style="width:80px;height:80px;">
-                                        @if (!string.IsNullOrEmpty(doctor.User.AvatarUrl))
-                                        {
-                                            <img src="@doctor.User.AvatarUrl" class="rounded-3" style="width:80px;height:80px;object-fit:cover;" alt="" />
-                                        }
-                                        else
-                                        {
-                                            <i class="bi bi-person" style="font-size:2rem;color:var(--mc-text-muted);"></i>
-                                        }
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1 min-w-0">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        @if (doctor.User.DoctorSpecialties.Any())
-                                        {
-                                            <span class="badge rounded-pill mb-1" style="background:var(--mc-primary-light);color:var(--mc-primary);font-size:0.6rem;">
-                                                @doctor.User.DoctorSpecialties.First().Specialty.SpecialtyName
-                                            </span>
-                                        }
-                                        <div class="d-flex align-items-center gap-1 rounded-pill px-2 small" style="background:#fffbeb;color:#d97706;">
-                                            <i class="bi bi-star-fill" style="font-size:0.65rem;"></i>
-                                            <span class="fw-bold" style="font-size:0.75rem;">@doctor.AverageRating.ToString("F1")</span>
-                                        </div>
-                                    </div>
-                                    <h6 class="fw-bold mb-1 text-truncate">@doctor.User.FullName</h6>
-                                    <p class="small mb-1 text-truncate" style="color:var(--mc-text-muted);">
-                                        @(doctor.Department?.DepartmentName ?? "Đa khoa") · @doctor.YearsOfExperience năm KN
-                                    </p>
-                                    <p class="small mb-0" style="color:var(--mc-text-muted);">
-                                        <i class="bi bi-chat-left-dots"></i> @doctor.TotalReviews đánh giá
-                                    </p>
-                                </div>
+                <button type="submit" class="w-full py-3 bg-primary text-white rounded-lg font-bold text-sm shadow-md shadow-primary/20 hover:bg-blue-600 transition-all">
+                    <span class="material-symbols-outlined text-sm align-middle mr-1">search</span> Tìm kiếm
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1">
+        <!-- Page Heading -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+            <div>
+                <h1 class="text-[#0d141b] text-3xl font-extrabold tracking-tight">Danh sách bác sĩ</h1>
+                <p class="text-slate-500 mt-1">Tìm và đặt lịch hẹn với bác sĩ phù hợp</p>
+            </div>
+        </div>
+
+        @if (!Model.Doctors.Any())
+        {
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center">
+                <span class="material-symbols-outlined text-primary text-4xl mb-2">search_off</span>
+                <p class="text-[#0d141b] font-semibold">Không tìm thấy bác sĩ nào.</p>
+                <p class="text-slate-500 text-sm">Hãy thử thay đổi bộ lọc tìm kiếm.</p>
+            </div>
+        }
+
+        <!-- Doctor Cards -->
+        <div class="grid grid-cols-1 gap-6">
+            @foreach (var doctor in Model.Doctors)
+            {
+                <div class="bg-white border border-slate-200 rounded-xl p-6 flex flex-col md:flex-row gap-6 hover:shadow-lg transition-shadow card-hover-effect">
+                    <!-- Doctor Avatar -->
+                    <div class="relative flex-shrink-0">
+                        @if (!string.IsNullOrEmpty(doctor.AvatarUrl))
+                        {
+                            <div class="w-32 h-32 rounded-xl bg-cover bg-center border border-slate-100" style="background-image: url('@doctor.AvatarUrl');"></div>
+                        }
+                        else
+                        {
+                            <div class="w-32 h-32 rounded-xl bg-primary/10 flex items-center justify-center border border-slate-100">
+                                <span class="material-symbols-outlined text-primary text-5xl">person</span>
                             </div>
+                        }
+                    </div>
 
-                            <div class="d-flex align-items-center justify-content-between pt-3 border-top" style="border-color:var(--mc-border)!important;">
-                                <div>
-                                    <span class="fw-bold" style="color:var(--mc-text);">@doctor.ConsultationFee.ToString("N0")đ</span>
-                                    <span class="small" style="color:var(--mc-text-muted);">/lần khám</span>
+                    <!-- Doctor Info -->
+                    <div class="flex-1 space-y-2">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                            <div>
+                                <h3 class="text-[#0d141b] text-xl font-bold">@doctor.FullName</h3>
+                                <p class="text-primary text-sm font-bold">
+                                    @if (doctor.Specialties.Any())
+                                    {
+                                        @string.Join(", ", doctor.Specialties)
+                                    }
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="flex text-amber-400">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                <span class="material-symbols-outlined text-lg @(i <= (int)doctor.AverageRating ? "star-filled" : "text-slate-300")">star</span>
+                                    }
                                 </div>
-                                <a asp-page="/Doctors/Details" asp-route-id="@doctor.DoctorProfileId" class="btn btn-mc-primary btn-sm px-3">
-                                    Đặt lịch <i class="bi bi-arrow-right"></i>
-                                </a>
+                                <span class="text-slate-600 text-sm font-bold">(@doctor.TotalReviews đánh giá)</span>
                             </div>
                         </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-8 text-sm text-slate-500">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-lg">work_history</span>
+                                <span>@doctor.YearsOfExperience năm kinh nghiệm</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-lg">payments</span>
+                                <span class="font-semibold text-primary">@doctor.ConsultationFee.ToString("N0") VNĐ</span>
+                            </div>
+                            @if (!string.IsNullOrEmpty(doctor.Location))
+                            {
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">location_on</span>
+                                    <span>@doctor.Location</span>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(doctor.InsuranceAccepted))
+                            {
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">verified_user</span>
+                                    <span>@doctor.InsuranceAccepted</span>
+                                </div>
+                            }
+                        </div>
                     </div>
-                }
-            </div>
+
+                    <!-- Actions -->
+                    <div class="flex flex-row md:flex-col gap-3 justify-center">
+                        <a asp-page="/Appointments/Create" asp-route-doctorId="@doctor.UserId" class="flex-1 px-6 py-2.5 bg-primary text-white font-bold rounded-lg text-sm hover:bg-blue-600 transition-colors text-center no-underline">
+                            Đặt lịch hẹn
+                        </a>
+                        <a asp-page="/Doctors/Details" asp-route-id="@doctor.DoctorProfileId" class="flex-1 px-6 py-2.5 bg-slate-100 text-slate-700 font-bold rounded-lg text-sm hover:bg-slate-200 transition-colors text-center no-underline">
+                            Xem hồ sơ
+                        </a>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </div>

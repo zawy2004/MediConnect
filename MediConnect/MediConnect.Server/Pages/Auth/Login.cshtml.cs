@@ -1,18 +1,21 @@
 using System.ComponentModel.DataAnnotations;
-using MediConnect.Server.Data;
+using System.Security.Claims;
+using MediConnect.Application.DTOs;
+using MediConnect.Application.Interfaces;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace MediConnect.Server.Pages.Auth;
 
 public class LoginModel : PageModel
 {
-    private readonly MediconnectContext _context;
+    private readonly IAuthService _authService;
 
-    public LoginModel(MediconnectContext context)
+    public LoginModel(IAuthService authService)
     {
-        _context = context;
+        _authService = authService;
     }
 
     [BindProperty]
@@ -32,31 +35,33 @@ public class LoginModel : PageModel
     {
         if (!ModelState.IsValid) return Page();
 
-        var user = await _context.Users
-            .Include(u => u.Role)
-            .FirstOrDefaultAsync(u => u.Email == Email && u.IsActive);
-
-        if (user == null || user.PasswordHash != Password)
+        var result = await _authService.LoginAsync(new LoginDto
         {
-            ErrorMessage = "Email hoặc mật khẩu không đúng.";
+            Email = Email,
+            Password = Password
+        });
+
+        if (!result.Success)
+        {
+            ErrorMessage = result.ErrorMessage;
             return Page();
         }
 
-        // Set session
-        HttpContext.Session.SetInt32("UserId", user.UserId);
-        HttpContext.Session.SetString("UserName", user.FullName);
-        HttpContext.Session.SetString("UserRole", user.Role?.RoleName ?? "PATIENT");
-
-        user.LastLoginAt = DateTime.Now;
-        await _context.SaveChangesAsync();
-
-        // Redirect based on role
-        var role = user.Role?.RoleName;
-        return role switch
+        var claims = new List<Claim>
         {
-            "ADMIN" => RedirectToPage("/Admin/Index"),
-            "DOCTOR" => RedirectToPage("/Doctor/Index"),
-            _ => RedirectToPage("/Patient/Index")
+            new(ClaimTypes.NameIdentifier, result.UserId.ToString()!),
+            new(ClaimTypes.Name, result.FullName ?? string.Empty),
+            new(ClaimTypes.Email, result.Email ?? string.Empty),
+            new(ClaimTypes.Role, result.RoleName ?? string.Empty)
         };
+
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var principal = new ClaimsPrincipal(identity);
+
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            principal);
+
+        return RedirectToPage("/Index");
     }
 }

@@ -1,26 +1,22 @@
-using MediConnect.Server.Data;
-using MediConnect.Server.Models;
+using MediConnect.Application.DTOs;
+using MediConnect.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace MediConnect.Server.Pages.Departments;
 
 public class IndexModel : PageModel
 {
-    private readonly MediconnectContext _context;
+    private readonly IDepartmentService _departmentService;
 
-    public IndexModel(MediconnectContext context)
+    public IndexModel(IDepartmentService departmentService)
     {
-        _context = context;
+        _departmentService = departmentService;
     }
 
-    public List<Department> Departments { get; set; } = new();
+    public List<DepartmentDto> Departments { get; set; } = new();
 
     public async Task OnGetAsync()
     {
-        Departments = await _context.Departments
-            .Where(d => d.IsActive)
-            .OrderBy(d => d.DepartmentName)
-            .ToListAsync();
+        Departments = await _departmentService.GetActiveDepartmentsAsync();
     }
 }

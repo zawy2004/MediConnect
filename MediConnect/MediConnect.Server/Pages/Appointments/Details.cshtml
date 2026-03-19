@@ -6,74 +6,107 @@
 
 @if (Model.Appointment == null)
 {
-    <div class="alert alert-warning">
-        <i class="bi bi-exclamation-triangle"></i> Không tìm thấy lịch hẹn.
+    <div class="max-w-[800px] mx-auto px-4 py-8">
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-6 text-center">
+            <span class="material-symbols-outlined text-amber-500 text-4xl">warning</span>
+            <p class="text-[#0d141b] font-semibold mt-2">Không tìm thấy lịch hẹn.</p>
+        </div>
     </div>
 }
 else
 {
     var appt = Model.Appointment;
+    var statusClass = appt.Status switch
+    {
+        "CONFIRMED" => "bg-green-100 text-green-700 border-green-200",
+        "PENDING" => "bg-amber-100 text-amber-700 border-amber-200",
+        "CANCELLED" => "bg-red-100 text-red-700 border-red-200",
+        "COMPLETED" => "bg-blue-100 text-blue-700 border-blue-200",
+        _ => "bg-slate-100 text-slate-700 border-slate-200"
+    };
 
-    <h2 class="page-header"><i class="bi bi-calendar-check"></i> Chi tiết lịch hẹn #@appt.AppointmentId</h2>
+    <div class="max-w-[1000px] mx-auto px-4 py-8">
+        <h1 class="text-[#0d141b] text-3xl font-black tracking-tight mb-6">
+            <span class="material-symbols-outlined text-primary align-middle mr-2">event_note</span>
+            Chi tiết lịch hẹn #@appt.AppointmentId
+        </h1>
 
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <table class="table table-borderless">
-                        <tr>
-                            <th style="width:200px;">Bác sĩ:</th>
-                            <td>@appt.Doctor.FullName</td>
-                        </tr>
-                        <tr>
-                            <th>Bệnh nhân:</th>
-                            <td>@appt.Patient.FullName</td>
-                        </tr>
-                        <tr>
-                            <th>Chuyên khoa:</th>
-                            <td>@(appt.Specialty?.SpecialtyName ?? "—")</td>
-                        </tr>
-                        <tr>
-                            <th>Ngày hẹn:</th>
-                            <td>@appt.AppointmentDate.ToString("dd/MM/yyyy")</td>
-                        </tr>
-                        <tr>
-                            <th>Giờ:</th>
-                            <td>@appt.StartTime.ToString("HH:mm") - @appt.EndTime.ToString("HH:mm")</td>
-                        </tr>
-                        <tr>
-                            <th>Trạng thái:</th>
-                            <td>
-                                <span class="badge @Model.GetBadgeClass(appt.Status) fs-6">@appt.Status</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Lý do khám:</th>
-                            <td>@(appt.Reason ?? "—")</td>
-                        </tr>
-                        <tr>
-                            <th>Ghi chú:</th>
-                            <td>@(appt.Notes ?? "—")</td>
-                        </tr>
-                        <tr>
-                            <th>Ngày tạo:</th>
-                            <td>@appt.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
-                        </tr>
-                    </table>
+        <div class="flex flex-col lg:flex-row gap-6">
+            <div class="flex-1">
+                <div class="bg-white rounded-xl border border-[#cfdbe7] shadow-sm overflow-hidden">
+                    <div class="p-6 space-y-5">
+                        <div class="flex items-start gap-4">
+                            <span class="material-symbols-outlined text-primary">person</span>
+                            <div>
+                                <p class="text-[#4c739a] text-xs font-bold uppercase tracking-wider">Bác sĩ</p>
+                                <p class="text-[#0d141b] font-semibold">@appt.DoctorName</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <span class="material-symbols-outlined text-primary">personal_injury</span>
+                            <div>
+                                <p class="text-[#4c739a] text-xs font-bold uppercase tracking-wider">Bệnh nhân</p>
+                                <p class="text-[#0d141b] font-semibold">@appt.PatientName</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <span class="material-symbols-outlined text-primary">medical_services</span>
+                            <div>
+                                <p class="text-[#4c739a] text-xs font-bold uppercase tracking-wider">Chuyên khoa</p>
+                                <p class="text-[#0d141b] font-semibold">@(appt.SpecialtyName ?? "—")</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <span class="material-symbols-outlined text-primary">calendar_today</span>
+                            <div>
+                                <p class="text-[#4c739a] text-xs font-bold uppercase tracking-wider">Ngày hẹn</p>
+                                <p class="text-[#0d141b] font-semibold">@appt.AppointmentDate.ToString("dd/MM/yyyy")</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <span class="material-symbols-outlined text-primary">schedule</span>
+                            <div>
+                                <p class="text-[#4c739a] text-xs font-bold uppercase tracking-wider">Giờ</p>
+                                <p class="text-[#0d141b] font-semibold">@appt.StartTime.ToString("HH:mm") - @appt.EndTime.ToString("HH:mm")</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <span class="material-symbols-outlined text-primary">info</span>
+                            <div>
+                                <p class="text-[#4c739a] text-xs font-bold uppercase tracking-wider">Trạng thái</p>
+                                <span class="text-xs font-bold px-3 py-1 rounded-full border @statusClass">@appt.Status</span>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <span class="material-symbols-outlined text-primary">description</span>
+                            <div>
+                                <p class="text-[#4c739a] text-xs font-bold uppercase tracking-wider">Lý do khám</p>
+                                <p class="text-[#0d141b]">@(appt.Reason ?? "—")</p>
+                            </div>
+                        </div>
+                        @if (!string.IsNullOrEmpty(appt.Notes))
+                        {
+                            <div class="flex items-start gap-4">
+                                <span class="material-symbols-outlined text-primary">note</span>
+                                <div>
+                                    <p class="text-[#4c739a] text-xs font-bold uppercase tracking-wider">Ghi chú</p>
+                                    <p class="text-[#0d141b]">@appt.Notes</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-4">
-            <div class="d-grid gap-2">
-                <a asp-page="/Appointments/Index" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left"></i> Quay lại danh sách
+            <div class="w-full lg:w-64 flex-shrink-0 space-y-3">
+                <a asp-page="/Appointments/Index" class="flex items-center justify-center gap-2 w-full rounded-lg h-12 border border-[#cfdbe7] text-[#0d141b] font-bold hover:bg-slate-50 transition-colors no-underline">
+                    <span class="material-symbols-outlined text-sm">arrow_back</span> Quay lại
                 </a>
                 @if (appt.Status == "PENDING" || appt.Status == "CONFIRMED")
                 {
                     <a asp-page="/Appointments/Cancel" asp-route-id="@appt.AppointmentId"
-                       class="btn btn-outline-danger">
-                        <i class="bi bi-x-circle"></i> Hủy lịch hẹn
+                       class="flex items-center justify-center gap-2 w-full rounded-lg h-12 bg-red-50 text-red-600 border border-red-200 font-bold hover:bg-red-100 transition-colors no-underline">
+                        <span class="material-symbols-outlined text-sm">cancel</span> Hủy lịch hẹn
                     </a>
                 }
             </div>

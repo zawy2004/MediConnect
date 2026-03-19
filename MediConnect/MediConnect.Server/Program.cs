@@ -1,23 +1,28 @@
-using MediConnect.Server.Data;
-using Microsoft.EntityFrameworkCore;
+using MediConnect.Application;
+using MediConnect.Infrastructure;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-// Register DbContext with SQL Server (Database First)
-builder.Services.AddDbContext<MediconnectContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Authentication
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Auth/Login";
+        options.LogoutPath = "/Auth/Logout";
+        options.AccessDeniedPath = "/Auth/Login";
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+    });
 
-// Session for user authentication state
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(60);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
+// Register Application Services
+builder.Services.AddApplication();
+
+// Register Infrastructure (DbContext, Repositories)
+builder.Services.AddInfrastructure(
+    builder.Configuration.GetConnectionString("DefaultConnection")!);
 
 var app = builder.Build();
 
@@ -33,8 +38,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseSession();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();

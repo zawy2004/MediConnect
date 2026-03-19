@@ -1,35 +1,31 @@
-using MediConnect.Server.Data;
-using MediConnect.Server.Models;
+using MediConnect.Application.DTOs;
+using MediConnect.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace MediConnect.Server.Pages;
 
 public class IndexModel : PageModel
 {
-    private readonly MediconnectContext _context;
+    private readonly IDashboardService _dashboardService;
 
-    public IndexModel(MediconnectContext context)
+    public IndexModel(IDashboardService dashboardService)
     {
-        _context = context;
+        _dashboardService = dashboardService;
     }
 
     public int TotalPatients { get; set; }
     public int TotalDoctors { get; set; }
     public int TotalAppointments { get; set; }
     public int TotalSpecialties { get; set; }
-    public List<Specialty> Specialties { get; set; } = new();
+    public List<SpecialtyDto> Specialties { get; set; } = new();
 
     public async Task OnGetAsync()
     {
-        TotalPatients = await _context.Users.CountAsync(u => u.Role.RoleName == "PATIENT");
-        TotalDoctors = await _context.Users.CountAsync(u => u.Role.RoleName == "DOCTOR");
-        TotalAppointments = await _context.Appointments.CountAsync();
-        TotalSpecialties = await _context.Specialties.CountAsync(s => s.IsActive);
-        Specialties = await _context.Specialties
-            .Where(s => s.IsActive)
-            .OrderBy(s => s.SpecialtyName)
-            .Take(8)
-            .ToListAsync();
+        var data = await _dashboardService.GetDashboardDataAsync();
+        TotalPatients = data.TotalPatients;
+        TotalDoctors = data.TotalDoctors;
+        TotalAppointments = data.TotalAppointments;
+        TotalSpecialties = data.TotalSpecialties;
+        Specialties = data.FeaturedSpecialties;
     }
 }

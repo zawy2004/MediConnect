@@ -1,18 +1,20 @@
-using MediConnect.Server.Data;
-using MediConnect.Server.Models;
+using System.Security.Claims;
+using MediConnect.Application.DTOs;
+using MediConnect.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace MediConnect.Server.Pages.Appointments;
 
+[Authorize]
 public class CancelModel : PageModel
 {
-    private readonly MediconnectContext _context;
+    private readonly IAppointmentService _appointmentService;
 
-    public CancelModel(MediconnectContext context)
+    public CancelModel(IAppointmentService appointmentService)
     {
-        _context = context;
+        _appointmentService = appointmentService;
     }
 
     [BindProperty]
@@ -21,15 +23,15 @@ public class CancelModel : PageModel
     [BindProperty]
     public string? CancelReason { get; set; }
 
-    public Appointment? Appointment { get; set; }
+    public AppointmentDetailDto? Appointment { get; set; }
 
     public async Task<IActionResult> OnGetAsync(int id)
     {
-        Appointment = await _context.Appointments
-            .Include(a => a.Doctor)
-            .FirstOrDefaultAsync(a => a.AppointmentId == id);
-
+        Appointment = await _appointmentService.GetAppointmentDetailAsync(id);
         if (Appointment == null) return NotFound();
+
+        var currentUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        if (Appointment.PatientId != currentUserId) return Forbid();
 
         AppointmentId = id;
         return Page();
@@ -37,28 +39,23 @@ public class CancelModel : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
-        var appointment = await _context.Appointments
-            .Include(a => a.Slot)
-            .FirstOrDefaultAsync(a => a.AppointmentId == AppointmentId);
+        var detail = await _appointmentService.GetAppointmentDetailAsync(AppointmentId);
+        if (detail == null) return NotFound();
 
-        if (appointment == null) return NotFound();
+        var currentUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        if (detail.PatientId != currentUserId) return Forbid();
 
-        appointment.Status = "CANCELLED_BY_PATIENT";
-        appointment.CancelReason = CancelReason;
-        appointment.CancelledAt = DateTime.Now;
-        appointment.UpdatedAt = DateTime.Now;
-
-        // Free up the time slot
-        if (appointment.Slot != null)
+        var result = await _appointmentService.CancelAppointmentAsync(new CancelAppointmentDto
         {
-            appointment.Slot.BookedCount = Math.Max(0, appointment.Slot.BookedCount - 1);
-            if (appointment.Slot.BookedCount < appointment.Slot.MaxCapacity)
-            {
-                appointment.Slot.IsAvailable = true;
-            }
-        }
+            AppointmentId = AppointmentId,
+            CancelReason = CancelReason
+        });
 
-        await _context.SaveChangesAsync();
+        if (!result.Success)
+        {
+            Appointment = detail;
+            return Page();
+        }
 
         return RedirectToPage("/Appointments/Index");
     }

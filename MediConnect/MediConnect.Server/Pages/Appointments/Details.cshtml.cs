@@ -1,41 +1,30 @@
-using MediConnect.Server.Data;
-using MediConnect.Server.Models;
+using MediConnect.Application.DTOs;
+using MediConnect.Application.Interfaces;
+using MediConnect.Server.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace MediConnect.Server.Pages.Appointments;
 
+[Authorize]
 public class DetailsModel : PageModel
 {
-    private readonly MediconnectContext _context;
+    private readonly IAppointmentService _appointmentService;
 
-    public DetailsModel(MediconnectContext context)
+    public DetailsModel(IAppointmentService appointmentService)
     {
-        _context = context;
+        _appointmentService = appointmentService;
     }
 
-    public Appointment? Appointment { get; set; }
+    public AppointmentDetailDto? Appointment { get; set; }
 
-    public string GetBadgeClass(string status)
-    {
-        if (status == "PENDING") return "badge-pending";
-        if (status == "CONFIRMED") return "badge-confirmed";
-        if (status == "COMPLETED") return "badge-completed";
-        if (status.StartsWith("CANCELLED")) return "badge-cancelled";
-        return "bg-secondary";
-    }
+    public string GetBadgeClass(string status) => StatusHelper.GetBadgeClass(status);
 
     public async Task<IActionResult> OnGetAsync(int id)
     {
-        Appointment = await _context.Appointments
-            .Include(a => a.Doctor)
-            .Include(a => a.Patient)
-            .Include(a => a.Specialty)
-            .FirstOrDefaultAsync(a => a.AppointmentId == id);
-
+        Appointment = await _appointmentService.GetAppointmentDetailAsync(id);
         if (Appointment == null) return NotFound();
-
         return Page();
     }
 }

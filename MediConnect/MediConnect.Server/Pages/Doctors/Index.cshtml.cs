@@ -1,19 +1,18 @@
-using MediConnect.Server.Data;
-using MediConnect.Server.Models;
+using MediConnect.Application.DTOs;
+using MediConnect.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace MediConnect.Server.Pages.Doctors;
 
 public class IndexModel : PageModel
 {
-    private readonly MediconnectContext _context;
+    private readonly IDoctorService _doctorService;
 
-    public IndexModel(MediconnectContext context)
+    public IndexModel(IDoctorService doctorService)
     {
-        _context = context;
+        _doctorService = doctorService;
     }
 
     [BindProperty(SupportsGet = true)]
@@ -25,46 +24,23 @@ public class IndexModel : PageModel
     [BindProperty(SupportsGet = true)]
     public int? DepartmentId { get; set; }
 
-    [BindProperty(SupportsGet = true)]
-    public int? MinRating { get; set; }
-
-    [BindProperty(SupportsGet = true)]
-    public decimal? MaxFee { get; set; }
-
-    public List<DoctorProfile> Doctors { get; set; } = new();
+    public List<DoctorListDto> Doctors { get; set; } = new();
     public SelectList SpecialtyList { get; set; } = default!;
     public SelectList DepartmentList { get; set; } = default!;
 
     public async Task OnGetAsync()
     {
-        var specialties = await _context.Specialties.Where(s => s.IsActive).OrderBy(s => s.SpecialtyName).ToListAsync();
+        var specialties = await _doctorService.GetActiveSpecialtiesAsync();
         SpecialtyList = new SelectList(specialties, "SpecialtyId", "SpecialtyName");
 
-        var departments = await _context.Departments.Where(d => d.IsActive).OrderBy(d => d.DepartmentName).ToListAsync();
+        var departments = await _doctorService.GetActiveDepartmentsAsync();
         DepartmentList = new SelectList(departments, "DepartmentId", "DepartmentName");
 
-        var query = _context.DoctorProfiles
-            .Include(d => d.User)
-                .ThenInclude(u => u.DoctorSpecialties)
-                    .ThenInclude(ds => ds.Specialty)
-            .Include(d => d.Department)
-            .Where(d => d.ApprovalStatus == "APPROVED");
-
-        if (!string.IsNullOrWhiteSpace(SearchTerm))
-            query = query.Where(d => d.User.FullName.Contains(SearchTerm));
-
-        if (SpecialtyId.HasValue)
-            query = query.Where(d => d.User.DoctorSpecialties.Any(ds => ds.SpecialtyId == SpecialtyId));
-
-        if (DepartmentId.HasValue)
-            query = query.Where(d => d.DepartmentId == DepartmentId);
-
-        if (MinRating.HasValue)
-            query = query.Where(d => d.AverageRating >= MinRating.Value);
-
-        if (MaxFee.HasValue)
-            query = query.Where(d => d.ConsultationFee <= MaxFee.Value);
-
-        Doctors = await query.OrderByDescending(d => d.AverageRating).ThenBy(d => d.User.FullName).ToListAsync();
+        Doctors = await _doctorService.SearchDoctorsAsync(new DoctorSearchFilterDto
+        {
+            SearchTerm = SearchTerm,
+            SpecialtyId = SpecialtyId,
+            DepartmentId = DepartmentId
+        });
     }
 }
