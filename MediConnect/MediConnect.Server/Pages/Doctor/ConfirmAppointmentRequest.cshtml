@@ -1,0 +1,71 @@
+@page
+@model MediConnect.Server.Pages.Doctor.ConfirmAppointmentRequestModel
+@{
+    ViewData["Title"] = "Xác nhận Yêu cầu Hẹn khám";
+    ViewData["HideLayout"] = true;
+}
+
+<div class="min-h-screen bg-[#f8fafc] flex">
+    @await Html.PartialAsync("_DoctorSidebar", "requests")
+    <main class="flex-1 overflow-y-auto p-8 space-y-6">
+        <h1 class="text-4xl md:text-5xl font-black">Xác nhận Yêu cầu Hẹn khám</h1>
+
+    @if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+    {
+        <div class="bg-green-50 border border-green-200 text-green-700 rounded-lg px-4 py-3 text-sm">@Model.StatusMessage</div>
+    }
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-8 space-y-4">
+        @foreach (var req in Model.Requests)
+        {
+            <div class="bg-white border rounded-2xl p-5">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <p class="text-xl font-semibold">@req.PatientName</p>
+                        <p class="text-sm text-slate-500">@req.AppointmentDate.ToString("dd/MM/yyyy") • @req.StartTime.ToString("HH:mm")</p>
+                    </div>
+                    <span class="text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-700">@req.Status</span>
+                </div>
+                <div class="mt-3 border border-blue-100 bg-blue-50 rounded-xl p-3">
+                    <p class="text-xs uppercase text-primary font-bold">AI Tóm tắt triệu chứng</p>
+                    <p class="text-sm text-slate-700 mt-1">@req.AiTriageSummary</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2">
+                    <form method="post" asp-page-handler="Confirm">
+                        <input type="hidden" name="appointmentId" value="@req.AppointmentId" />
+                        <button class="px-5 py-2 bg-primary text-white rounded-lg">Xác nhận</button>
+                    </form>
+                    <form method="post" asp-page-handler="Reject" class="flex items-center gap-2 w-full lg:w-auto">
+                        <input type="hidden" name="appointmentId" value="@req.AppointmentId" />
+                        <input type="text" name="reason" placeholder="Lý do từ chối" class="rounded-lg border-slate-200 w-full lg:w-64" />
+                        <button class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg">Từ chối</button>
+                    </form>
+                </div>
+            </div>
+        }
+
+        @if (Model.Requests.Count == 0)
+        {
+            <div class="bg-white border rounded-xl p-6 text-slate-500">Không có yêu cầu chờ phê duyệt.</div>
+        }
+        </div>
+
+        <div class="lg:col-span-4 space-y-4">
+            <div class="bg-blue-800 text-white rounded-2xl p-5">
+                <p class="text-xs uppercase tracking-widest">Hiệu suất hôm nay</p>
+                <p class="text-6xl font-black mt-2">85%</p>
+                <p class="text-sm text-blue-100">Tỷ lệ xác nhận yêu cầu</p>
+            </div>
+            <div class="bg-white border rounded-2xl p-5">
+                <h3 class="text-lg font-bold">Danh sách chờ AI</h3>
+                <p class="text-sm text-slate-500 mt-2">Các yêu cầu có mức ưu tiên cao đang được theo dõi.</p>
+                <a asp-page="/Doctor/Waitlist" class="inline-block mt-3 text-primary text-sm no-underline">Mở danh sách chờ</a>
+            </div>
+            <div class="bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-2xl p-5 text-sm">
+                Ghi chú AI: ưu tiên các bệnh nhân có nguy cơ cao trong khung giờ sáng.
+            </div>
+        </div>
+    </div>
+</main>
+</div>

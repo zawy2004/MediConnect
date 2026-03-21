@@ -1,0 +1,74 @@
+@page
+@model MediConnect.Server.Pages.Admin.DashboardModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    ViewData["HideLayout"] = true;
+}
+
+<div class="min-h-screen bg-[#f8fafc] flex">
+    @await Html.PartialAsync("_AdminSidebar", "dashboard")
+
+    <main class="flex-1 overflow-y-auto">
+        <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between">
+            <h1 class="text-3xl font-black">Tổng quan Hệ thống</h1>
+            <a asp-page="/Admin/Statistics" class="px-4 py-2 bg-primary text-white rounded-xl no-underline text-sm font-bold">Xem báo cáo chi tiết</a>
+        </header>
+
+        <div class="p-8 space-y-6">
+            <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="bg-white border rounded-2xl p-5"><p class="text-xs text-slate-500">Tổng người dùng</p><p class="text-3xl font-black mt-2">@Model.Data.TotalUsers</p></div>
+                <div class="bg-white border rounded-2xl p-5"><p class="text-xs text-slate-500">Lịch hẹn hôm nay</p><p class="text-3xl font-black mt-2">@Model.Data.TotalAppointmentsToday <span class="text-sm font-semibold text-primary">Đang xử lý: @Model.Data.ProcessingAppointmentsToday</span></p></div>
+                <div class="bg-white border rounded-2xl p-5"><p class="text-xs text-slate-500">Sức khỏe hệ thống</p><p class="text-3xl font-black mt-2">@Model.Data.UptimePercent%</p><p class="text-xs text-red-500 mt-1">Error: @Model.Data.ErrorRatePercent%</p></div>
+            </section>
+
+            <section class="bg-gradient-to-br from-slate-900 to-indigo-950 p-7 rounded-3xl text-white">
+                <h2 class="text-2xl font-extrabold">AI-FE-04: Phân tích Dự báo Nhu cầu</h2>
+                <p class="text-sm text-slate-300 mt-2">Cảnh báo và đề xuất tối ưu theo dữ liệu thời gian thực của hệ thống MediConnect.</p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-5">
+                    <div class="bg-white/10 border border-white/10 rounded-2xl p-4">
+                        <p class="text-xs uppercase tracking-wider text-red-300 font-bold">Cảnh báo tải trọng</p>
+                        <p class="mt-2">Chuyên khoa có nhu cầu tăng cao, cần bổ sung bác sĩ trực trong tuần tới.</p>
+                    </div>
+                    <div class="bg-white/10 border border-white/10 rounded-2xl p-4">
+                        <p class="text-xs uppercase tracking-wider text-emerald-300 font-bold">Đề xuất tối ưu</p>
+                        <p class="mt-2">Ưu tiên điều phối lại lịch trực và mở thêm ca khám buổi sáng.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white border rounded-2xl p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <h2 class="text-lg font-bold">Phân bổ Chuyên khoa</h2>
+                        <a asp-page="/Admin/SpecialtyManagement" class="text-primary text-sm no-underline">Quản lý</a>
+                    </div>
+                    <div class="space-y-3">
+                        @foreach (var item in Model.Data.SpecialtyLoads)
+                        {
+                            <div class="border border-slate-200 rounded-xl p-3 flex items-center justify-between">
+                                <p class="font-semibold">@item.SpecialtyName</p>
+                                <span class="text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-700">@item.Count lượt</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="bg-white border rounded-2xl p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <h2 class="text-lg font-bold">Xu hướng đặt lịch</h2>
+                        <a asp-page="/Admin/Statistics" class="text-primary text-sm no-underline">Xem tất cả</a>
+                    </div>
+                    <div class="space-y-3">
+                        @foreach (var row in Model.Data.TrendCounts)
+                        {
+                            <div class="flex items-center justify-between border border-slate-100 rounded-xl px-3 py-2">
+                                <span class="font-semibold">@row.Date.ToString("dd/MM")</span>
+                                <span class="text-xs bg-slate-100 px-2 py-1 rounded-full">@row.Count</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>

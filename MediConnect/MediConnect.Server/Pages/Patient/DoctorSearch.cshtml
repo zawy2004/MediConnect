@@ -1,0 +1,69 @@
+@page
+@model MediConnect.Server.Pages.Patient.DoctorSearchModel
+@{
+    ViewData["Title"] = "Tìm bác sĩ";
+}
+
+<div class="max-w-[1280px] mx-auto px-6 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <aside class="lg:col-span-3 bg-white border border-slate-200 rounded-xl p-5 h-fit">
+            <h2 class="font-bold text-lg mb-4">Bộ lọc</h2>
+            <form method="get" class="space-y-4">
+                <div>
+                    <label class="text-sm text-slate-500">Từ khóa</label>
+                    <input asp-for="SearchTerm" class="w-full mt-1 rounded-lg border-slate-200" placeholder="Tên bác sĩ, chuyên khoa..." />
+                </div>
+                <div>
+                    <label class="text-sm text-slate-500">Chuyên khoa</label>
+                    <select asp-for="SpecialtyId" asp-items="Model.SpecialtyList" class="w-full mt-1 rounded-lg border-slate-200">
+                        <option value="">Tất cả</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-sm text-slate-500">Khoa/Phòng ban</label>
+                    <select asp-for="DepartmentId" asp-items="Model.DepartmentList" class="w-full mt-1 rounded-lg border-slate-200">
+                        <option value="">Tất cả</option>
+                    </select>
+                </div>
+                <button class="w-full py-2 bg-primary text-white rounded-lg font-semibold">Áp dụng lọc</button>
+            </form>
+        </aside>
+
+        <section class="lg:col-span-9 space-y-4">
+            <div class="flex items-center justify-between">
+                <h1 class="text-3xl font-black">@Model.Doctors.Count bác sĩ phù hợp</h1>
+                <a asp-page="/Patient/TriageAssistant" class="text-primary font-semibold no-underline">Gợi ý AI</a>
+            </div>
+
+            @if (Model.Doctors.Count == 0)
+            {
+                <div class="bg-white border border-slate-200 rounded-xl p-10 text-center">
+                    <h2 class="text-2xl font-bold mb-2">Không tìm thấy bác sĩ phù hợp</h2>
+                    <p class="text-slate-500">Bạn có thể thử bỏ bớt bộ lọc hoặc xem lịch tổng quát.</p>
+                    <div class="mt-5 flex gap-3 justify-center">
+                        <a asp-page="/Patient/DoctorSearch" class="px-4 py-2 border rounded-lg no-underline">Đặt lại bộ lọc</a>
+                        <a asp-page="/Appointments/Create" class="px-4 py-2 bg-primary text-white rounded-lg no-underline">Xem lịch tổng quát</a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                @foreach (var doctor in Model.Doctors)
+                {
+                    <div class="bg-white border border-slate-200 rounded-xl p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div>
+                            <h2 class="text-xl font-bold">@doctor.FullName</h2>
+                            <p class="text-slate-600 text-sm mt-1">@doctor.DepartmentName • @doctor.YearsOfExperience năm kinh nghiệm</p>
+                            <p class="text-slate-500 text-sm mt-1">@string.Join(", ", doctor.Specialties)</p>
+                            <p class="text-sm mt-1">⭐ @doctor.AverageRating.ToString("0.0") (@doctor.TotalReviews đánh giá)</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <a asp-page="/Doctors/Details" asp-route-id="@doctor.DoctorProfileId" class="px-4 py-2 border rounded-lg no-underline">Xem hồ sơ</a>
+                            <a asp-page="/Patient/AppointmentConfirm" asp-route-doctorUserId="@doctor.UserId" class="px-4 py-2 bg-primary text-white rounded-lg no-underline">Đặt lịch ngay</a>
+                        </div>
+                    </div>
+                }
+            }
+        </section>
+    </div>
+</div>

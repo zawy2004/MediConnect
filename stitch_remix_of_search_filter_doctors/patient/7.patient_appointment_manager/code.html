@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quản lý lịch hẹn MediConnect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Manrope', sans-serif;
+        }.no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }.no-scrollbar {
+            -ms-overflow-style: none;scrollbar-width: none;}
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#0d141b] dark:text-slate-100 min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#e7edf3] dark:border-slate-800 px-10 py-3 bg-white dark:bg-slate-900 sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-8">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M24 4L6 12V22C6 33.1 13.7 43.4 24 46C34.3 43.4 42 33.1 42 22V12L24 4Z" fill="currentColor" fill-opacity="0.15"></path>
+<path d="M24 4L6 12V22C6 33.1 13.7 43.4 24 46C34.3 43.4 42 33.1 42 22V12L24 4ZM24 10C25.1 10 26 10.9 26 12V20H34C35.1 20 36 20.9 36 22V26C36 27.1 35.1 28 34 28H26V36C26 37.1 25.1 38 24 38H20C18.9 38 18 37.1 18 36V28H10C8.9 28 8 27.1 8 26V22C8 20.9 8.9 20 10 20H18V12C18 10.9 18.9 10 20 10H24Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-primary text-xl font-bold leading-tight tracking-[-0.015em]">MediConnect</h2>
+</div>
+<div class="flex items-center gap-9">
+<a class="text-[#0d141b] dark:text-slate-200 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Trang chủ</a>
+<a class="text-[#0d141b] dark:text-slate-200 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Tìm Bác sĩ</a>
+<a class="text-primary text-sm font-bold leading-normal border-b-2 border-primary pb-1" href="#">Lịch hẹn</a>
+<a class="text-[#0d141b] dark:text-slate-200 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Hồ sơ sức khỏe</a>
+</div>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<label class="flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-[#4c739a] flex border-none bg-[#e7edf3] dark:bg-slate-800 items-center justify-center pl-4 rounded-l-lg border-r-0">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d141b] dark:text-slate-200 focus:outline-0 focus:ring-0 border-none bg-[#e7edf3] dark:bg-slate-800 h-full placeholder:text-[#4c739a] px-4 rounded-l-none border-l-0 pl-2 text-sm font-normal" placeholder="Tìm kiếm" value=""/>
+</div>
+</label>
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-[#e7edf3] dark:bg-slate-800 text-[#0d141b] dark:text-slate-200 hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/20" data-alt="Hình đại diện người dùng" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCLQZNBCeoHfjPFAdidwfKYIfDg3iFW_39NScJ6IhuB4zGtvgAMNILMPoQ5zRgyB_GSp0wv_mjNBHaAM9jv34IROlRiRFZgjomYkGylgDzp1nP5RMKIqlCdm1AZ_aRUxFfSnPRKpnO3TbrgI-WTZmEYU7nmyJ4S9hn2feIfZCc7LmXvCyhB2wBgr7zQjXcgBnyelJY690YJpx6D2EpgsjdYt_ibPRDDiU4zM2_hmg-Egx2q2bXt0hd8qNsjOFc9sBTfk4KBmD3EjSls");'></div>
+</div>
+</header>
+<main class="flex-1 flex justify-center py-8">
+<div class="layout-content-container flex flex-col max-w-[1000px] flex-1 px-4">
+<div class="flex flex-wrap justify-between items-end gap-3 pb-6">
+<div class="flex min-w-72 flex-col gap-2">
+<p class="text-[#0d141b] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Lịch hẹn của tôi</p>
+<p class="text-[#4c739a] dark:text-slate-400 text-lg font-normal leading-normal">Quản lý các cuộc hẹn sắp tới và xem lịch sử y tế của bạn.</p>
+</div>
+<button class="bg-primary text-white font-bold py-3 px-6 rounded-lg flex items-center gap-2 hover:bg-blue-600 shadow-lg shadow-primary/20 transition-all">
+<span class="material-symbols-outlined">add_circle</span>
+                            Đặt lịch mới
+                        </button>
+</div>
+<div class="mb-8 bg-white dark:bg-slate-900 rounded-2xl border border-[#e7edf3] dark:border-slate-800 shadow-sm overflow-hidden">
+<div class="p-5 flex items-center justify-between border-b border-[#e7edf3] dark:border-slate-800">
+<div class="flex items-center gap-4">
+<h3 class="text-lg font-bold dark:text-white">Tháng 10, 2023</h3>
+<div class="flex gap-1">
+<button class="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded">
+<span class="material-symbols-outlined text-xl">chevron_left</span>
+</button>
+<button class="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded">
+<span class="material-symbols-outlined text-xl">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="flex bg-[#e7edf3] dark:bg-slate-800 p-1 rounded-lg">
+<button class="px-4 py-1.5 text-xs font-bold rounded-md bg-white dark:bg-slate-700 shadow-sm text-primary">Tháng</button>
+<button class="px-4 py-1.5 text-xs font-bold rounded-md text-[#4c739a] dark:text-slate-400 hover:text-primary">Tuần</button>
+</div>
+</div>
+<div class="p-5 overflow-x-auto no-scrollbar">
+<div class="min-w-[700px]">
+<div class="grid grid-cols-7 gap-2 mb-2">
+<div class="text-center text-xs font-bold text-[#4c739a] uppercase tracking-wider">T2</div>
+<div class="text-center text-xs font-bold text-[#4c739a] uppercase tracking-wider">T3</div>
+<div class="text-center text-xs font-bold text-[#4c739a] uppercase tracking-wider">T4</div>
+<div class="text-center text-xs font-bold text-[#4c739a] uppercase tracking-wider">T5</div>
+<div class="text-center text-xs font-bold text-[#4c739a] uppercase tracking-wider">T6</div>
+<div class="text-center text-xs font-bold text-[#4c739a] uppercase tracking-wider">T7</div>
+<div class="text-center text-xs font-bold text-[#4c739a] uppercase tracking-wider">CN</div>
+</div>
+<div class="grid grid-cols-7 gap-2">
+<div class="h-14 flex flex-col items-center justify-center rounded-xl bg-slate-50/50 dark:bg-slate-800/30 text-slate-400 text-sm">25</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl bg-slate-50/50 dark:bg-slate-800/30 text-slate-400 text-sm">26</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl bg-slate-50/50 dark:bg-slate-800/30 text-slate-400 text-sm">27</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl bg-slate-50/50 dark:bg-slate-800/30 text-slate-400 text-sm">28</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl bg-slate-50/50 dark:bg-slate-800/30 text-slate-400 text-sm">29</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl bg-slate-50/50 dark:bg-slate-800/30 text-slate-400 text-sm">30</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">1</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">2</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">3</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">4</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">5</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">6</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">7</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">8</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">9</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">10</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">11</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">12</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">13</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">14</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">15</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">16</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">17</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">18</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">19</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">20</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">21</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">22</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-primary/30 bg-primary/5 cursor-pointer transition-all dark:text-white text-sm relative">
+                                        23
+                                        <div class="absolute bottom-2 size-1.5 bg-green-500 rounded-full"></div>
+</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border-2 border-primary bg-primary/10 cursor-pointer transition-all text-primary font-bold text-sm relative shadow-sm">
+                                        24
+                                        <div class="absolute bottom-2 size-1.5 bg-green-500 rounded-full"></div>
+</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">25</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm relative">
+                                        26
+                                        <div class="absolute bottom-2 size-1.5 bg-amber-500 rounded-full"></div>
+</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">27</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">28</div>
+<div class="h-14 flex flex-col items-center justify-center rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all dark:text-white text-sm">29</div>
+</div>
+</div>
+</div>
+</div>
+<div class="pb-6">
+<div class="flex border-b border-[#cfdbe7] dark:border-slate-800 px-4 gap-12">
+<a class="flex flex-col items-center justify-center border-b-[3px] border-primary text-[#0d141b] dark:text-white pb-[13px] pt-4" href="#">
+<p class="text-sm font-bold leading-normal tracking-[0.015em]">Sắp tới (3)</p>
+</a>
+<a class="flex flex-col items-center justify-center border-b-[3px] border-transparent text-[#4c739a] dark:text-slate-400 pb-[13px] pt-4 hover:text-primary transition-colors" href="#">
+<p class="text-sm font-bold leading-normal tracking-[0.015em]">Lịch hẹn cũ</p>
+</a>
+</div>
+</div>
+<div class="pb-6">
+<div class="px-0 py-3">
+<label class="flex flex-col min-w-40 h-14 w-full shadow-sm">
+<div class="flex w-full flex-1 items-stretch rounded-xl h-full border border-[#cfdbe7] dark:border-slate-800">
+<div class="text-[#4c739a] flex border-none bg-white dark:bg-slate-900 items-center justify-center pl-4 rounded-l-xl border-r-0">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#0d141b] dark:text-slate-200 focus:outline-0 focus:ring-0 border-none bg-white dark:bg-slate-900 focus:border-none h-full placeholder:text-[#4c739a] px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Tìm kiếm theo tên bác sĩ, chuyên khoa hoặc bệnh viện" value=""/>
+</div>
+</label>
+</div>
+</div>
+<h2 class="text-[#0d141b] dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] pb-4" id="today-appointments">Sắp tới trong tuần này</h2>
+<div class="flex flex-col gap-4">
+<div class="bg-white dark:bg-slate-900 rounded-xl p-5 border border-[#e7edf3] dark:border-slate-800 flex flex-col md:flex-row gap-6 hover:border-primary/50 transition-all shadow-sm">
+<div class="flex-shrink-0">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-24 border border-slate-100 dark:border-slate-800" data-alt="Bác sĩ Sarah Jenkins" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDyy00R3QUr-rZC3cZUbhTonAzZRD90BBX16lQPoYGxj28XGLznLtQx5LMXFIl6pPysHBTd6AiUu5fWUpIJDVp72gaO1gA8iiUsDb04HZrfD_nrmr-WSDpQ5IfsmuoiBWPJanxOJAkjfCJL4S-em5LdLbU0uWdzSzs_g_FxUX7PVH6zDR_JQK8NrQ7iq5xtGCOJCKmjXEZFhw7YnNSiDJfIYqIeYTTC0iD7E7Bmgz34tt8FOnYam4voyoKFefuiBUfQvPQGrxXI1I9y");'></div>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-xl font-bold dark:text-white">BS. Sarah Jenkins</h3>
+<p class="text-primary font-semibold text-sm">Chuyên gia Tim mạch</p>
+</div>
+<span class="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold px-3 py-1 rounded-full border border-green-200 dark:border-green-800">ĐÃ XÁC NHẬN</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 text-sm text-[#4c739a] dark:text-slate-400">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+                                        Ngày mai, 24 Th10
+                                    </div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+                                        10:30 (45 phút)
+                                    </div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                                        Bệnh viện St. Mary, Khu B
+                                    </div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">videocam</span>
+                                        Trực tiếp
+                                    </div>
+</div>
+<div class="flex gap-3 flex-wrap">
+<button class="bg-primary/10 text-primary hover:bg-primary hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-all">Đổi lịch</button>
+<button class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-red-50 hover:text-red-600 px-4 py-2 rounded-lg text-sm font-bold transition-all">Hủy lịch hẹn</button>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl p-5 border border-[#e7edf3] dark:border-slate-800 flex flex-col md:flex-row gap-6 hover:border-primary/50 transition-all shadow-sm">
+<div class="flex-shrink-0">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-24 border border-slate-100 dark:border-slate-800" data-alt="Bác sĩ David Chen" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA-A3DEpfMnBfRtbMbAVtWSz6pgdchNSdmAItl-25v3d1gEW5c0epiXm91Fsqn-fMMcCILb7aXDNVRy3MGu_18G6i25bXDFKq4gG-KnMVUW-DEXzVYc9wk_m6xovzvr4Y9Lqil2oHXRS0fzRQPNJp--SDr4GKNFEnXVU8ukeNDnuEAOhCuYW4m2P7Od3Fx1_QdSykYpYHzSD45mXKSfkB-jkfrhsrP9NZbSlIHl1tlXIxLQ-QKp7r2O_hH1-Xa1GO11RmDFI6QNq-RT");'></div>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-xl font-bold dark:text-white">BS. David Chen</h3>
+<p class="text-primary font-semibold text-sm">Bác sĩ Da liễu</p>
+</div>
+<span class="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-bold px-3 py-1 rounded-full border border-amber-200 dark:border-amber-800">CHỜ PHÊ DUYỆT</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 text-sm text-[#4c739a] dark:text-slate-400">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+                                        Thứ 6, 26 Th10
+                                    </div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+                                        14:15 (20 phút)
+                                    </div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">link</span>
+                                        Telehealth (Link sẽ được gửi sau)
+                                    </div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">attach_file</span>
+                                        2 Tệp đính kèm đã tải lên
+                                    </div>
+</div>
+<div class="flex gap-3 flex-wrap">
+<button class="bg-primary text-white hover:bg-blue-600 px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">videocam</span> Tham gia cuộc gọi
+                                    </button>
+<button class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 px-4 py-2 rounded-lg text-sm font-bold transition-all">Đổi lịch</button>
+<button class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-red-50 hover:text-red-600 px-4 py-2 rounded-lg text-sm font-bold transition-all">Hủy</button>
+</div>
+</div>
+</div>
+<h2 class="text-[#0d141b] dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] pb-4 pt-8">Tháng sau</h2>
+<div class="bg-white dark:bg-slate-900 rounded-xl p-5 border border-[#e7edf3] dark:border-slate-800 flex flex-col md:flex-row gap-6 hover:border-primary/50 transition-all shadow-sm opacity-90">
+<div class="flex-shrink-0">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-24 border border-slate-100 dark:border-slate-800" data-alt="Bác sĩ Elena Rodriguez" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCaUmT8dVTVeCsXDoMXvnkgiHXgF4EgtaN3zS-qzR_UsPHbRLYwBYcYwgl1Ub0-ZRwmGQMvKuFkTXXFHyOftNDKsC0VCUCG3nxbewZQooypkRSyRGNESOjSpTGZL36Ec6G5CEtMczkf9hmG7MTlx-QaUNbWBqrMiAixBNHhLEDJ2PZ7sLKhDsnuF2C08LSoCqefWEbkfIv87HRLzIlmmEzyz2A5iX6xpYP88bwjWmuxznTn9qJXemXy2lCzzrRoN0LQCrZAUitcnp4a");'></div>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-xl font-bold dark:text-white">BS. Elena Rodriguez</h3>
+<p class="text-primary font-semibold text-sm">Bác sĩ Tổng quát</p>
+</div>
+<span class="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-bold px-3 py-1 rounded-full border border-blue-200 dark:border-blue-800">ĐÃ LÊN LỊCH</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 text-sm text-[#4c739a] dark:text-slate-400">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+                                        12 Th11, 2023
+                                    </div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+                                        09:00
+                                    </div>
+<div class="flex items-center gap-2 col-span-full">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                                        Trung tâm MediConnect, 123 Care Lane, Suite 400
+                                    </div>
+</div>
+<div class="flex gap-3 flex-wrap">
+<button class="bg-primary/10 text-primary hover:bg-primary hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-all">Đổi lịch</button>
+<button class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span> Tải hóa đơn
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-6 mt-12">
+<div class="max-w-[1000px] mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-sm text-[#4c739a] dark:text-slate-400">© 2023 Quản lý lịch hẹn MediConnect. Bảo lưu mọi quyền.</p>
+<div class="flex gap-6">
+<a class="text-sm text-[#4c739a] dark:text-slate-400 hover:text-primary" href="#">Trung tâm hỗ trợ</a>
+<a class="text-sm text-[#4c739a] dark:text-slate-400 hover:text-primary" href="#">Chính sách bảo mật</a>
+<a class="text-sm text-[#4c739a] dark:text-slate-400 hover:text-primary" href="#">Điều khoản dịch vụ</a>
+</div>
+</div>
+</footer>
+</div>
+</div>
+
+</body></html>

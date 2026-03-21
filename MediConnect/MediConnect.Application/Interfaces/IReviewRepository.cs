@@ -5,4 +5,5 @@ namespace MediConnect.Application.Interfaces;
 public interface IReviewRepository
 {
     Task<List<Review>> GetByDoctorIdAsync(int doctorId, int take = 10);
+    Task<List<Review>> GetByDateRangeAsync(DateTime fromDate, DateTime toDate);
 }

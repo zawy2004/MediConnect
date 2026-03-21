@@ -1,0 +1,20 @@
+@page
+@model MediConnect.Server.Pages.Patient.NoDoctorsFoundModel
+@{
+    ViewData["Title"] = "Không có bác sĩ phù hợp";
+}
+
+<div class="max-w-[980px] mx-auto px-6 py-12">
+    <div class="bg-white border border-slate-200 rounded-2xl p-10 text-center">
+        <div class="size-16 mx-auto rounded-full bg-slate-100 text-slate-500 flex items-center justify-center">
+            <span class="material-symbols-outlined text-3xl">search_off</span>
+        </div>
+        <h1 class="text-4xl font-black mt-4">Không có bác sĩ nào phù hợp bộ lọc</h1>
+        <p class="text-slate-500 mt-3">Bạn có thể nới rộng bộ lọc hoặc thử tìm theo triệu chứng với AI.</p>
+        <p class="text-xs text-slate-400 mt-2">@Model.FilterSummary</p>
+        <div class="mt-6 flex justify-center gap-3">
+            <a asp-page="/Patient/SearchDoctors" class="px-4 py-2 border border-slate-300 rounded-xl no-underline">Xóa bộ lọc</a>
+            <a asp-page="/Patient/SymptomAssessment" class="px-4 py-2 bg-primary text-white rounded-xl no-underline">Dùng AI để gợi ý</a>
+        </div>
+    </div>
+</div>

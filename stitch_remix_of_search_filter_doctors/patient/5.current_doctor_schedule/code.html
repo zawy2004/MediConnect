@@ -1,0 +1,376 @@
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tìm kiếm Bác sĩ MediConnect AI (Tiếng Việt)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a",
+                        "available": "#3b82f6",
+                        "unavailable": "#ef4444",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.375rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: 80px repeat(7, 1fr);
+        }
+        .time-slot {
+            height: 48px;
+            border-bottom: 1px solid #e2e8f0;
+            border-right: 1px solid #e2e8f0;
+        }
+        .dark .time-slot {
+            border-bottom: 1px solid #1e293b;
+            border-right: 1px solid #1e293b;
+        }
+        .slot-available {
+            @apply bg-blue-50/40 dark:bg-blue-900/10 border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/20 cursor-pointer transition-colors relative;
+        }
+        .slot-available::after {
+            content: '';
+            @apply absolute inset-1 bg-available/10 rounded border border-available/20;
+        }
+        .slot-unavailable {
+            @apply bg-red-50/20 dark:bg-red-900/5 relative cursor-not-allowed;
+        }
+        .slot-unavailable::after {
+            content: '';
+            @apply absolute inset-1 bg-unavailable/5 rounded border border-unavailable/10;
+        }
+        .filter-select {
+            @apply bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-full py-1.5 pl-3 pr-8 text-xs font-bold text-slate-700 dark:text-slate-200 focus:ring-primary focus:border-primary appearance-none cursor-pointer;
+        }
+        .calendar-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .calendar-scroll::-webkit-scrollbar-track {
+            @apply bg-slate-50 dark:bg-slate-900;
+        }
+        .calendar-scroll::-webkit-scrollbar-thumb {
+            @apply bg-slate-300 dark:bg-slate-700 rounded-full;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<header class="sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 lg:px-20 py-3">
+<div class="max-w-[1440px] mx-auto flex items-center justify-between gap-8">
+<div class="flex items-center gap-8 flex-1">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-3xl font-bold">medical_services</span>
+<h2 class="text-slate-900 dark:text-white text-xl font-extrabold tracking-tight">MediConnect</h2>
+</div>
+<div class="hidden md:flex flex-1 max-w-md">
+<label class="relative w-full">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+<span class="material-symbols-outlined">search</span>
+</span>
+<input class="block w-full rounded-lg border-none bg-slate-100 dark:bg-slate-800 py-2 pl-10 pr-3 text-sm placeholder-slate-500 focus:ring-2 focus:ring-primary dark:text-white" placeholder="Tìm kiếm chuyên khoa hoặc tên bác sĩ..." type="text"/>
+</label>
+</div>
+</div>
+<nav class="hidden lg:flex items-center gap-8">
+<a class="text-slate-600 dark:text-slate-300 text-sm font-semibold hover:text-primary transition-colors" href="#">Tìm Bác sĩ</a>
+<a class="text-slate-600 dark:text-slate-300 text-sm font-semibold hover:text-primary transition-colors" href="#">Lịch hẹn của tôi</a>
+<a class="text-slate-600 dark:text-slate-300 text-sm font-semibold hover:text-primary transition-colors" href="#">Hồ sơ sức khỏe</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-cover bg-center border-2 border-primary/20" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCC3u92Bk1vB_nyOOj0XdN5i6eD_jHIRSlWfUEWz9hEdP_uUF4hbmmIlEa5dE1xGZlGJarSXOvtj2x0NywD4-PF-iAAEVEv42t-itzrnrBGx2_zCwYA5zOGcJIbqP3XmB-4quakah7vtaJVZ9Y08Nbpwa-pP7wbwQjbYY5HTmpdif7XXH8T167SvXtYi9bNz6BbgJ70i3OA9bfmKMsj8OkMb9ax65Dqz8kGHMfngkXMZpdeSeHZBuFFTi2wYEUbQr8jGf0yZ4LpvTNm");'></div>
+</div>
+</div>
+</header>
+<main class="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 px-6 lg:px-20 py-8">
+<div class="lg:col-span-8">
+<div class="mb-6">
+<h1 class="text-2xl font-extrabold text-slate-900 dark:text-white">Tìm kiếm Bác sĩ MediConnect với AI</h1>
+<p class="text-slate-500">Chọn khung giờ từ 07:00 AM đến 08:00 PM để xem các bác sĩ hàng đầu cho ca khám 30 phút của bạn.</p>
+</div>
+<div class="flex flex-wrap items-center gap-3 mb-8">
+<div class="flex items-center gap-2 px-3 py-1.5 bg-slate-900 text-white rounded-full text-[10px] font-black uppercase tracking-widest shrink-0">
+<span class="material-symbols-outlined text-sm">psychology</span>
+                Logic Xếp hạng AI
+            </div>
+<div class="relative inline-block">
+<select class="filter-select">
+<option>Phù hợp Chuyên khoa (30%)</option>
+<option>Tim mạch</option>
+<option>Thần kinh</option>
+<option>Nhi khoa</option>
+<option>Chấn thương chỉnh hình</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-base">expand_more</span>
+</div>
+<div class="relative inline-block">
+<select class="filter-select">
+<option>Kinh nghiệm (20%)</option>
+<option>&gt;5 Năm</option>
+<option>&gt;10 Năm</option>
+<option>&gt;15 Năm</option>
+<option>&gt;20 Năm</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-base">expand_more</span>
+</div>
+<div class="relative inline-block">
+<select class="filter-select">
+<option>Đánh giá Bệnh nhân (20%)</option>
+<option>4.5+ ★</option>
+<option>4.0+ ★</option>
+<option>3.5+ ★</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-base">expand_more</span>
+</div>
+<div class="relative inline-block">
+<select class="filter-select">
+<option>Thời gian chờ (20%)</option>
+<option>&lt; 15 phút</option>
+<option>&lt; 30 phút</option>
+<option>&lt; 45 phút</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-base">expand_more</span>
+</div>
+<div class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-full text-xs font-bold border border-slate-200 dark:border-slate-700">
+                Khối lượng công việc (10%)
+            </div>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+<div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50">
+<div class="flex items-center gap-4">
+<h3 class="font-bold text-lg">Tháng 10, 23 - 29, 2023</h3>
+<div class="flex gap-1">
+<button class="p-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded transition-colors"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="p-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded transition-colors"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+<div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+<button class="px-4 py-1.5 text-xs font-bold rounded-lg text-slate-500">Tháng</button>
+<button class="px-4 py-1.5 text-xs font-bold bg-white dark:bg-slate-700 shadow-sm rounded-lg text-primary">Tuần</button>
+<button class="px-4 py-1.5 text-xs font-bold rounded-lg text-slate-500">Ngày</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<div class="min-w-[800px]">
+<div class="calendar-grid border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0 z-20 shadow-sm">
+<div class="p-3"></div>
+<div class="p-3 text-center border-l border-slate-100 dark:border-slate-800">
+<span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest">Thứ 2</span>
+<span class="text-lg font-bold">23</span>
+</div>
+<div class="p-3 text-center border-l border-slate-100 dark:border-slate-800">
+<span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest">Thứ 3</span>
+<span class="text-lg font-bold">24</span>
+</div>
+<div class="p-3 text-center border-l border-slate-100 dark:border-slate-800 bg-primary/5">
+<span class="block text-[10px] font-black text-primary uppercase tracking-widest">Thứ 4</span>
+<span class="text-lg font-bold text-primary underline decoration-2 underline-offset-4">25</span>
+</div>
+<div class="p-3 text-center border-l border-slate-100 dark:border-slate-800">
+<span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest">Thứ 5</span>
+<span class="text-lg font-bold">26</span>
+</div>
+<div class="p-3 text-center border-l border-slate-100 dark:border-slate-800">
+<span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest">Thứ 6</span>
+<span class="text-lg font-bold">27</span>
+</div>
+<div class="p-3 text-center border-l border-slate-100 dark:border-slate-800">
+<span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest">Thứ 7</span>
+<span class="text-lg font-bold text-slate-400">28</span>
+</div>
+<div class="p-3 text-center border-l border-slate-100 dark:border-slate-800">
+<span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest">CN</span>
+<span class="text-lg font-bold text-slate-400">29</span>
+</div>
+</div>
+<div class="max-h-[700px] overflow-y-auto calendar-scroll">
+<div class="grid-rows-[repeat(27,auto)]">
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">07:00 AM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">07:30 AM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">08:00 AM</div><div class="time-slot slot-available"></div><div class="time-slot slot-unavailable"></div><div class="time-slot slot-available ring-2 ring-primary ring-inset z-10 shadow-[inset_0_0_15px_rgba(59,130,246,0.1)]"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">08:30 AM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-unavailable"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">09:00 AM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">09:30 AM</div><div class="time-slot slot-unavailable"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-unavailable"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">10:00 AM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">10:30 AM</div><div class="time-slot slot-available"></div><div class="time-slot slot-unavailable"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">11:00 AM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">11:30 AM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">12:00 PM</div><div class="time-slot slot-unavailable"></div><div class="time-slot slot-unavailable"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">12:30 PM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">01:00 PM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">01:30 PM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">02:00 PM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">02:30 PM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">03:00 PM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">03:30 PM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">04:00 PM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">04:30 PM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">05:00 PM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">05:30 PM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">06:00 PM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">06:30 PM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">07:00 PM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">07:30 PM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+<div class="calendar-grid"><div class="p-2 text-right text-[10px] font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">08:00 PM</div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot slot-available"></div><div class="time-slot"></div><div class="time-slot"></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-4 flex gap-6 text-sm">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 bg-blue-50 border border-blue-200 rounded"></div>
+<span class="font-bold text-slate-600 dark:text-slate-400">Bác sĩ có sẵn</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 bg-red-50 border border-red-200 rounded"></div>
+<span class="font-bold text-slate-600 dark:text-slate-400">Đã kín lịch</span>
+</div>
+</div>
+</div>
+<div class="lg:col-span-4">
+<div class="sticky top-24 space-y-4">
+<div class="flex items-center justify-between">
+<h2 class="text-xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                    Xếp hạng AI hàng đầu
+                    <span class="material-symbols-outlined text-primary text-lg">verified</span>
+</h2>
+<div class="flex items-center gap-1.5 px-3 py-1 bg-primary text-white rounded-lg shadow-sm">
+<span class="material-symbols-outlined text-xs">schedule</span>
+<span class="text-[11px] font-black uppercase tracking-tight">T4, 08:00 AM</span>
+</div>
+</div>
+<div class="space-y-4">
+<div class="bg-white dark:bg-slate-900 rounded-2xl border-2 border-primary p-5 shadow-lg relative overflow-hidden group">
+<div class="absolute top-0 right-0 bg-primary text-white text-[10px] font-black px-4 py-1.5 rounded-bl-xl uppercase tracking-widest">
+                        Độ phù hợp 98%
+                    </div>
+<div class="flex gap-4">
+<div class="w-20 h-20 rounded-2xl bg-cover bg-center shrink-0 border-2 border-white dark:border-slate-800 shadow-sm" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBf8SpJGwp-FLaDMbXqLEiWr3OHlQh20G8DfWMMlufkHh91h8S3SI29z6ehEa7TP9WK_7I8s76OoxRQCrzpOxRNhwBYfBkrPNtvcSZD0ZoK0oKqMF69U72tcH7scbAtpKOxen32o22ET6sXiD5fxypbXWcxt0FGrap9hUGCivLTqpRvvqxwf-EIgl7f-OCLShw6tfLkS8A2Jdz7t6_r0yER-plCTpgk8IvqPnqKW7AQYfrgIdCUHzATlr0erBPgBSu9IqbzBzHotMgW");'></div>
+<div class="flex-1">
+<h3 class="font-extrabold text-slate-900 dark:text-white text-base leading-tight">Bác sĩ Sarah Jenkins, MD</h3>
+<p class="text-primary text-xs font-bold mb-2">Chuyên gia Tim mạch cao cấp</p>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1 text-amber-400">
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+<span class="text-xs font-black text-slate-700 dark:text-slate-300">4.9</span>
+</div>
+<div class="flex items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined text-sm">work_history</span>
+<span class="text-xs font-bold">15+ năm</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-5 space-y-2">
+<div class="flex justify-between items-center px-1">
+<span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Phân tích điểm AI</span>
+<span class="text-[10px] font-bold text-primary">Mức độ phù hợp cao</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden flex">
+<div class="bg-primary h-full border-r border-white/20" style="width: 30%" title="Phù hợp Chuyên khoa (30%)"></div>
+<div class="bg-blue-400 h-full border-r border-white/20" style="width: 20%" title="Kinh nghiệm (20%)"></div>
+<div class="bg-blue-300 h-full border-r border-white/20" style="width: 20%" title="Đánh giá (20%)"></div>
+<div class="bg-blue-200 h-full border-r border-white/20" style="width: 20%" title="Thời gian chờ (20%)"></div>
+<div class="bg-blue-100 h-full" style="width: 10%" title="Khối lượng công việc (10%)"></div>
+</div>
+</div>
+<button class="w-full mt-5 py-3 bg-primary text-white rounded-xl font-bold text-sm hover:bg-blue-600 transition-all shadow-md shadow-primary/20">
+                        Đặt lịch lúc 08:00 AM
+                    </button>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm hover:border-primary/50 transition-colors group">
+<div class="flex gap-4">
+<div class="w-16 h-16 rounded-xl bg-cover bg-center shrink-0" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCwZFJctuR6A6Ss9JZYax86az0krfpdn1sgiTcD2MTaFkJFIF2ewPzSdSpH5ku9rtuk8Y2YB0izWv8a7RZIjwIWwKfw0xrCg3xywh4hrvKykuiNVQ3HffkNDaGVbdCPwTkwp9m7_SIPJoOM2Z6eg0j-eQNqg7TPrhsY0ib1Ngr4dNeaGGJI0To6eZn1lM_ajk0SsalPJjbTM7825gtANTtGvnSjuAAvED8N6ep5bNW3BnzjMgYVCx9-2mvUa3KWmh6XeYaHPTlVftoD");'></div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-bold text-slate-900 dark:text-white text-sm">Bác sĩ Emily Rivera, DO</h3>
+<span class="text-xs font-black text-slate-800 dark:text-slate-200">92%</span>
+</div>
+<p class="text-primary text-[11px] font-bold mb-1">Nội khoa tổng quát</p>
+<div class="flex items-center gap-2 text-amber-400">
+<span class="material-symbols-outlined filled-icon text-[14px]">star</span>
+<span class="text-[11px] font-bold text-slate-500">4.8 (892)</span>
+</div>
+</div>
+</div>
+<div class="mt-4 flex gap-1 h-1 rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+<div class="bg-slate-400" style="width: 30%"></div>
+<div class="bg-slate-400" style="width: 20%"></div>
+<div class="bg-slate-400" style="width: 20%"></div>
+<div class="bg-slate-400" style="width: 20%"></div>
+<div class="bg-slate-400" style="width: 10%"></div>
+</div>
+<button class="w-full mt-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-lg font-bold text-xs hover:bg-slate-200 transition-colors">
+                        Đặt lịch lúc 08:00 AM
+                    </button>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm hover:border-primary/50 transition-colors">
+<div class="flex gap-4">
+<div class="w-16 h-16 rounded-xl bg-cover bg-center shrink-0" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBYzDdHGJeHtBWo0fB5zP8RvB9bGs5mCALWGflybRgclfntWG1KhO7fC602CBou5A2fg-WQPYTH_DT3xxx1DmOfsFHI-ejff4pcPZr5-bPDyuYdaFdAfAkRon0yUaIadg7XwOrkyXY3HosnXQ-0vQ-JzHQsi3VRVyUdG9x69G356DLP0BnRUpxI_AzA89i7GW02hj30nj-GkhZ2ue71mI3X8I7Vt6F5yN2s-Rf6ZwL9B9HtTTsbivdqZidPGpzJ93Bl9MB5VamGLBy2");'></div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-bold text-slate-900 dark:text-white text-sm">Bác sĩ Marcus Chen, MD</h3>
+<span class="text-xs font-black text-slate-800 dark:text-slate-200">85%</span>
+</div>
+<p class="text-primary text-[11px] font-bold mb-1">Bác sĩ Tim mạch</p>
+<div class="flex items-center gap-2 text-amber-400">
+<span class="material-symbols-outlined filled-icon text-[14px]">star</span>
+<span class="text-[11px] font-bold text-slate-500">4.7 (156)</span>
+</div>
+</div>
+</div>
+<div class="mt-4 flex gap-1 h-1 rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+<div class="bg-slate-400" style="width: 25%"></div>
+<div class="bg-slate-400" style="width: 20%"></div>
+<div class="bg-slate-400" style="width: 20%"></div>
+<div class="bg-slate-400" style="width: 20%"></div>
+<div class="bg-slate-400" style="width: 15%"></div>
+</div>
+<button class="w-full mt-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-lg font-bold text-xs hover:bg-slate-200 transition-colors">
+                        Đặt lịch lúc 08:00 AM
+                    </button>
+</div>
+</div>
+<button class="w-full py-3 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl text-slate-500 dark:text-slate-400 font-bold text-sm hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">add_circle</span>
+                Xem thêm chuyên gia MediConnect
+            </button>
+</div>
+</div>
+</main>
+<div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-40">
+<button class="flex items-center gap-3 bg-slate-900 text-white px-8 py-4 rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all font-bold tracking-tight">
+<span class="material-symbols-outlined">map</span>
+        Chuyển sang Chế độ Bản đồ
+    </button>
+</div>
+</body></html>

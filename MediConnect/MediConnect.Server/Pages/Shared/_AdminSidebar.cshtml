@@ -1,0 +1,53 @@
+@model string
+@{
+    var active = (Model ?? string.Empty).ToLowerInvariant();
+    string NavClass(string key)
+        => active == key
+            ? "flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-primary font-bold no-underline"
+            : "flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all no-underline";
+}
+
+<aside class="w-64 flex-shrink-0 bg-white border-r border-slate-200 flex flex-col">
+    <div class="p-6 flex flex-col h-full">
+        <div class="flex items-center gap-3 mb-8 px-2">
+            <div class="size-9 bg-primary rounded-lg flex items-center justify-center text-white shadow-md shadow-primary/20">
+                <span class="material-symbols-outlined">shield</span>
+            </div>
+            <h2 class="text-xl font-extrabold tracking-tight uppercase">MEDIADMIN</h2>
+        </div>
+
+        <nav class="flex flex-col gap-1.5 grow">
+            <a asp-page="/Admin/Dashboard" class="@NavClass("dashboard")">
+                <span class="material-symbols-outlined">dashboard</span><p class="text-sm">Bảng điều khiển</p>
+            </a>
+            <a asp-page="/Admin/UserManagement" class="@NavClass("users")">
+                <span class="material-symbols-outlined">group</span><p class="text-sm">Quản lý người dùng</p>
+            </a>
+            <a asp-page="/Admin/SpecialtyManagement" class="@NavClass("specialty")">
+                <span class="material-symbols-outlined">medical_services</span><p class="text-sm">Cấu hình chuyên khoa</p>
+            </a>
+            <a asp-page="/Admin/Statistics" class="@NavClass("statistics")">
+                <span class="material-symbols-outlined">bar_chart</span><p class="text-sm">Thống kê báo cáo</p>
+            </a>
+            <a asp-page="/Admin/SystemMonitoring" class="@NavClass("monitoring")">
+                <span class="material-symbols-outlined">description</span><p class="text-sm">Theo dõi Log hệ thống</p>
+            </a>
+            <a asp-page="/Admin/ComplaintManagement" class="@NavClass("complaints")">
+                <span class="material-symbols-outlined">support_agent</span><p class="text-sm">Quản lý khiếu nại</p>
+            </a>
+            <a asp-page="/Admin/ZaloNotification" class="@NavClass("zalo")">
+                <span class="material-symbols-outlined">chat</span><p class="text-sm">Thông báo Zalo</p>
+            </a>
+        </nav>
+
+        <div class="mt-auto pt-6 border-t border-slate-100">
+            <div class="flex items-center gap-3 px-2">
+                <div class="size-10 rounded-full bg-primary text-white flex items-center justify-center font-bold">A</div>
+                <div class="flex flex-col overflow-hidden">
+                    <h1 class="text-[11px] font-bold leading-tight truncate">Admin MediConnect</h1>
+                    <p class="text-slate-500 text-[9px] font-medium uppercase">Quản trị viên hệ thống</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</aside>

@@ -14,6 +14,10 @@ public static class DependencyInjection
         services.AddScoped<ISpecialtyService, SpecialtyService>();
         services.AddScoped<IDepartmentService, DepartmentService>();
         services.AddScoped<IDashboardService, DashboardService>();
+        services.AddScoped<IPortalService, PortalService>();
+        services.AddScoped<IPatientPortalService, PatientPortalService>();
+        services.AddScoped<IAdminPortalService, AdminPortalService>();
+        services.AddScoped<IDoctorPortalService, DoctorPortalService>();
 
         return services;
     }

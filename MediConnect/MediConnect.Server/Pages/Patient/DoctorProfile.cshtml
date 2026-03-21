@@ -1,0 +1,72 @@
+@page
+@model MediConnect.Server.Pages.Patient.DoctorProfileModel
+@{
+    ViewData["Title"] = "Hồ sơ bác sĩ & đặt lịch";
+}
+
+@if (Model.Data?.Doctor != null)
+{
+    var doctor = Model.Data.Doctor;
+    <div class="max-w-[1320px] mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <section class="lg:col-span-8 space-y-5">
+            <div class="bg-white border border-slate-200 rounded-2xl p-6">
+                <h1 class="text-4xl font-black">@doctor.FullName</h1>
+                <p class="text-slate-500 mt-1">@doctor.DepartmentName • @doctor.YearsOfExperience+ năm kinh nghiệm</p>
+                <div class="mt-3 text-sm text-slate-600 space-y-1">
+                    <p>⭐ @doctor.AverageRating.ToString("0.0") (@doctor.TotalReviews đánh giá)</p>
+                    <p>1.2k lượt khám • @Model.Data.SatisfiedPercent% hài lòng • @Model.Data.AwardsCount+ chứng nhận</p>
+                </div>
+                <p class="mt-4 text-slate-700">@doctor.Bio</p>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-6">
+                <h2 class="text-xl font-black mb-3">Kinh nghiệm & đánh giá</h2>
+                <div class="space-y-3">
+                    @foreach (var review in doctor.RecentReviews)
+                    {
+                        <div class="border border-slate-200 rounded-xl p-3">
+                            <p class="font-semibold">@review.PatientName</p>
+                            <p class="text-xs text-slate-500">⭐ @review.Rating.ToString("0.0") • @review.CreatedAt.ToString("dd/MM/yyyy")</p>
+                            <p class="text-sm text-slate-600 mt-1">@review.Comment</p>
+                        </div>
+                    }
+                    @if (doctor.RecentReviews.Count == 0)
+                    {
+                        <p class="text-sm text-slate-500">Chưa có đánh giá hiển thị.</p>
+                    }
+                </div>
+            </div>
+        </section>
+
+        <aside class="lg:col-span-4 bg-white border border-slate-200 rounded-2xl p-5 h-fit sticky top-6 space-y-4">
+            <h2 class="text-xl font-black">Đặt lịch nhanh</h2>
+
+            @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+            {
+                <div class="bg-red-50 border border-red-200 text-red-700 rounded-xl px-3 py-2 text-sm">@Model.ErrorMessage</div>
+            }
+
+            <form method="post" asp-page-handler="Book" class="space-y-3">
+                <input asp-for="DoctorProfileId" type="hidden" />
+                <div>
+                    <label asp-for="SlotId" class="text-sm text-slate-500">Khung giờ</label>
+                    <select asp-for="SlotId" class="w-full mt-1 rounded-xl border-slate-200">
+                        <option value="">Chọn khung giờ</option>
+                        @foreach (var slot in Model.Data.NextSlots)
+                        {
+                            <option value="@slot.SlotId">@slot.SlotDate.ToString("dd/MM") • @slot.StartTime.ToString("HH:mm") - @slot.EndTime.ToString("HH:mm")</option>
+                        }
+                    </select>
+                    <span asp-validation-for="SlotId" class="text-red-500 text-sm"></span>
+                </div>
+                <div>
+                    <label asp-for="Reason" class="text-sm text-slate-500">Lý do khám</label>
+                    <textarea asp-for="Reason" rows="3" class="w-full mt-1 rounded-xl border-slate-200" placeholder="Mô tả ngắn triệu chứng"></textarea>
+                </div>
+                <button type="submit" class="w-full py-2.5 rounded-xl bg-primary text-white font-semibold">Tiếp tục thanh toán</button>
+            </form>
+
+            <a asp-page="/Patient/DoctorSchedule" asp-route-doctorUserId="@doctor.UserId" class="block text-center py-2 rounded-xl border border-slate-300 no-underline">Xem lịch đầy đủ</a>
+        </aside>
+    </div>
+}

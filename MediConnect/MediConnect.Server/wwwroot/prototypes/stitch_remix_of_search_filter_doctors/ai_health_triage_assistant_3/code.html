@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Trợ lý phân loại &amp; Đề xuất đặt lịch AI - MediConnect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<header class="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="bg-primary text-white p-1.5 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined !text-[24px]">medical_services</span>
+</div>
+<h1 class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">MediConnect</h1>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Bảng điều khiển</a>
+<a class="text-sm font-semibold text-primary" href="#">Trợ lý phân loại</a>
+<a class="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Lịch hẹn</a>
+<a class="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Hồ sơ</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-background-dark"></span>
+</button>
+<div class="h-8 w-8 rounded-full bg-cover bg-center border border-slate-200 dark:border-slate-700" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCyCb3d1iuzNGESSMHhWSd1_b-ZzMcCwtfFONSiACkvRHaHmstHc9TpSIQJWCLfgMlZVCJM62dyLGoKAeU4XlC5-hdtpTmDNGXgTWE2XxB-WV8k-NDamC_UqkbmrHyXb8jjwhIAuJ1Kz0gFARQcflG57CfhpqTTSnomWTGyDdKg_S5mV2vSarzbRcZwy2A5Tv7TsSosN6AYmgVVoIWqoN2PRbxLQ2pNru9zFdGuKL0Yfo-PFUK3SFsMV2eSSz8AfKmKtddiUsU8A1Xl");'></div>
+</div>
+</div>
+</header>
+<main class="flex-1 flex flex-col max-w-7xl mx-auto w-full px-6 py-6 gap-6">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+<div class="lg:col-span-2">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h2 class="text-3xl font-extrabold text-slate-900 dark:text-white leading-tight">Trợ lý đánh giá triệu chứng</h2>
+<p class="text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-emerald-500">lock</span>
+                        Phiên phân loại y tế bảo mật và tuân thủ tiêu chuẩn an toàn dữ liệu
+                    </p>
+</div>
+<div class="flex flex-col gap-2 min-w-[240px]">
+<div class="flex justify-between text-xs font-bold uppercase tracking-wider text-slate-400">
+<span>TIẾN TRÌNH PHÂN TÍCH</span>
+<span>65%</span>
+</div>
+<div class="h-2 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 65%;"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-8 min-h-0">
+<div class="lg:col-span-2 flex flex-col bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+<div class="flex-1 overflow-y-auto p-6 space-y-6">
+<div class="flex items-start gap-4">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0 border border-primary/20">
+<span class="material-symbols-outlined">smart_toy</span>
+</div>
+<div class="flex flex-col gap-1 max-w-[80%]">
+<span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">TRỢ LÝ AI MEDICONNECT</span>
+<div class="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 p-4 rounded-xl rounded-tl-none">
+<p class="text-sm leading-relaxed">
+                                Chào bạn! Tôi là trợ lý sức khỏe của bạn. Vui lòng mô tả các triệu chứng bạn đang gặp phải, chúng đã kéo dài bao lâu và mức độ nghiêm trọng.
+                            </p>
+</div>
+</div>
+</div>
+<div class="flex items-start gap-4 flex-row-reverse">
+<div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 bg-cover bg-center shrink-0" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDMrIhKAPufpypjtHT7eUjM4KGbdFgEI5gyaHsUxpUiLkmcLEJCblYKjAyrX3MTi_GLrb0If6TNsCypm2E2ID_zfnp-QewUs_HxY-3JUms4NnSD0hNNZAWAZSELuWy8lxQ3vpt5lk08iwCSAKhUbwEso1z3CpwWIGMe3wco6_qg962VDNjYiPXauM-NvRFUAFFr39gE3O0GYFyH8ZvWXbIxUkdFhnODNIwpwyqVPrRm0Rbivvo0gfDJnFZ2fq2BFc5ZbqGhAjjgHzBi");'></div>
+<div class="flex flex-col gap-1 items-end max-w-[80%]">
+<span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mr-1">BẠN</span>
+<div class="bg-primary text-white p-4 rounded-xl rounded-tr-none">
+<p class="text-sm leading-relaxed">
+                                Tôi bị ho khan kéo dài và sốt nhẹ trong hai ngày qua. Ngực tôi cảm thấy hơi tức khi thở sâu. Không có tiền sử hen suyễn.
+                            </p>
+</div>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0 border border-primary/20">
+<span class="material-symbols-outlined">smart_toy</span>
+</div>
+<div class="flex flex-col gap-1 max-w-[80%]">
+<span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">TRỢ LÝ AI MEDICONNECT</span>
+<div class="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 p-4 rounded-xl rounded-tl-none">
+<p class="text-sm leading-relaxed">
+                                Cảm ơn thông tin đó. Bạn có gặp triệu chứng nào khác như mệt mỏi, đau họng hay mất vị giác không? Ngoài ra, hãy đánh giá mức độ tức ngực theo thang điểm từ 1-10?
+                            </p>
+</div>
+</div>
+</div>
+<div class="flex items-start gap-4 flex-row-reverse">
+<div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 bg-cover bg-center shrink-0" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD0TSTSuwqpYl47zNbSSWUhpnTp3vj2TZX1MUppDv70ihpnwYzVq4E0y0H0SeYaKZ_1ZMUSJoMdmTBHvZ3ehKJIzJclQkht857WqFnSu_mqijbR5f0P0RALQm3twtDip5MA82sfirsHZzTyDBh7sB8Tzd68qSsZBeF02qmU9Erkhv-6jC-__vKBFOV0StBgt2XZucSyl6pQQhE7UgfgSJD0gPzZOHo2fcU_tIpMXSR1rb6NjDcnu9iA_fVkulk4-9ZjXQNlW1zPv3ED");'></div>
+<div class="flex flex-col gap-1 items-end max-w-[80%]">
+<span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mr-1">BẠN</span>
+<div class="bg-primary text-white p-4 rounded-xl rounded-tr-none shadow-sm">
+<p class="text-sm leading-relaxed">
+                                Có, khá mệt mỏi. Không mất vị giác. Tôi đánh giá mức độ tức ngực khoảng điểm 4. Thường là khi tôi cố gắng hít thở sâu.
+                            </p>
+</div>
+</div>
+</div>
+</div>
+<div class="p-6 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
+<div class="flex flex-wrap gap-2 mb-4">
+<button class="px-3 py-1.5 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:border-primary hover:text-primary transition-all">Đau đầu</button>
+<button class="px-3 py-1.5 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:border-primary hover:text-primary transition-all">Đau người</button>
+<button class="px-3 py-1.5 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:border-primary hover:text-primary transition-all">Mệt mỏi</button>
+</div>
+<div class="relative flex items-center gap-3">
+<textarea class="flex-1 min-h-[56px] max-h-32 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none dark:text-white" placeholder="Nhập triệu chứng của bạn tại đây..."></textarea>
+<button class="flex items-center justify-center w-12 h-12 rounded-xl bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all shrink-0">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</div>
+<div class="space-y-6 overflow-y-auto">
+<div class="bg-white dark:bg-slate-900 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden relative">
+<div class="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-red-500 text-xl">emergency</span>
+                        Lịch tư vấn khẩn cấp
+                    </h3>
+<span class="px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-900/30 text-[10px] font-bold text-red-600 dark:text-red-400 animate-pulse">LIVE</span>
+</div>
+<div class="flex items-center gap-4 bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-100 dark:border-red-800/30">
+<div class="flex-1">
+<div class="text-sm font-bold text-red-700 dark:text-red-300">Còn 2 chỗ trống ưu tiên</div>
+<p class="text-[11px] text-red-600/80 dark:text-red-400/80">Trong khung giờ hành chính hôm nay</p>
+</div>
+<button class="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold px-3 py-1.5 rounded-md transition-colors">Yêu cầu</button>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+<div class="p-5 border-b border-slate-100 dark:border-slate-800">
+<div class="flex items-center justify-between mb-2">
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Đề xuất chuyên khoa</span>
+<span class="material-symbols-outlined text-primary text-lg">respiratory_rate</span>
+</div>
+<h3 class="text-lg font-bold text-slate-900 dark:text-white">Nội hô hấp</h3>
+<p class="text-xs text-slate-500 mt-1">Dựa trên triệu chứng ho và tức ngực của bạn</p>
+</div>
+<div class="p-5 bg-slate-50/50 dark:bg-slate-800/30">
+<div class="flex items-center justify-between mb-4">
+<div class="flex flex-col">
+<div class="text-xs font-bold text-slate-700 dark:text-slate-300">Lịch trống hôm nay</div>
+<div class="text-[10px] text-slate-400">Thứ Hai, 22 Tháng 5</div>
+</div>
+<button class="flex items-center justify-center w-8 h-8 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-primary hover:bg-primary/5 hover:border-primary transition-all shadow-sm" title="Xem lịch trống các ngày khác">
+<span class="material-symbols-outlined !text-[18px]">calendar_month</span>
+</button>
+</div>
+<div class="grid grid-cols-4 gap-2">
+<button class="flex flex-col items-center py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-primary hover:text-primary transition-all">
+<span class="text-xs font-bold">14:00</span>
+</button>
+<button class="flex flex-col items-center py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-primary hover:text-primary transition-all">
+<span class="text-xs font-bold">14:30</span>
+</button>
+<button class="flex flex-col items-center py-2 rounded-lg border border-primary bg-primary/5 text-primary">
+<span class="text-xs font-bold">15:00</span>
+</button>
+<button class="flex flex-col items-center py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-primary hover:text-primary transition-all">
+<span class="text-xs font-bold">15:30</span>
+</button>
+<button class="flex flex-col items-center py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-primary hover:text-primary transition-all">
+<span class="text-xs font-bold">16:00</span>
+</button>
+<button class="flex flex-col items-center py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-primary hover:text-primary transition-all">
+<span class="text-xs font-bold">16:30</span>
+</button>
+<div class="flex flex-col items-center py-2 rounded-lg bg-slate-100 dark:bg-slate-800/50 text-slate-400 cursor-not-allowed border border-transparent">
+<span class="text-xs font-bold">17:00</span>
+</div>
+<button class="flex items-center justify-center py-2 rounded-lg border border-dashed border-slate-300 dark:border-slate-600 hover:border-primary transition-all">
+<span class="material-symbols-outlined text-sm">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border-2 border-primary overflow-hidden relative">
+<div class="bg-primary px-3 py-1.5 flex items-center gap-2">
+<span class="material-symbols-outlined text-white text-sm">stars</span>
+<span class="text-[10px] font-black text-white uppercase tracking-wider">Bác sĩ tối ưu nhất</span>
+</div>
+<div class="p-5">
+<div class="flex gap-4 items-start mb-4">
+<div class="relative">
+<div class="w-16 h-16 rounded-xl bg-cover bg-center border border-slate-100 dark:border-slate-700" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuByFbojMSUWEHxhQTJCPu6DcXFMMVDQdZqu2zyXreYzo0ehlyA5TvBGkEZqWQO2_jbFvXOg5KIGPsmD4oFm7ZZxacar2kTF5_bYiOwQGGaUfRIZwe-PAnfqKzh_tL2BMtA0OnX587PX9hDFN2dWZYjsGNKSA1XDlWEk3hzR_VwXF22d1exb8Cqn2OUft_q1J6CCTuccrJkXU7xrGWrVF38YlZ3wgN005HKpkSGhTNqMRk4SxA4QLle4VIYvzueWaxRCA08koK0ximzF");'></div>
+<div class="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center">
+<span class="material-symbols-outlined text-white !text-[12px]">check</span>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="font-bold text-slate-900 dark:text-white truncate">TS. BS. Sarah Jenkins</h4>
+<p class="text-xs text-primary font-semibold">Chuyên gia Nội hô hấp</p>
+<div class="flex items-center gap-3 mt-2">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-500 !text-[14px] fill-current">star</span>
+<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300">4.9</span>
+</div>
+<div class="text-[11px] text-slate-400">12 năm KN</div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 mb-4 p-2 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+<span class="material-symbols-outlined text-primary text-sm">thumb_up</span>
+<p class="text-[10px] text-slate-600 dark:text-slate-400 italic">Được đề xuất vì kinh nghiệm điều trị các ca ho kéo dài tương tự.</p>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<button class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 py-2.5 rounded-lg text-xs font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">Xem hồ sơ</button>
+<button class="w-full bg-primary text-white py-2.5 rounded-lg text-xs font-bold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">Đặt lịch ngay</button>
+</div>
+</div>
+</div>
+<div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-slate-400 text-lg">warning</span>
+<p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
+<strong>Thông báo miễn trừ trách nhiệm y tế:</strong> Công cụ phân loại AI này chỉ dành cho mục đích thông tin và không thay thế cho lời khuyên, chẩn đoán hoặc điều trị y tế chuyên nghiệp. <strong>Nếu bạn gặp tình trạng cấp cứu, vui lòng gọi 115 ngay lập tức.</strong>
+</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="w-full py-4 px-6 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark mt-auto">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800/30 rounded-full">
+<span class="material-symbols-outlined text-emerald-600 text-[14px]">verified_user</span>
+<span class="text-[10px] font-black uppercase text-emerald-600 tracking-wider">Tuân thủ HIPAA</span>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full">
+<span class="material-symbols-outlined text-slate-600 text-[14px]">encrypted</span>
+<span class="text-[10px] font-black uppercase text-slate-600 tracking-wider">Mã hóa đầu cuối</span>
+</div>
+</div>
+<p class="text-[11px] text-slate-400">© 2024 MediConnect AI Systems. Bảo lưu mọi quyền.</p>
+</div>
+</footer>
+
+</body></html>

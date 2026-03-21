@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-primary-fixed-variant": "#00468b",
+                        "on-secondary-container": "#596576",
+                        "surface": "#f8f9fa",
+                        "on-surface": "#191c1d",
+                        "tertiary-container": "#a04401",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#a8c8ff",
+                        "on-secondary-fixed-variant": "#3c4858",
+                        "surface-variant": "#e1e3e4",
+                        "primary": "#00488d",
+                        "surface-container-high": "#e7e8e9",
+                        "on-tertiary-fixed-variant": "#783100",
+                        "surface-container": "#edeeef",
+                        "secondary-fixed-dim": "#bbc7db",
+                        "primary-fixed": "#d6e3ff",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#a8c8ff",
+                        "primary-container": "#005fb8",
+                        "secondary-container": "#d7e3f8",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#cadcff",
+                        "error": "#ba1a1a",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#424752",
+                        "secondary": "#535f70",
+                        "outline": "#727783",
+                        "tertiary-fixed": "#ffdbcb",
+                        "on-background": "#191c1d",
+                        "tertiary": "#7b3200",
+                        "on-secondary-fixed": "#101c2b",
+                        "background": "#f8f9fa",
+                        "on-error": "#ffffff",
+                        "outline-variant": "#c2c6d4",
+                        "surface-container-low": "#f3f4f5",
+                        "inverse-surface": "#2e3132",
+                        "surface-bright": "#f8f9fa",
+                        "surface-tint": "#005db5",
+                        "surface-dim": "#d9dadb",
+                        "inverse-on-surface": "#f0f1f2",
+                        "tertiary-fixed-dim": "#ffb691",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#ffd1bc",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#341100",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-primary-fixed": "#001b3d",
+                        "secondary-fixed": "#d7e3f8"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(24px);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface min-h-screen">
+<!-- TopAppBar -->
+<nav class="sticky top-0 z-50 flex justify-between items-center w-full px-8 py-4 max-w-full bg-slate-50 dark:bg-slate-950">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tight text-blue-800 dark:text-blue-300 font-headline">MediConnect</span>
+<div class="hidden md:flex items-center gap-6 font-manrope text-sm tracking-wide">
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors" href="#">Dashboard</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors" href="#">Patients</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors" href="#">Schedule</a>
+<a class="text-blue-700 dark:text-blue-400 border-b-2 border-blue-700 dark:border-blue-400 pb-1" href="#">Memberships</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">help_outline</button>
+<div class="h-8 w-8 rounded-full overflow-hidden bg-surface-container-highest">
+<img alt="Doctor profile avatar" data-alt="Close up professional portrait of a doctor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBerqGBlC_n7ATFlIMN_qBQKWxTBCvotHR0WvVTiAYh2fOWoo_M4Xwgwgq5FZGvA7jl_aXAHpIqiKn7J-ovkNefBTlo3wqLzNdYKj8lVPmrXKKx7SktWMxDXxZfhGMIfgp_JUBLlMhnhB3OU6wL7utJSDP0hy1lQRMX2fmHecnXnNZgZg3S2prux8XMDv9iUD91cgT54i3S1szIUCePrWlNAItRwN0nct12-PRrhPE3iOzRNjwlI2Xw2nZwOLxkzxnrWefEUQMSMD7S"/>
+</div>
+</div>
+</nav>
+<main class="max-w-7xl mx-auto px-6 py-12 md:py-16">
+<!-- Title Section -->
+<header class="mb-12">
+<h1 class="font-headline text-4xl font-extrabold tracking-tight text-primary mb-2">Thanh toán Gói Thành viên</h1>
+<p class="text-on-surface-variant text-lg">Hoàn tất thanh toán để duy trì các đặc quyền chuyên gia của bạn.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+<!-- Left Side: Payment Method Selection -->
+<section class="lg:col-span-7 space-y-8">
+<div class="bg-surface-container-low p-1 rounded-xl">
+<div class="bg-surface-container-lowest p-8 rounded-xl">
+<h2 class="font-headline text-xl font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">account_balance_wallet</span>
+                            Phương thức thanh toán
+                        </h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- Selected Method -->
+<div class="group relative cursor-pointer border-2 border-primary bg-primary-fixed/20 p-5 rounded-xl transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<div class="h-10 w-10 rounded-lg flex items-center justify-center bg-white shadow-sm overflow-hidden">
+<img alt="VNPAY" data-alt="VNPAY payment gateway logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtFPxhChuvhiQRFIf3c0I--aSjR0wJX-kNrEkw8ddrBHnwhdsKczsQ_2caG5CWAIch5PlNaYdZWKY2yj-KzOT2VPOO6wadsxPx1Aes9_Kutk3RA5X-kG7Ceyk_of3p3iTlQz-rmLQ7I06GBLeRkv_UruVWI_-xp4OhTn7NFdNb6f9pxHkMZ5BXSkiQU3Y2IASrXxFgWCKUjdo4ta3KGn9MmTOaiZ-mTqwfaeE-rte_VVxUBEtm4dBQjuUmOWfGMpfGdO4rODh4w97E"/>
+</div>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<p class="font-headline font-bold text-on-primary-fixed-variant">VNPAY</p>
+<p class="text-xs text-on-secondary-container mt-1">Cổng thanh toán quốc gia</p>
+</div>
+<!-- MoMo -->
+<div class="group relative cursor-pointer bg-surface-container-low hover:bg-surface-container-high p-5 rounded-xl transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<div class="h-10 w-10 rounded-lg flex items-center justify-center bg-white shadow-sm overflow-hidden">
+<img alt="MoMo" data-alt="MoMo e-wallet logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3mUTwejjq0RmBl3C2rTTlVX2qEp1xuYyGwkOUlm4Cwyd7ghXTgxtW0IsDVm5SXTouOd7Z1B9BVoWfcE735ukz35cfJh_zwU5zboiywD9tQzCQZQvMGF4kP0Nz0SLs5Xo7A07bk1AYSmomO4XnIiWyKbH6nOZtm0LswbmE-m2xsbVgBEOJarJJbf6py6tkYR4qe3xp-uW-y_JPEefQ4-SL9KfZrF_Zs5Y1OLqxuf6NeMnTKnUCS6HP1_F3dmtgYstV48oAmNXeHoS9"/>
+</div>
+</div>
+<p class="font-headline font-bold text-on-surface">Ví MoMo</p>
+<p class="text-xs text-on-secondary-container mt-1">Thanh toán nhanh qua App</p>
+</div>
+<!-- Apple Pay -->
+<div class="group relative cursor-pointer bg-surface-container-low hover:bg-surface-container-high p-5 rounded-xl transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<div class="h-10 w-10 rounded-lg flex items-center justify-center bg-white shadow-sm overflow-hidden">
+<img alt="Apple Pay" data-alt="Apple Pay official logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVvcAXIidWLfisGwpWT599vyfO5OCxZ-DkwmeY-EVOhzgy48vCamUtg3wXVyrVQlAbZ-mivEGYfehx_RRNX5cnvdF2TMaLEVP1jqcSR1-i1rAMx8PWlmLFrMk7aANih4jmgO_1DkU-M2HuWIcewhDF9f0PM8s3fj2ZRlU-SQyXpZABO9QAtJx3IPmJWQNTis1yODlDG2gHeJKFdjh54vWA9fotZJH_Z5gnqgM_2MXJ4ZrmDo3ET8UuSfp0OByNHWZXElp_SRFQb2CC"/>
+</div>
+</div>
+<p class="font-headline font-bold text-on-surface">Apple Pay</p>
+<p class="text-xs text-on-secondary-container mt-1">Bảo mật với FaceID/TouchID</p>
+</div>
+<!-- Credit Card -->
+<div class="group relative cursor-pointer bg-surface-container-low hover:bg-surface-container-high p-5 rounded-xl transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<div class="h-10 w-10 rounded-lg flex items-center justify-center bg-white shadow-sm overflow-hidden">
+<span class="material-symbols-outlined text-on-secondary-container">credit_card</span>
+</div>
+</div>
+<p class="font-headline font-bold text-on-surface">Thẻ Tín dụng</p>
+<p class="text-xs text-on-secondary-container mt-1">Visa, Mastercard, JCB</p>
+</div>
+</div>
+<!-- Card Details (Initially hidden or shown based on selection) -->
+<div class="mt-8 pt-8 border-t border-outline-variant/20">
+<div class="space-y-4">
+<div class="flex flex-col gap-1">
+<label class="text-sm font-medium text-on-surface-variant ml-1">Ghi chú thanh toán (Không bắt buộc)</label>
+<input class="w-full bg-surface-container-highest border-none rounded-t-xl border-b-2 border-transparent focus:ring-0 focus:bg-primary-fixed focus:border-primary px-4 py-3 transition-all duration-200" placeholder="Nhập nội dung chuyển khoản..." type="text"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Security Badge Section -->
+<div class="flex items-center gap-4 px-6">
+<div class="flex -space-x-2">
+<div class="h-8 w-8 rounded-full bg-white flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[16px] text-primary">verified_user</span>
+</div>
+<div class="h-8 w-8 rounded-full bg-white flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[16px] text-primary">lock</span>
+</div>
+</div>
+<p class="text-sm text-on-secondary-container leading-tight">
+                        Thông tin của bạn được mã hóa 256-bit SSL. <br/>
+                        Giao dịch được bảo mật bởi hệ thống quản lý rủi ro MediConnect.
+                    </p>
+</div>
+</section>
+<!-- Right Side: Summary Card -->
+<aside class="lg:col-span-5 sticky top-24">
+<div class="bg-surface-container-low p-8 rounded-xl shadow-sm overflow-hidden relative">
+<!-- Subtle Gradient Decoration -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+<h3 class="font-headline text-lg font-bold mb-8">Tóm tắt đơn hàng</h3>
+<div class="space-y-6">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-headline font-bold text-xl text-primary">Gói Premium (1 tháng)</p>
+<p class="text-sm text-on-secondary-container mt-1">Dành cho Bác sĩ Chuyên khoa</p>
+</div>
+<span class="bg-tertiary-container/10 text-tertiary font-bold text-[10px] px-2 py-1 rounded-full tracking-wider">ELITE</span>
+</div>
+<div class="space-y-3 py-6 border-y border-outline-variant/15">
+<div class="flex justify-between text-sm">
+<span class="text-on-secondary-container">Thời hạn</span>
+<span class="font-medium text-on-surface">30 ngày</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-on-secondary-container">Ngày bắt đầu</span>
+<span class="font-medium text-on-surface">Hôm nay</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-on-secondary-container">Mã giảm giá</span>
+<button class="text-primary font-bold hover:underline">Thêm mã</button>
+</div>
+</div>
+<div class="flex justify-between items-end pt-2">
+<span class="font-headline font-medium text-on-surface">Thành tiền</span>
+<div class="text-right">
+<p class="font-headline text-3xl font-extrabold text-on-surface tracking-tight">1,000,000đ</p>
+<p class="text-[10px] text-on-secondary-container uppercase tracking-widest mt-1">Đã bao gồm thuế VAT</p>
+</div>
+</div>
+<div class="pt-8">
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-white font-headline font-bold py-5 px-8 rounded-xl shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+<span>Xác nhận Thanh toán</span>
+<div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+</button>
+<p class="text-center text-[11px] text-on-secondary-container mt-4 px-4 leading-relaxed">
+                                Bằng cách nhấn xác nhận, bạn đồng ý với <a class="underline" href="#">Điều khoản dịch vụ</a> và chính sách gia hạn tự động của MediConnect.
+                            </p>
+</div>
+</div>
+</div>
+<!-- Benefits Mini Card -->
+<div class="mt-6 glass-card border border-white/40 p-6 rounded-xl">
+<p class="font-headline text-sm font-bold text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">workspace_premium</span>
+                        Quyền lợi sẽ được kích hoạt ngay lập tức
+                    </p>
+<ul class="space-y-3">
+<li class="flex items-center gap-3 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;">check</span>
+                            Ưu tiên hiển thị trên kết quả tìm kiếm
+                        </li>
+<li class="flex items-center gap-3 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;">check</span>
+                            Tư vấn Video không giới hạn thời gian
+                        </li>
+</ul>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer Space -->
+<footer class="mt-16 pb-12 border-t border-outline-variant/10 pt-12 text-center">
+<div class="flex justify-center gap-8 mb-6">
+<img alt="PCI Compliance" class="grayscale opacity-50" data-alt="PCI DSS certified secure logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPocdBfH9mn1awebWIl29le0QT9OAzHtIinR6r_mHnLrV9gWb0ymFz916FHAAXEB11pYdkiKMHYPMbb0EfxyNWdPJQMHiHNoO_VFOejO1V3FrFoL2qXV6f8Pi1IEJrA_9GoqbmNjUxhKMzzLYDXRBbrQ2hjE8gWrAetes2miKpdbSdhYowUk89C_36fUTewaKRaXQHADlPOx9KQM9jbNgov3D08N-QtkDX-KezMEaTPFAUtmhErwTb5cjInBwfrIfaxWU6NJ-09wOj"/>
+<img alt="Visa" class="grayscale opacity-50" data-alt="Visa payment network logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyaq8sYgizzGcuW-B_gdtbW7eOWsAGtWIB9g1zWWUMdARZzeR9YXo2WsxIsPnO60qZgM_qqjNzEOGlv2LOtxGK_YP8uAmc_JUHXML1BJIQN91B2lZ-RlAvGRMSNsZWfSoF6V_74TCxNX6s1TO45nj_HT6esCKK1Xe6NvOtSpQ9ZmgVzp-BWkj2bp9g_pQVh8A-z7t_7zaSjbR-W5DT73Ejc02DWxJVM-tHmhBhTL5A2zoYdepcPX3H2jUvkuWIn0dda28JcOvO4z0O"/>
+<img alt="Mastercard" class="grayscale opacity-50" data-alt="Mastercard payment network logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARBngbUEBqfJGfszEMLbB92GrhZhEYN5NGcPzes63NWJlNPkRAQHzTg0OUZyAkQ7i338Wb2s_ugosOPwK0mQpL6Bs30gZFjxS649KDxVnT72MLL96V-nZOU1sgwc_-_wNwQB50pW9PkAhULU6QVysOJ8jKrH3-xXDbwUgzKuEZWYaDySrehPBdn8Q0gL_xrAKAFFVcgnN81cuVwJLk1RBKdfT3RPkOvSGmvKmr0fBndELU1UXFrxThmzxPrjEa0wUn5gNO2VeN6ubN"/>
+</div>
+<p class="text-xs text-on-secondary-container">© 2024 MediConnect Inc. Bản quyền thuộc về hệ thống chăm sóc sức khỏe số.</p>
+</footer>
+</body></html>

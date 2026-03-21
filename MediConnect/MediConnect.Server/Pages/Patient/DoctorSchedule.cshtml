@@ -1,0 +1,30 @@
+@page
+@model MediConnect.Server.Pages.Patient.DoctorScheduleModel
+@{
+    ViewData["Title"] = "Lịch bác sĩ";
+}
+
+@if (Model.Data != null)
+{
+    <div class="max-w-[1280px] mx-auto px-6 py-8 space-y-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-4xl font-black">Lịch khám của @Model.Data.DoctorName</h1>
+                <p class="text-slate-500 mt-1">Từ @Model.Data.FromDate.ToString("dd/MM/yyyy") đến @Model.Data.ToDate.ToString("dd/MM/yyyy")</p>
+            </div>
+            <a asp-page="/Patient/SearchDoctors" class="px-4 py-2 border rounded-xl no-underline">Quay lại tìm kiếm</a>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-2xl p-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                @foreach (var slot in Model.Data.Slots)
+                {
+                    <div class="border rounded-xl p-3 @(slot.IsAvailable ? "border-blue-200 bg-blue-50" : "border-red-200 bg-red-50")">
+                        <p class="font-semibold">@slot.SlotDate.ToString("dd/MM") • @slot.StartTime.ToString("HH:mm") - @slot.EndTime.ToString("HH:mm")</p>
+                        <p class="text-xs mt-1 @(slot.IsAvailable ? "text-blue-700" : "text-red-700")">@slot.StatusLabel</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}

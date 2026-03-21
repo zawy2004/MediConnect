@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Patient Account Registration - HealConnect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#cfdbe7] dark:border-slate-800 px-10 py-3 bg-white dark:bg-background-dark">
+<div class="flex items-center gap-4 text-[#0d141b] dark:text-white">
+<div class="size-6 text-primary">
+<span class="material-symbols-outlined text-3xl">medical_services</span>
+</div>
+<h2 class="text-[#0d141b] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">HealConnect</h2>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<div class="flex items-center gap-9">
+<a class="text-[#0d141b] dark:text-slate-300 text-sm font-medium leading-normal" href="#">Find Doctors</a>
+<a class="text-[#0d141b] dark:text-slate-300 text-sm font-medium leading-normal" href="#">Specialties</a>
+<a class="text-[#0d141b] dark:text-slate-300 text-sm font-medium leading-normal" href="#">About Us</a>
+</div>
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]">
+<span class="truncate">Log In</span>
+</button>
+</div>
+</header>
+<main class="flex flex-1 justify-center py-10 px-4">
+<div class="layout-content-container flex flex-col max-w-[640px] flex-1 bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-[#cfdbe7] dark:border-slate-800 overflow-hidden">
+<!-- Page Heading -->
+<div class="flex flex-wrap justify-between gap-3 p-8 pb-4">
+<div class="flex min-w-72 flex-col gap-2">
+<p class="text-[#0d141b] dark:text-white text-3xl font-black leading-tight tracking-[-0.033em]">Create Your Patient Account</p>
+<p class="text-[#4c739a] dark:text-slate-400 text-base font-normal leading-normal">Join our healthcare community to manage your appointments and health records securely.</p>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="flex flex-col gap-3 px-8 py-4">
+<div class="flex gap-6 justify-between">
+<p class="text-[#0d141b] dark:text-white text-base font-medium leading-normal">Basic Information</p>
+<p class="text-[#0d141b] dark:text-white text-sm font-normal leading-normal">Step 1 of 3</p>
+</div>
+<div class="rounded-full bg-[#cfdbe7] dark:bg-slate-700 h-2.5">
+<div class="h-2.5 rounded-full bg-primary" style="width: 33%;"></div>
+</div>
+<div class="flex items-center gap-2 text-[#4c739a] dark:text-slate-400 text-sm font-normal leading-normal">
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+<span>Next: Personal Details</span>
+</div>
+</div>
+<!-- Form Content -->
+<div class="flex flex-col px-8 py-4">
+<h2 class="text-[#0d141b] dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] pb-6">Step 1: Contact Details</h2>
+<div class="space-y-6">
+<!-- Full Name -->
+<div class="flex flex-col gap-2">
+<label class="text-[#0d141b] dark:text-slate-200 text-sm font-semibold leading-normal">Full Name
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d141b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#cfdbe7] dark:border-slate-700 bg-slate-50 dark:bg-slate-800 h-14 placeholder:text-[#4c739a] p-[15px] text-base font-normal" placeholder="e.g. Johnathan Doe"/>
+</label></div>
+<!-- Email Address -->
+<div class="flex flex-col gap-2">
+<label class="text-[#0d141b] dark:text-slate-200 text-sm font-semibold leading-normal">Email Address
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d141b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#cfdbe7] dark:border-slate-700 bg-slate-50 dark:bg-slate-800 h-14 placeholder:text-[#4c739a] p-[15px] text-base font-normal" placeholder="john@example.com" type="email"/>
+</label></div>
+<!-- Phone Number -->
+<div class="flex flex-col gap-2">
+<label class="text-[#0d141b] dark:text-slate-200 text-sm font-semibold leading-normal">Phone Number
+<div class="flex gap-2">
+<div class="flex items-center justify-center px-3 rounded-lg border border-[#cfdbe7] dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-500">+1</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d141b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#cfdbe7] dark:border-slate-700 bg-slate-50 dark:bg-slate-800 h-14 placeholder:text-[#4c739a] p-[15px] text-base font-normal" placeholder="(555) 000-0000" type="tel"/>
+</div>
+</label></div>
+</div>
+<!-- Security Notice -->
+<div class="mt-10 p-4 bg-primary/5 dark:bg-primary/10 rounded-xl border border-primary/20 flex gap-4 items-start">
+<span class="material-symbols-outlined text-primary">shield</span>
+<div class="flex flex-col gap-1">
+<p class="text-[#0d141b] dark:text-white text-sm font-bold">Your privacy is our priority</p>
+<p class="text-[#4c739a] dark:text-slate-400 text-xs leading-normal">All your healthcare data is encrypted and managed according to HIPAA standards and modern security protocols.</p>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex items-center justify-between mt-10 mb-8 gap-4">
+<button class="flex-1 flex h-14 items-center justify-center rounded-lg border border-[#cfdbe7] dark:border-slate-700 text-[#0d141b] dark:text-white font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                Cancel
+                            </button>
+<button class="flex-[2] flex h-14 items-center justify-center rounded-lg bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:brightness-110 transition-all">
+                                Continue to Step 2
+                            </button>
+</div>
+<!-- Footer Links -->
+<div class="flex flex-col items-center gap-2 mb-4">
+<p class="text-[#4c739a] dark:text-slate-500 text-xs text-center px-4">
+                                By continuing, you agree to HealConnect's 
+                                <a class="text-primary hover:underline" href="#">Privacy Policy</a> and 
+                                <a class="text-primary hover:underline" href="#">Terms of Service</a>.
+                            </p>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Disclaimer/Slogan -->
+<footer class="flex flex-col items-center py-8 text-center px-4">
+<div class="flex items-center gap-2 mb-2 text-slate-400">
+<span class="material-symbols-outlined text-sm">lock</span>
+<span class="text-xs font-medium uppercase tracking-widest">End-to-End Encrypted Registration</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm">© 2024 HealConnect Healthcare Systems. All rights reserved.</p>
+</footer>
+</div>
+</div>
+</body></html>

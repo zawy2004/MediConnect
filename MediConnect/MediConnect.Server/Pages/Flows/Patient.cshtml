@@ -1,0 +1,24 @@
+@page
+@model MediConnect.Server.Pages.Flows.PatientModel
+@{
+    ViewData["Title"] = "Luồng Patient";
+}
+
+<div class="max-w-[1280px] mx-auto px-6 py-10">
+    <div class="mb-8">
+        <h1 class="text-3xl font-extrabold tracking-tight text-[#0d141b]">Luồng Patient</h1>
+        <p class="text-slate-500 mt-2">Bộ màn hình đã map từ stitch_remix cho hành trình bệnh nhân.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        @foreach (var screen in Model.Screens)
+        {
+            <a asp-page="/Prototype/View" asp-route-key="@screen.Key"
+               class="block bg-white rounded-xl border border-slate-200 p-5 hover:border-primary hover:shadow-sm transition-all no-underline">
+                <h3 class="text-[#0d141b] font-bold text-base">@screen.Title</h3>
+                <p class="text-slate-500 text-sm mt-1">@screen.Description</p>
+                <p class="text-primary text-sm font-semibold mt-3">Mở màn hình →</p>
+            </a>
+        }
+    </div>
+</div>

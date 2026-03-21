@@ -1,0 +1,90 @@
+@page
+@model MediConnect.Server.Pages.Doctor.WaitlistModel
+@{
+    ViewData["Title"] = "Quản lý Danh sách chờ";
+    ViewData["HideLayout"] = true;
+}
+
+<div class="min-h-screen bg-[#f8fafc] flex">
+    @await Html.PartialAsync("_DoctorSidebar", "waitlist")
+    <main class="flex-1 overflow-y-auto p-8 space-y-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-4xl font-black">Quản lý Danh sách chờ</h1>
+                <p class="text-slate-500">Điều chỉnh thứ tự ưu tiên và theo dõi bệnh nhân dự phòng.</p>
+            </div>
+            <form method="post" asp-page-handler="NotifyNext">
+                <button class="px-5 py-2.5 bg-primary text-white rounded-xl">Gửi ngay bây giờ</button>
+            </form>
+        </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+    {
+        <div class="bg-blue-50 border border-blue-200 text-blue-700 rounded-xl px-4 py-3 text-sm">@Model.StatusMessage</div>
+    }
+
+        <div class="bg-white border rounded-2xl p-2 inline-flex gap-1">
+            <button type="button" class="px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold">Tất cả</button>
+            <button type="button" class="px-4 py-2 rounded-xl text-sm text-slate-600">Cấp cứu</button>
+            <button type="button" class="px-4 py-2 rounded-xl text-sm text-slate-600">Đang thông báo</button>
+        </div>
+
+        <section class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="bg-white border rounded-2xl p-4"><p class="text-xs text-slate-500">Trạng thái</p><p class="text-2xl font-black mt-2">@(Model.Data.IsFullToday ? "Lịch đã đầy" : "Còn slot")</p></div>
+            <div class="bg-white border rounded-2xl p-4"><p class="text-xs text-slate-500">Tổng trong hàng chờ</p><p class="text-2xl font-black mt-2">@Model.Data.TotalCount</p></div>
+            <div class="bg-white border rounded-2xl p-4"><p class="text-xs text-slate-500">Hiệu suất chờ</p><p class="text-2xl font-black mt-2">@Model.Data.AverageWaitMinutes phút</p></div>
+        </section>
+
+    <section class="bg-white border rounded-2xl overflow-hidden">
+        <table class="w-full text-sm">
+            <thead class="bg-slate-50 text-slate-500">
+                <tr>
+                    <th class="text-left px-4 py-3 w-20">Thứ tự</th>
+                    <th class="text-left px-4 py-3">Bệnh nhân</th>
+                    <th class="text-left px-4 py-3">Thời gian đăng ký</th>
+                    <th class="text-left px-4 py-3">Trạng thái</th>
+                    <th class="text-left px-4 py-3">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Data.Items)
+                {
+                    <tr class="border-t border-slate-100 hover:bg-slate-50">
+                        <td class="px-4 py-3 font-semibold">@item.Order.ToString("00")</td>
+                        <td class="px-4 py-3">@item.PatientName</td>
+                        <td class="px-4 py-3">@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs bg-slate-100 text-slate-700">@item.Status</span></td>
+                        <td class="px-4 py-3">
+                            <div class="flex items-center gap-2">
+                                <form method="post" asp-page-handler="MoveUp">
+                                    <input type="hidden" name="waitlistId" value="@item.WaitlistId" />
+                                    <button class="px-2 py-1 border rounded-lg">↑</button>
+                                </form>
+                                <form method="post" asp-page-handler="MoveDown">
+                                    <input type="hidden" name="waitlistId" value="@item.WaitlistId" />
+                                    <button class="px-2 py-1 border rounded-lg">↓</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
+
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="bg-white border rounded-2xl p-5">
+                <h3 class="text-2xl font-black">Hiệu suất chờ</h3>
+                <p class="text-5xl font-black mt-4">@Model.Data.AverageWaitMinutes <span class="text-base font-semibold text-slate-500">phút</span></p>
+                <p class="text-sm text-slate-500 mt-2">Thời gian chờ trung bình hiện tại.</p>
+            </div>
+            <div class="lg:col-span-2 bg-gradient-to-br from-blue-700 to-blue-800 text-white rounded-2xl p-6">
+                <h3 class="text-4xl font-black">Gửi thông báo hàng loạt cho các slot trống sắp tới?</h3>
+                <p class="mt-2 text-sm text-blue-100">Hệ thống phát hiện slot trống và có thể gửi thông báo tự động.</p>
+                <form method="post" asp-page-handler="NotifyNext" class="mt-4">
+                    <button class="px-5 py-2.5 bg-white text-blue-700 rounded-xl font-semibold">Gửi ngay bây giờ</button>
+                </form>
+            </div>
+        </section>
+    </main>
+</div>

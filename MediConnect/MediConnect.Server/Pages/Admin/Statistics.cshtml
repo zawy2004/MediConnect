@@ -1,0 +1,68 @@
+@page
+@model MediConnect.Server.Pages.Admin.StatisticsModel
+@{
+    ViewData["Title"] = "Báo cáo thống kê";
+    ViewData["HideLayout"] = true;
+}
+
+<div class="min-h-screen bg-[#f8fafc] flex">
+    @await Html.PartialAsync("_AdminSidebar", "statistics")
+    <main class="flex-1 overflow-y-auto">
+        <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between">
+            <h1 class="text-3xl font-black">Báo cáo & Phân tích MediAdmin AI</h1>
+            <a asp-page="/Admin/Dashboard" class="text-slate-500 no-underline">Quay lại dashboard</a>
+        </header>
+
+        <div class="p-8 space-y-6">
+            <form method="get" class="bg-white border rounded-2xl p-4 flex flex-wrap items-end gap-3">
+                <div>
+                    <label class="text-sm text-slate-500">Từ ngày</label>
+                    <input asp-for="FromDate" type="date" class="block rounded-xl border-slate-200" />
+                </div>
+                <div>
+                    <label class="text-sm text-slate-500">Đến ngày</label>
+                    <input asp-for="ToDate" type="date" class="block rounded-xl border-slate-200" />
+                </div>
+                <button class="px-4 py-2 bg-primary text-white rounded-xl">Lọc</button>
+            </form>
+
+            <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white border rounded-2xl p-5"><p class="text-xs text-slate-500">Tổng lượt khám</p><p class="text-3xl font-black mt-2">@Model.Data.TotalVisits</p></div>
+                <div class="bg-white border rounded-2xl p-5"><p class="text-xs text-slate-500">Doanh thu</p><p class="text-3xl font-black mt-2">@Model.Data.Revenue.ToString("N0")</p></div>
+                <div class="bg-white border rounded-2xl p-5"><p class="text-xs text-slate-500">Tỷ lệ hoàn thành</p><p class="text-3xl font-black mt-2">@Model.Data.CompletionRatePercent%</p></div>
+                <div class="bg-white border rounded-2xl p-5"><p class="text-xs text-slate-500">CSAT</p><p class="text-3xl font-black mt-2">@Model.Data.Csat</p></div>
+            </section>
+
+            <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-white border rounded-2xl p-5">
+                    <h2 class="text-lg font-bold mb-3">Xu hướng đặt lịch & AI Anomaly Detection</h2>
+                    <div class="h-72 rounded-xl border border-slate-100 bg-slate-50 flex items-center justify-center text-slate-400">Biểu đồ xu hướng 30 ngày</div>
+                </div>
+
+                <div class="bg-white border rounded-2xl p-5">
+                    <h2 class="text-lg font-bold mb-3">AI Phân tích phản hồi</h2>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach (var key in Model.Data.FeedbackKeywords)
+                        {
+                            <span class="px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 text-sm">@key.Keyword</span>
+                        }
+                    </div>
+                    <p class="text-sm text-emerald-600 font-semibold mt-4">Sentiment summary: tích cực</p>
+                </div>
+            </section>
+
+            <section class="bg-white border rounded-2xl p-5">
+                <h2 class="text-lg font-bold mb-3">Hiệu suất theo ngày</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    @foreach (var day in Model.Data.AppointmentTrend)
+                    {
+                        <div class="border border-slate-100 rounded-lg px-3 py-2 flex items-center justify-between">
+                            <span class="text-sm">@day.Date.ToString("dd/MM/yyyy")</span>
+                            <span class="font-semibold">@day.Count</span>
+                        </div>
+                    }
+                </div>
+            </section>
+        </div>
+    </main>
+</div>

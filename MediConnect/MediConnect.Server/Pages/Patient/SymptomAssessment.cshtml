@@ -1,0 +1,47 @@
+@page
+@model MediConnect.Server.Pages.Patient.SymptomAssessmentModel
+@{
+    ViewData["Title"] = "Đánh giá triệu chứng bằng AI";
+}
+
+<div class="max-w-[1240px] mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <section class="lg:col-span-7 bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
+        <h1 class="text-4xl font-black">AI Health Triage Assistant</h1>
+        <p class="text-slate-500">Mô tả triệu chứng để nhận gợi ý mức độ ưu tiên và bác sĩ phù hợp.</p>
+
+        <form method="post" class="space-y-4">
+            <div>
+                <label asp-for="SymptomText" class="text-sm text-slate-500">Triệu chứng</label>
+                <textarea asp-for="SymptomText" rows="5" class="w-full mt-1 rounded-xl border-slate-200" placeholder="Ví dụ: đau đầu 2 ngày, sốt nhẹ, chóng mặt..."></textarea>
+                <span asp-validation-for="SymptomText" class="text-red-500 text-sm"></span>
+            </div>
+            <button type="submit" class="px-5 py-2.5 rounded-xl bg-primary text-white font-semibold">Phân tích</button>
+        </form>
+    </section>
+
+    <aside class="lg:col-span-5 bg-white border border-slate-200 rounded-2xl p-6 space-y-3">
+        <h2 class="text-xl font-black">Kết quả đánh giá</h2>
+        @if (Model.Result != null)
+        {
+            <div class="rounded-xl border border-amber-200 bg-amber-50 p-3">
+                <p class="text-sm text-amber-700">Mức độ ưu tiên</p>
+                <p class="font-bold text-amber-900">@((Model.Result.RiskScore >= 80) ? "Cao" : (Model.Result.RiskScore >= 50 ? "Trung bình" : "Thấp"))</p>
+            </div>
+            <p class="text-sm text-slate-700">@Model.Result.AssistantReply</p>
+            <p class="text-xs text-slate-500">Chuyên khoa gợi ý: @Model.Result.SuggestedSpecialty • Risk score: @Model.Result.RiskScore/100</p>
+            <div class="space-y-2">
+                @foreach (var suggestion in Model.Result.SuggestedDoctors)
+                {
+                    <a asp-page="/Patient/DoctorProfile" asp-route-doctorProfileId="@suggestion.DoctorProfileId" class="block border border-slate-200 rounded-xl p-3 no-underline hover:bg-slate-50">
+                        <p class="font-semibold text-slate-800">@suggestion.FullName</p>
+                        <p class="text-xs text-slate-500">@(suggestion.DepartmentName ?? "Chưa cập nhật") • @string.Join(", ", suggestion.Specialties)</p>
+                    </a>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-sm text-slate-500">Kết quả phân tích sẽ hiển thị tại đây sau khi bạn nhập triệu chứng.</p>
+        }
+    </aside>
+</div>

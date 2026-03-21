@@ -1,0 +1,10 @@
+@page "{key}"
+@model MediConnect.Server.Pages.Prototype.ViewModel
+@{
+    ViewData["Title"] = Model.ScreenTitle;
+    ViewData["HideLayout"] = true;
+}
+
+<div class="h-screen w-full bg-slate-100">
+    <iframe src="@Model.PrototypeUrl" class="h-full w-full border-0" title="@Model.ScreenTitle"></iframe>
+</div>

@@ -1,0 +1,72 @@
+@page
+@model MediConnect.Server.Pages.Doctor.ProfileModel
+@{
+    ViewData["Title"] = "Hồ sơ chuyên môn";
+    ViewData["HideLayout"] = true;
+}
+
+<div class="min-h-screen bg-[#f8fafc] flex">
+    @await Html.PartialAsync("_DoctorSidebar", "profile")
+    <main class="flex-1 overflow-y-auto p-8">
+    <div class="flex items-center justify-between mb-6 gap-4">
+        <h1 class="text-4xl md:text-5xl font-black">Cập nhật Hồ sơ Chuyên môn</h1>
+        <div class="flex items-center gap-2">
+            <a asp-page="/Doctor/SpecialtyProfile" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-600 no-underline">Hủy</a>
+            <a asp-page="/Doctor/Dashboard" class="text-slate-500 no-underline">Quay lại dashboard</a>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="mb-4 p-3 rounded-xl bg-green-50 text-green-700">@Model.SuccessMessage</div>
+    }
+
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 mb-5">
+        <div class="flex items-center justify-between gap-3">
+            <div>
+                <h2 class="font-bold text-lg">@Model.DoctorProfile?.FullName</h2>
+                <p class="text-slate-500 text-sm mt-1">@Model.DoctorProfile?.DepartmentName • @Model.DoctorProfile?.YearsOfExperience năm kinh nghiệm</p>
+            </div>
+            <div class="text-right">
+                <p class="text-xs text-slate-500">Gói hiện tại</p>
+                <p class="font-semibold">@Model.MembershipPlan</p>
+                <p class="text-xs text-slate-400">Hết hạn: @Model.MembershipExpiresAt.ToString("dd/MM/yyyy")</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+        <div class="rounded-2xl p-5 bg-blue-600 text-white">
+            <h3 class="font-bold">Phân tích AI MediConnect</h3>
+            <p class="text-sm mt-2">@Model.AiTrend</p>
+        </div>
+        <div class="rounded-2xl p-5 bg-indigo-600 text-white">
+            <h3 class="font-bold">Khuyến nghị</h3>
+            <p class="text-sm mt-2">@Model.AiRecommendation</p>
+        </div>
+    </div>
+
+    <form method="post" class="bg-white border border-slate-200 rounded-2xl p-6 space-y-5">
+        <div>
+            <label class="text-sm text-slate-500">Kinh nghiệm & giới thiệu</label>
+            <textarea asp-for="Bio" rows="6" class="w-full mt-1 rounded-lg border-slate-200"></textarea>
+            <span asp-validation-for="Bio" class="text-red-500 text-sm"></span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <label class="text-sm text-slate-500">Phí khám</label>
+                <input asp-for="ConsultationFee" class="w-full mt-1 rounded-lg border-slate-200" />
+            </div>
+            <div>
+                <label class="text-sm text-slate-500">Bảo hiểm hỗ trợ</label>
+                <input asp-for="InsuranceAccepted" class="w-full mt-1 rounded-lg border-slate-200" />
+            </div>
+            <div>
+                <label class="text-sm text-slate-500">Địa điểm</label>
+                <input asp-for="Location" class="w-full mt-1 rounded-lg border-slate-200" />
+            </div>
+        </div>
+        <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-primary to-blue-700 text-white rounded-xl font-semibold">Lưu thay đổi</button>
+    </form>
+    </main>
+</div>

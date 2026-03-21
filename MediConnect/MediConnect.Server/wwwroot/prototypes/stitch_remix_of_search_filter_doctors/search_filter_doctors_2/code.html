@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tìm kiếm bác sĩ - MediConnect AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        details > summary {
+            list-style: none;
+        }
+        details > summary::-webkit-details-marker {
+            display: none;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<header class="sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 lg:px-20 py-3">
+<div class="max-w-[1440px] mx-auto flex items-center justify-between gap-8">
+<div class="flex items-center gap-8 flex-1">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-3xl font-bold">clinical_notes</span>
+<h2 class="text-slate-900 dark:text-white text-xl font-extrabold tracking-tight">MediConnect</h2>
+</div>
+<div class="hidden md:flex flex-1 max-w-md">
+<label class="relative w-full">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+<span class="material-symbols-outlined">search</span>
+</span>
+<input class="block w-full rounded-lg border-none bg-slate-100 dark:bg-slate-800 py-2 pl-10 pr-3 text-sm placeholder-slate-500 focus:ring-2 focus:ring-primary dark:text-white" placeholder="Tìm kiếm chuyên gia MediConnect..." type="text"/>
+</label>
+</div>
+</div>
+<nav class="hidden lg:flex items-center gap-8">
+<a class="text-slate-600 dark:text-slate-300 text-sm font-semibold hover:text-primary transition-colors" href="#">Tìm bác sĩ</a>
+<a class="text-slate-600 dark:text-slate-300 text-sm font-semibold hover:text-primary transition-colors" href="#">Lịch hẹn của tôi</a>
+<a class="text-slate-600 dark:text-slate-300 text-sm font-semibold hover:text-primary transition-colors" href="#">Hồ sơ sức khỏe</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-cover bg-center border-2 border-primary/20" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCC3u92Bk1vB_nyOOj0XdN5i6eD_jHIRSlWfUEWz9hEdP_uUF4hbmmIlEa5dE1xGZlGJarSXOvtj2x0NywD4-PF-iAAEVEv42t-itzrnrBGx2_zCwYA5zOGcJIbqP3XmB-4quakah7vtaJVZ9Y08Nbpwa-pP7wbwQjbYY5HTmpdif7XXH8T167SvXtYi9bNz6BbgJ70i3OA9bfmKMsj8OkMb9ax65Dqz8kGHMfngkXMZpdeSeHZBuFFTi2wYEUbQr8jGf0yZ4LpvTNm");'>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-[1440px] mx-auto flex flex-col lg:flex-row gap-8 px-6 lg:px-20 py-8">
+<aside class="w-full lg:w-72 flex-shrink-0">
+<div class="sticky top-24 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm max-h-[calc(100vh-120px)] overflow-y-auto">
+<div class="flex items-center justify-between mb-6">
+<h1 class="text-slate-900 dark:text-white text-lg font-bold">Bộ lọc</h1>
+<button class="text-primary text-xs font-bold uppercase tracking-wider hover:underline">Đặt lại</button>
+</div>
+<div class="space-y-4">
+<div class="p-3 bg-primary/5 border border-primary/20 rounded-lg">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl filled-icon">auto_awesome</span>
+<span class="text-sm font-bold text-slate-900 dark:text-white">Gợi ý AI (AI-FE-01)</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</div>
+<p class="text-[10px] text-slate-500 mt-1 leading-tight">Tối ưu hóa gợi ý dựa trên triệu chứng của bạn</p>
+</div>
+<details class="border-b border-slate-100 dark:border-slate-800 pb-4" open="">
+<summary class="flex items-center justify-between cursor-pointer group">
+<span class="text-slate-900 dark:text-white text-xs font-bold uppercase tracking-widest">Chuyên khoa</span>
+<span class="material-symbols-outlined text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<div class="mt-3 space-y-2">
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-sm font-medium text-slate-700 dark:text-slate-300">Tim mạch</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-sm font-medium text-slate-700 dark:text-slate-300">Nhi khoa</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-sm font-medium text-slate-700 dark:text-slate-300">Da liễu</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-sm font-medium text-slate-700 dark:text-slate-300">Thần kinh</span>
+</label>
+</div>
+</details>
+<details class="border-b border-slate-100 dark:border-slate-800 pb-4" open="">
+<summary class="flex items-center justify-between cursor-pointer group">
+<span class="text-slate-900 dark:text-white text-xs font-bold uppercase tracking-widest">Địa điểm / Khoảng cách</span>
+<span class="material-symbols-outlined text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<div class="mt-3 space-y-3">
+<input class="w-full rounded-lg border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-sm py-2 px-3 focus:ring-primary" placeholder="Nhập mã bưu chính hoặc thành phố" type="text"/>
+<div class="space-y-1">
+<div class="flex justify-between text-[10px] font-bold text-slate-500">
+<span>1 Km</span>
+<span>50 Km</span>
+</div>
+<input class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary" type="range"/>
+<div class="text-center text-xs font-bold text-primary">Trong vòng 10 km</div>
+</div>
+</div>
+</details>
+<details class="border-b border-slate-100 dark:border-slate-800 pb-4" open="">
+<summary class="flex items-center justify-between cursor-pointer group">
+<span class="text-slate-900 dark:text-white text-xs font-bold uppercase tracking-widest">Bảo hiểm chấp nhận</span>
+<span class="material-symbols-outlined text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<div class="mt-3">
+<select class="w-full rounded-lg border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-primary">
+<option>Aetna</option>
+<option>Bảo Việt Healthcare</option>
+<option>PVI Insurance</option>
+<option>BHYT Nhà Nước</option>
+<option>Liberty Mutual</option>
+</select>
+</div>
+</details>
+<details class="border-b border-slate-100 dark:border-slate-800 pb-4" open="">
+<summary class="flex items-center justify-between cursor-pointer group">
+<span class="text-slate-900 dark:text-white text-xs font-bold uppercase tracking-widest">Trạng thái trống</span>
+<span class="material-symbols-outlined text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<div class="mt-3 space-y-2">
+<button class="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-transparent text-sm font-semibold hover:bg-slate-100 transition-colors">
+<span class="material-symbols-outlined text-sm">schedule</span> Thời gian thực: Hôm nay
+                        </button>
+<button class="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-transparent text-sm font-semibold hover:bg-slate-100 transition-colors">
+<span class="material-symbols-outlined text-sm">event</span> Ngày mai
+                        </button>
+<button class="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/10 text-primary border border-primary/20 text-sm font-semibold">
+<span class="material-symbols-outlined text-sm">calendar_month</span> 7 ngày tới
+                        </button>
+</div>
+</details>
+<details class="border-b border-slate-100 dark:border-slate-800 pb-4" open="">
+<summary class="flex items-center justify-between cursor-pointer group">
+<span class="text-slate-900 dark:text-white text-xs font-bold uppercase tracking-widest">Đánh giá</span>
+<span class="material-symbols-outlined text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<div class="mt-3 space-y-2">
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="text-primary focus:ring-primary bg-transparent" name="rating" type="radio"/>
+<div class="flex items-center gap-1 text-amber-400">
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+<span class="material-symbols-outlined filled-icon text-lg">star_half</span>
+<span class="text-slate-600 dark:text-slate-400 text-xs font-bold ml-1">4.5+ Sao</span>
+</div>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="text-primary focus:ring-primary bg-transparent" name="rating" type="radio"/>
+<div class="flex items-center gap-1 text-amber-400">
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+<span class="material-symbols-outlined text-slate-300 text-lg">star</span>
+<span class="text-slate-600 dark:text-slate-400 text-xs font-bold ml-1">4.0+ Sao</span>
+</div>
+</label>
+</div>
+</details>
+</div>
+<button class="w-full mt-8 py-3 bg-primary text-white rounded-lg font-bold text-sm shadow-md shadow-primary/20 hover:bg-blue-600 transition-all">
+                Áp dụng bộ lọc
+            </button>
+</div>
+</aside>
+<div class="flex-1">
+<nav class="flex items-center gap-2 mb-4 text-sm font-medium">
+<a class="text-slate-500 hover:text-primary" href="#">Trang chủ</a>
+<span class="text-slate-300">/</span>
+<span class="text-slate-900 dark:text-white">Tìm kiếm MediConnect</span>
+</nav>
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+<div>
+<h2 class="text-slate-900 dark:text-white text-3xl font-extrabold tracking-tight">0 Bác sĩ phù hợp với bộ lọc của bạn</h2>
+<p class="text-slate-500 dark:text-slate-400 mt-1">Xếp hạng AI cho Tim mạch tại Hà Nội với bảo hiểm Aetna</p>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-sm text-slate-500 font-medium">Sắp xếp theo:</span>
+<button class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-sm font-bold text-slate-900 dark:text-white opacity-50 cursor-not-allowed">
+                    Điểm phù hợp AI
+                    <span class="material-symbols-outlined">expand_more</span>
+</button>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-6">
+<div class="flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-xs font-bold border border-primary/20">
+                Gợi ý AI đang bật
+                <button class="material-symbols-outlined text-base">close</button>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full text-xs font-bold border border-slate-200 dark:border-slate-800">
+                Tim mạch
+                <button class="material-symbols-outlined text-base">close</button>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full text-xs font-bold border border-slate-200 dark:border-slate-800">
+                7 ngày tới
+                <button class="material-symbols-outlined text-base">close</button>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-12 shadow-sm text-center flex flex-col items-center">
+<div class="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-400 mb-6">
+<span class="material-symbols-outlined text-5xl">search_off</span>
+</div>
+<h3 class="text-slate-900 dark:text-white text-xl font-bold max-w-lg mb-3">
+                Rất tiếc, chúng tôi không tìm thấy bác sĩ nào phù hợp với các tiêu chí hiện tại của bạn.
+            </h3>
+<p class="text-slate-500 dark:text-slate-400 text-sm max-w-md mb-8 leading-relaxed">
+                Bạn có thể thử đặt lại bộ lọc hoặc xem tất cả lịch trống trong ngày để có nhiều lựa chọn hơn.
+            </p>
+<div class="flex flex-col sm:flex-row items-center gap-4 w-full justify-center mb-10">
+<a class="w-full sm:w-auto px-8 py-3.5 bg-primary text-white text-sm font-bold rounded-lg hover:bg-blue-600 hover:shadow-lg hover:shadow-primary/30 transition-all flex items-center justify-center gap-2" href="#">
+                    Xem lịch tổng quát
+                    <span class="material-symbols-outlined text-lg">arrow_forward</span>
+</a>
+<button class="w-full sm:w-auto px-8 py-3.5 bg-white dark:bg-transparent border-2 border-primary text-primary text-sm font-bold rounded-lg hover:bg-primary/5 transition-all">
+                    Đặt lại tất cả bộ lọc
+                </button>
+</div>
+<div class="flex items-center gap-3 py-3 px-5 bg-primary/5 border border-primary/10 rounded-full">
+<span class="material-symbols-outlined text-primary text-lg filled-icon">auto_awesome</span>
+<span class="text-xs font-medium text-slate-600 dark:text-slate-400">
+<span class="font-bold text-slate-900 dark:text-white">Gợi ý AI:</span> 
+                    Thử mở rộng khoảng cách hoặc thay đổi chuyên khoa để nhận đề xuất mới.
+                </span>
+</div>
+</div>
+</div>
+</main>
+<div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-40">
+<button class="flex items-center gap-3 bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl hover:scale-105 transition-transform font-bold tracking-tight">
+<span class="material-symbols-outlined">map</span>
+        Xem bản đồ
+    </button>
+</div>
+
+</body></html>

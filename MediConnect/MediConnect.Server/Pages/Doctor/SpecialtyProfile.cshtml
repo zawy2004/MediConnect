@@ -1,0 +1,47 @@
+@page
+@model MediConnect.Server.Pages.Doctor.SpecialtyProfileModel
+@{
+    ViewData["Title"] = "Hồ sơ chuyên môn";
+    ViewData["HideLayout"] = true;
+}
+
+@if (Model.Data?.Doctor != null)
+{
+    <div class="min-h-screen bg-[#f8fafc] flex">
+        @await Html.PartialAsync("_DoctorSidebar", "specialty")
+        <main class="flex-1 overflow-y-auto p-8 space-y-6">
+        <div class="bg-white border rounded-2xl p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-5xl font-black">@Model.Data.Doctor.FullName</h1>
+                <p class="text-slate-500 mt-1">@Model.Data.Doctor.DepartmentName • @Model.Data.Doctor.YearsOfExperience năm kinh nghiệm</p>
+                <span class="inline-flex mt-3 px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-bold">Đã xác minh chuyên môn</span>
+            </div>
+            <div class="bg-indigo-50 border border-indigo-200 rounded-2xl px-4 py-3 text-right">
+                <p class="text-xs text-indigo-500">Trạng thái gói</p>
+                <p class="font-semibold text-indigo-700">@Model.Data.MembershipPlan</p>
+                <p class="text-xs text-indigo-500">Hết hạn: @Model.Data.MembershipExpiresAt.ToString("dd/MM/yyyy")</p>
+            </div>
+        </div>
+
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 bg-white border rounded-2xl p-6">
+                <h2 class="text-2xl font-bold">Thông tin chuyên môn</h2>
+                <p class="text-slate-600 mt-3">@Model.Data.Doctor.Bio</p>
+                <p class="text-sm text-slate-500 mt-4">Học vấn: @Model.Data.Doctor.Education</p>
+                <p class="text-sm text-slate-500">Chuyên khoa: @string.Join(", ", Model.Data.Doctor.Specialties)</p>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-blue-600 text-white rounded-2xl p-5">
+                    <h3 class="font-bold">Xu hướng khu vực</h3>
+                    <p class="text-sm mt-2">@Model.Data.AiTrend</p>
+                </div>
+                <div class="bg-indigo-600 text-white rounded-2xl p-5">
+                    <h3 class="font-bold">Khuyến nghị AI</h3>
+                    <p class="text-sm mt-2">@Model.Data.AiRecommendation</p>
+                </div>
+                <a asp-page="/Doctor/Profile" class="block text-center px-4 py-2 bg-primary text-white rounded-xl no-underline">Cập nhật hồ sơ</a>
+            </div>
+        </section>
+        </main>
+    </div>
+}

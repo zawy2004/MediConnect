@@ -1,0 +1,37 @@
+@page
+@model MediConnect.Server.Pages.Doctor.MembershipModel
+@{
+    ViewData["Title"] = "Gói thành viên";
+}
+
+<div class="min-h-screen bg-[#f8fafc]">
+    <div class="max-w-[1200px] mx-auto px-6 py-8">
+        <h1 class="text-5xl font-black">Chọn Gói Thành Viên</h1>
+        <p class="text-slate-500 mt-2">Nâng cấp để tối ưu hiệu suất làm việc và kết nối với bệnh nhân hiệu quả hơn.</p>
+
+        <form method="post" class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+        @foreach (var plan in Model.Data.Plans)
+        {
+            <label class="border rounded-2xl p-6 bg-white cursor-pointer relative @(plan.IsRecommended ? "border-2 border-primary shadow-lg scale-[1.02]" : "")">
+                @if (plan.IsRecommended)
+                {
+                    <span class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-white text-[10px] font-bold uppercase">Khuyên dùng</span>
+                }
+                <input type="radio" asp-for="PlanCode" value="@plan.PlanCode" class="mr-2" checked="@(Model.PlanCode == plan.PlanCode)" />
+                <span class="font-bold">@plan.PlanName</span>
+                <p class="text-3xl font-black mt-2">@(plan.Price == 0 ? "Miễn phí" : $"{plan.Price:N0}đ")</p>
+                <ul class="text-sm text-slate-600 mt-3 space-y-1">
+                    @foreach (var feature in plan.Features)
+                    {
+                        <li class="flex items-start gap-2"><span class="material-symbols-outlined text-base text-primary">check_circle</span><span>@feature</span></li>
+                    }
+                </ul>
+            </label>
+        }
+
+        <div class="md:col-span-3">
+            <button type="submit" class="px-6 py-3 bg-primary text-white rounded-xl font-semibold">Tiếp tục thanh toán</button>
+        </div>
+    </form>
+    </div>
+</div>

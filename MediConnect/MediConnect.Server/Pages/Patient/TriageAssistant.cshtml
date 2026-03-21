@@ -1,0 +1,52 @@
+@page
+@model MediConnect.Server.Pages.Patient.TriageAssistantModel
+@{
+    ViewData["Title"] = "Trợ lý đánh giá triệu chứng";
+}
+
+<div class="max-w-[1280px] mx-auto px-6 py-8">
+    <h1 class="text-3xl font-black mb-5">Trợ lý đánh giá triệu chứng</h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <section class="lg:col-span-2 bg-white border border-slate-200 rounded-xl p-5">
+            <p class="text-slate-500 mb-4">Mô tả triệu chứng càng chi tiết, gợi ý càng chính xác.</p>
+            <form method="post" class="space-y-3">
+                <textarea asp-for="SymptomText" rows="5" class="w-full rounded-lg border-slate-200" placeholder="Ví dụ: Tôi bị tức ngực và khó thở khi vận động..."></textarea>
+                <span asp-validation-for="SymptomText" class="text-red-500 text-sm"></span>
+                <button type="submit" class="px-5 py-2 bg-primary text-white rounded-lg font-semibold">Phân tích bởi AI</button>
+            </form>
+
+            <div class="mt-5 rounded-lg border border-blue-100 bg-blue-50 p-4">
+                <p class="text-xs text-primary font-semibold uppercase">Phản hồi từ MediConnect AI</p>
+                <p class="mt-2">@Model.AssistantReply</p>
+            </div>
+        </section>
+
+        <aside class="bg-white border border-slate-200 rounded-xl p-5 space-y-4">
+            <div>
+                <p class="text-sm text-slate-500">Chuyên khoa đề xuất</p>
+                <p class="text-2xl font-black mt-1">@Model.SuggestedSpecialty</p>
+            </div>
+            <div>
+                <p class="text-sm text-slate-500">Mức độ ưu tiên</p>
+                <p class="text-2xl font-black text-red-500 mt-1">@Model.RiskScore%</p>
+            </div>
+            <a asp-page="/Patient/DoctorSearch" asp-route-searchTerm="@Model.SuggestedSpecialty" class="block text-center py-2 bg-primary text-white rounded-lg no-underline">Tìm bác sĩ phù hợp</a>
+        </aside>
+    </div>
+
+    <section class="mt-6 bg-white border border-slate-200 rounded-xl p-5">
+        <h2 class="text-xl font-bold mb-3">Bác sĩ đề xuất</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            @foreach (var doctor in Model.SuggestedDoctors)
+            {
+                <div class="border border-slate-200 rounded-lg p-4">
+                    <p class="font-semibold">@doctor.FullName</p>
+                    <p class="text-sm text-slate-500">@doctor.DepartmentName</p>
+                    <p class="text-sm mt-1">⭐ @doctor.AverageRating.ToString("0.0")</p>
+                    <a asp-page="/Patient/AppointmentConfirm" asp-route-doctorUserId="@doctor.UserId" class="inline-block mt-3 text-primary text-sm font-semibold no-underline">Đặt lịch ngay →</a>
+                </div>
+            }
+        </div>
+    </section>
+</div>

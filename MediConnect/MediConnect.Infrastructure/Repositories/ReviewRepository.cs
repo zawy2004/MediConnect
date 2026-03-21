@@ -24,4 +24,13 @@ public class ReviewRepository : IReviewRepository
             .Take(take)
             .ToListAsync();
     }
+
+    public async Task<List<Review>> GetByDateRangeAsync(DateTime fromDate, DateTime toDate)
+    {
+        return await _context.Reviews
+            .AsNoTracking()
+            .Where(r => r.CreatedAt >= fromDate && r.CreatedAt <= toDate)
+            .OrderByDescending(r => r.CreatedAt)
+            .ToListAsync();
+    }
 }

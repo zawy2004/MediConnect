@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Hồ sơ Sức khỏe Cá nhân - MediConnect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            .chart-bar { @apply bg-primary/20 hover:bg-primary transition-colors rounded-t-sm; }
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<header class="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="bg-primary text-white p-1.5 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined !text-[24px]">medical_services</span>
+</div>
+<h1 class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">MediConnect</h1>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Bảng điều khiển</a>
+<a class="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Tìm bác sĩ</a>
+<a class="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Lịch hẹn</a>
+<a class="text-sm font-semibold text-primary" href="#">Hồ sơ sức khỏe</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-background-dark"></span>
+</button>
+<div class="h-8 w-8 rounded-full bg-cover bg-center border border-slate-200 dark:border-slate-700" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCyCb3d1iuzNGESSMHhWSd1_b-ZzMcCwtfFONSiACkvRHaHmstHc9TpSIQJWCLfgMlZVCJM62dyLGoKAeU4XlC5-hdtpTmDNGXgTWE2XxB-WV8k-NDamC_UqkbmrHyXb8jjwhIAuJ1Kz0gFARQcflG57CfhpqTTSnomWTGyDdKg_S5mV2vSarzbRcZwy2A5Tv7TsSosN6AYmgVVoIWqoN2PRbxLQ2pNru9zFdGuKL0Yfo-PFUK3SFsMV2eSSz8AfKmKtddiUsU8A1Xl");'></div>
+</div>
+</div>
+</header>
+<main class="flex-1 max-w-7xl mx-auto w-full px-6 py-8">
+<div class="flex flex-col md:flex-row gap-8 items-start mb-8">
+<div class="flex items-center gap-6 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 w-full">
+<div class="relative">
+<div class="w-24 h-24 rounded-full bg-cover bg-center border-4 border-white dark:border-slate-800 shadow-md" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCyCb3d1iuzNGESSMHhWSd1_b-ZzMcCwtfFONSiACkvRHaHmstHc9TpSIQJWCLfgMlZVCJM62dyLGoKAeU4XlC5-hdtpTmDNGXgTWE2XxB-WV8k-NDamC_UqkbmrHyXb8jjwhIAuJ1Kz0gFARQcflG57CfhpqTTSnomWTGyDdKg_S5mV2vSarzbRcZwy2A5Tv7TsSosN6AYmgVVoIWqoN2PRbxLQ2pNru9zFdGuKL0Yfo-PFUK3SFsMV2eSSz8AfKmKtddiUsU8A1Xl");'></div>
+<button class="absolute bottom-0 right-0 bg-primary text-white p-1.5 rounded-full border-2 border-white dark:border-slate-900">
+<span class="material-symbols-outlined !text-[16px]">edit</span>
+</button>
+</div>
+<div>
+<h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">Nguyễn Minh Anh</h2>
+<div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 mt-1">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span class="text-sm font-medium">Thành viên từ 2023</span>
+</div>
+</div>
+<div class="ml-auto hidden lg:flex gap-3">
+<div class="text-center px-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl">
+<p class="text-[10px] font-bold text-slate-400 uppercase">Nhóm máu</p>
+<p class="text-lg font-bold text-red-500">O+</p>
+</div>
+<div class="text-center px-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl">
+<p class="text-[10px] font-bold text-slate-400 uppercase">BMI</p>
+<p class="text-lg font-bold text-emerald-500">22.4</p>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<div class="lg:col-span-8 space-y-8">
+<div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined animate-pulse">ac_unit</span>
+<span class="text-xs font-bold uppercase tracking-wider opacity-80">Cảnh báo mùa đông (AI-Generated)</span>
+</div>
+<h3 class="text-xl font-bold mb-3">Nguy cơ cúm mùa &amp; bệnh hô hấp tăng cao</h3>
+<p class="text-blue-100 text-sm mb-4 max-w-2xl leading-relaxed">
+                        Dựa trên dữ liệu thời tiết khu vực và hồ sơ tiền sử hen suyễn nhẹ của bạn, MediConnect AI khuyến nghị: 
+                        Giữ ấm vùng cổ, tiêm nhắc lại vắc xin cúm và tránh tiếp xúc gần với người đang có triệu chứng ho, sốt.
+                    </p>
+<div class="flex gap-4">
+<button class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm font-bold transition-colors">Xem hướng dẫn</button>
+<button class="bg-white text-primary px-4 py-2 rounded-lg text-sm font-bold transition-colors">Đặt lịch tiêm phòng</button>
+</div>
+</div>
+<span class="material-symbols-outlined absolute -right-8 -bottom-8 !text-[200px] opacity-10 rotate-12">health_and_safety</span>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-800">
+<div class="flex items-center justify-between mb-8">
+<h3 class="text-lg font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">monitoring</span>
+                        Chỉ số sức khỏe
+                    </h3>
+<select class="text-sm bg-slate-50 dark:bg-slate-800 border-none rounded-lg focus:ring-primary">
+<option>6 tháng qua</option>
+<option>1 năm qua</option>
+</select>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div>
+<div class="flex items-center justify-between mb-4">
+<p class="text-sm font-bold text-slate-500 uppercase tracking-tighter">Cân nặng (kg)</p>
+<span class="text-xs font-semibold text-emerald-500">-1.2kg vs tháng trước</span>
+</div>
+<div class="h-40 flex items-end gap-2 px-2">
+<div class="flex-1 chart-bar h-[65%]" title="Tháng 5: 66kg"></div>
+<div class="flex-1 chart-bar h-[70%]" title="Tháng 6: 67kg"></div>
+<div class="flex-1 chart-bar h-[68%]" title="Tháng 7: 66.5kg"></div>
+<div class="flex-1 chart-bar h-[62%]" title="Tháng 8: 65.8kg"></div>
+<div class="flex-1 chart-bar h-[60%]" title="Tháng 9: 65.2kg"></div>
+<div class="flex-1 bg-primary h-[58%]" title="Tháng 10: 64.8kg"></div>
+</div>
+<div class="flex justify-between mt-2 px-2">
+<span class="text-[10px] font-bold text-slate-400 uppercase">T5</span>
+<span class="text-[10px] font-bold text-slate-400 uppercase">T6</span>
+<span class="text-[10px] font-bold text-slate-400 uppercase">T7</span>
+<span class="text-[10px] font-bold text-slate-400 uppercase">T8</span>
+<span class="text-[10px] font-bold text-slate-400 uppercase">T9</span>
+<span class="text-[10px] font-bold text-slate-400 uppercase">T10</span>
+</div>
+</div>
+<div>
+<div class="flex items-center justify-between mb-4">
+<p class="text-sm font-bold text-slate-500 uppercase tracking-tighter">Huyết áp (mmHg)</p>
+<span class="text-xs font-semibold text-amber-500">Xu hướng tăng nhẹ</span>
+</div>
+<div class="relative h-40 w-full border-l border-b border-slate-100 dark:border-slate-800">
+<svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
+<path d="M0 40 L20 35 L40 38 L60 30 L80 32 L100 25" fill="none" stroke="#137fec" stroke-width="2"></path>
+<circle cx="0" cy="40" fill="#137fec" r="2"></circle>
+<circle cx="20" cy="35" fill="#137fec" r="2"></circle>
+<circle cx="40" cy="38" fill="#137fec" r="2"></circle>
+<circle cx="60" cy="30" fill="#137fec" r="2"></circle>
+<circle cx="80" cy="32" fill="#137fec" r="2"></circle>
+<circle cx="100" cy="25" fill="#137fec" r="3"></circle>
+</svg>
+</div>
+<div class="flex justify-between mt-2 px-2">
+<span class="text-[10px] font-bold text-slate-400 uppercase">T5</span>
+<span class="text-[10px] font-bold text-slate-400 uppercase">T6</span>
+<span class="text-[10px] font-bold text-slate-400 uppercase">T7</span>
+<span class="text-[10px] font-bold text-slate-400 uppercase">T8</span>
+<span class="text-[10px] font-bold text-slate-400 uppercase">T9</span>
+<span class="text-[10px] font-bold text-slate-400 uppercase">T10</span>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+<div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<h3 class="text-lg font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">history</span>
+                        Lịch sử khám bệnh
+                    </h3>
+<button class="text-sm font-bold text-primary hover:underline">Xem tất cả</button>
+</div>
+<div class="divide-y divide-slate-100 dark:divide-slate-800">
+<div class="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">stethoscope</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white">Kiểm tra Nội hô hấp</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400">PGS.TS. BS. Marcus Chen • 22/10/2023</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-1 text-xs font-bold px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg hover:bg-slate-200 transition-colors">
+<span class="material-symbols-outlined text-[16px]">description</span>
+                                Hồ sơ PDF
+                            </button>
+<button class="flex items-center gap-1 text-xs font-bold px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg hover:bg-slate-200 transition-colors">
+<span class="material-symbols-outlined text-[16px]">biotech</span>
+                                Kết quả xét nghiệm
+                            </button>
+</div>
+</div>
+<div class="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">dentistry</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white">Khám Răng hàm mặt</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400">ThS. BS. Lê Hoài Nam • 15/05/2023</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-1 text-xs font-bold px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg hover:bg-slate-200 transition-colors">
+<span class="material-symbols-outlined text-[16px]">description</span>
+                                Hồ sơ PDF
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-4 space-y-6">
+<div class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-800">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest">Thông tin cá nhân</h3>
+<button class="text-primary material-symbols-outlined !text-[20px]">edit</button>
+</div>
+<div class="space-y-4">
+<div>
+<p class="text-[10px] font-bold text-slate-400 uppercase">Họ và tên</p>
+<p class="text-sm font-bold text-slate-900 dark:text-white">Nguyễn Minh Anh</p>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<p class="text-[10px] font-bold text-slate-400 uppercase">Ngày sinh</p>
+<p class="text-sm font-bold text-slate-900 dark:text-white">12/04/1995</p>
+</div>
+<div>
+<p class="text-[10px] font-bold text-slate-400 uppercase">Giới tính</p>
+<p class="text-sm font-bold text-slate-900 dark:text-white">Nam</p>
+</div>
+</div>
+<div>
+<p class="text-[10px] font-bold text-slate-400 uppercase">Nhóm máu</p>
+<p class="text-sm font-bold text-slate-900 dark:text-white">O+ (Dương tính)</p>
+</div>
+<div>
+<p class="text-[10px] font-bold text-slate-400 uppercase">Dị ứng</p>
+<div class="flex flex-wrap gap-2 mt-1">
+<span class="px-2 py-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-[11px] font-bold rounded">Hải sản</span>
+<span class="px-2 py-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-[11px] font-bold rounded">Penicillin</span>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-slate-900 dark:bg-slate-950 rounded-2xl p-6 shadow-xl border border-slate-800 text-white relative overflow-hidden">
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary">psychology</span>
+<h3 class="text-sm font-bold uppercase tracking-widest">AI Health Insights</h3>
+</div>
+<div class="space-y-4">
+<div class="p-3 bg-white/5 rounded-xl border border-white/10">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-amber-500 text-[18px]">warning</span>
+<p class="text-xs font-bold text-amber-500">Cần chú ý huyết áp</p>
+</div>
+<p class="text-[11px] text-slate-400 leading-relaxed">Huyết áp tâm thu của bạn có xu hướng tăng trong 3 tháng qua (trung bình 135/85). Hãy giảm lượng muối và theo dõi thêm.</p>
+</div>
+<div class="p-3 bg-white/5 rounded-xl border border-white/10">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-emerald-500 text-[18px]">verified</span>
+<p class="text-xs font-bold text-emerald-500">Kiểm soát cân nặng tốt</p>
+</div>
+<p class="text-[11px] text-slate-400 leading-relaxed">Bạn đã giảm 1.2kg trong tháng qua, đưa chỉ số BMI về mức lý tưởng 22.4.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-800">
+<h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Khuyến nghị cá nhân</h3>
+<div class="space-y-4">
+<div class="flex gap-3 items-start">
+<span class="material-symbols-outlined text-primary text-[20px]">calendar_month</span>
+<div>
+<p class="text-xs font-bold text-slate-900 dark:text-white">Khám tổng quát định kỳ</p>
+<p class="text-[11px] text-slate-500 mt-0.5">Dự kiến: 15/12/2023</p>
+</div>
+</div>
+<div class="flex gap-3 items-start">
+<span class="material-symbols-outlined text-primary text-[20px]">directions_run</span>
+<div>
+<p class="text-xs font-bold text-slate-900 dark:text-white">Thay đổi lối sống</p>
+<p class="text-[11px] text-slate-500 mt-0.5">Tăng cường vận động 30p/ngày để cải thiện chỉ số huyết áp.</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 py-3 bg-primary text-white rounded-xl font-bold text-sm hover:bg-primary/90 transition-all">
+                    Đặt lịch khám tiếp theo
+                </button>
+</div>
+</div>
+</div>
+</main>
+<footer class="w-full py-8 px-6 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark mt-auto">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+<div class="flex flex-col md:flex-row items-center gap-6">
+<div class="flex items-center gap-2">
+<div class="bg-primary/10 text-primary p-1 rounded flex items-center justify-center">
+<span class="material-symbols-outlined !text-[18px]">medical_services</span>
+</div>
+<span class="font-bold text-slate-900 dark:text-white">MediConnect</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800/30 rounded-full">
+<span class="material-symbols-outlined text-emerald-600 text-[14px]">verified_user</span>
+<span class="text-[10px] font-black uppercase text-emerald-600 tracking-wider">Tuân thủ HIPAA</span>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full">
+<span class="material-symbols-outlined text-slate-600 text-[14px]">encrypted</span>
+<span class="text-[10px] font-black uppercase text-slate-600 tracking-wider">Mã hóa 256-bit</span>
+</div>
+</div>
+</div>
+<div class="text-center md:text-right">
+<p class="text-[11px] text-slate-400">© 2024 MediConnect Healthcare Systems. Ngôn ngữ: Tiếng Việt</p>
+<div class="flex gap-4 mt-2 justify-center md:justify-end">
+<a class="text-[11px] font-bold text-slate-500 hover:text-primary" href="#">Quyền riêng tư</a>
+<a class="text-[11px] font-bold text-slate-500 hover:text-primary" href="#">Điều khoản</a>
+<a class="text-[11px] font-bold text-slate-500 hover:text-primary" href="#">Trợ giúp</a>
+</div>
+</div>
+</div>
+</footer>
+
+</body></html>

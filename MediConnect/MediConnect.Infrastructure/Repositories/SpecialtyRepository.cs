@@ -34,4 +34,10 @@ public class SpecialtyRepository : ISpecialtyRepository
     {
         return await _context.Specialties.CountAsync(s => s.IsActive);
     }
+
+    public Task UpdateAsync(Specialty specialty)
+    {
+        _context.Specialties.Update(specialty);
+        return Task.CompletedTask;
+    }
 }

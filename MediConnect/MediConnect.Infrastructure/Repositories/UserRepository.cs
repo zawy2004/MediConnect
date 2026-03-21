@@ -34,6 +34,47 @@ public class UserRepository : IUserRepository
         return await _context.Users.AnyAsync(u => u.Email == email);
     }
 
+    public async Task<List<User>> GetRecentUsersAsync(int take)
+    {
+        return await _context.Users
+            .AsNoTracking()
+            .Include(u => u.Role)
+            .OrderByDescending(u => u.CreatedAt)
+            .Take(take)
+            .ToListAsync();
+    }
+
+    public async Task<List<User>> SearchUsersAsync(string? searchTerm, string? roleName, int take = 200)
+    {
+        var query = _context.Users
+            .AsNoTracking()
+            .Include(u => u.Role)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(u =>
+                u.FullName.Contains(searchTerm) ||
+                u.Email.Contains(searchTerm) ||
+                (u.PhoneNumber != null && u.PhoneNumber.Contains(searchTerm)));
+        }
+
+        if (!string.IsNullOrWhiteSpace(roleName))
+        {
+            query = query.Where(u => u.Role.RoleName == roleName);
+        }
+
+        return await query
+            .OrderByDescending(u => u.CreatedAt)
+            .Take(take)
+            .ToListAsync();
+    }
+
+    public async Task<int> CountAllActiveAsync()
+    {
+        return await _context.Users.CountAsync(u => u.IsActive);
+    }
+
     public Task<User> CreateAsync(User user)
     {
         _context.Users.Add(user);

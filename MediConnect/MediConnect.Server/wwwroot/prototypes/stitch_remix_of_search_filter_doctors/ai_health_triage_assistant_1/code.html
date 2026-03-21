@@ -1,0 +1,483 @@
+<!doctype html>
+<html class="light" lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Xác nhận Đặt lịch &amp; Thanh toán - MediConnect</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#137fec",
+              "background-light": "#f6f7f8",
+              "background-dark": "#101922",
+            },
+            fontFamily: {
+              display: ["Manrope"],
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+    <style type="text/tailwindcss">
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .loading-spinner {
+        animation: spin 1s linear infinite;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col"
+  >
+    <header
+      class="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md"
+    >
+      <div
+        class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            class="bg-primary text-white p-1.5 rounded-lg flex items-center justify-center"
+          >
+            <span class="material-symbols-outlined !text-[24px]"
+              >medical_services</span
+            >
+          </div>
+          <h1
+            class="text-lg font-bold tracking-tight text-slate-900 dark:text-white"
+          >
+            MediConnect
+          </h1>
+        </div>
+        <nav class="hidden md:flex items-center gap-8">
+          <a
+            class="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors"
+            href="#"
+            >Bảng điều khiển</a
+          >
+          <a
+            class="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors"
+            href="#"
+            >Tìm bác sĩ</a
+          >
+          <a class="text-sm font-semibold text-primary" href="#">Lịch hẹn</a>
+          <a
+            class="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors"
+            href="#"
+            >Hồ sơ</a
+          >
+        </nav>
+        <div class="flex items-center gap-4">
+          <button
+            class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors relative"
+          >
+            <span class="material-symbols-outlined">notifications</span>
+            <span
+              class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-background-dark"
+            ></span>
+          </button>
+          <div
+            class="h-8 w-8 rounded-full bg-cover bg-center border border-slate-200 dark:border-slate-700"
+            style="
+              background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuCyCb3d1iuzNGESSMHhWSd1_b-ZzMcCwtfFONSiACkvRHaHmstHc9TpSIQJWCLfgMlZVCJM62dyLGoKAeU4XlC5-hdtpTmDNGXgTWE2XxB-WV8k-NDamC_UqkbmrHyXb8jjwhIAuJ1Kz0gFARQcflG57CfhpqTTSnomWTGyDdKg_S5mV2vSarzbRcZwy2A5Tv7TsSosN6AYmgVVoIWqoN2PRbxLQ2pNru9zFdGuKL0Yfo-PFUK3SFsMV2eSSz8AfKmKtddiUsU8A1Xl&quot;);
+            "
+          ></div>
+        </div>
+      </div>
+    </header>
+    <main class="flex-1 max-w-6xl mx-auto w-full px-6 py-8">
+      <div class="mb-8">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">
+            Xác nhận &amp; Thanh toán
+          </h2>
+          <span
+            class="text-sm font-bold text-primary px-3 py-1 bg-primary/10 rounded-full"
+            >Bước cuối cùng</span
+          >
+        </div>
+        <div
+          class="relative w-full h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden"
+        >
+          <div
+            class="absolute top-0 left-0 h-full bg-primary transition-all duration-500"
+            style="width: 100%"
+          ></div>
+        </div>
+        <div
+          class="flex justify-between mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest"
+        >
+          <span>Chọn bác sĩ &amp; Thời gian</span>
+          <span class="text-primary">Xác nhận &amp; Thanh toán</span>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="lg:col-span-7 space-y-6">
+          <div
+            class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-800"
+          >
+            <h3
+              class="text-lg font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2"
+            >
+              <span class="material-symbols-outlined text-primary">person</span>
+              Thông tin bệnh nhân
+            </h3>
+            <div class="space-y-6">
+              <div class="grid grid-cols-2 gap-4">
+                <label
+                  class="relative flex items-center p-4 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:border-primary transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/5"
+                >
+                  <input
+                    checked=""
+                    class="w-4 h-4 text-primary border-slate-300 focus:ring-primary"
+                    name="patient_type"
+                    type="radio"
+                  />
+                  <div class="ml-3">
+                    <span class="text-sm font-bold block dark:text-white"
+                      >Sử dụng thông tin tài khoản</span
+                    >
+                    <span class="text-xs text-slate-500"
+                      >Tự động điền từ hồ sơ của bạn</span
+                    >
+                  </div>
+                </label>
+                <label
+                  class="relative flex items-center p-4 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:border-primary transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/5"
+                >
+                  <input
+                    class="w-4 h-4 text-primary border-slate-300 focus:ring-primary"
+                    name="patient_type"
+                    type="radio"
+                  />
+                  <div class="ml-3">
+                    <span class="text-sm font-bold block dark:text-white"
+                      >Đặt cho người khác</span
+                    >
+                    <span class="text-xs text-slate-500"
+                      >Nhập thông tin người thân</span
+                    >
+                  </div>
+                </label>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                  <p class="text-[11px] font-bold text-slate-400 uppercase">
+                    Họ và tên
+                  </p>
+                  <div
+                    class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-xl px-4 py-3 text-sm font-semibold dark:text-white"
+                  >
+                    Nguyễn Văn A
+                  </div>
+                </div>
+                <div class="space-y-1.5">
+                  <p class="text-[11px] font-bold text-slate-400 uppercase">
+                    Số điện thoại
+                  </p>
+                  <div
+                    class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-xl px-4 py-3 text-sm font-semibold dark:text-white"
+                  >
+                    0901 234 567
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-800"
+          >
+            <h3
+              class="text-lg font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2"
+            >
+              <span class="material-symbols-outlined text-primary"
+                >monitor_heart</span
+              >
+              Tình trạng sức khỏe
+            </h3>
+            <div class="space-y-5">
+              <div>
+                <label
+                  class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 block"
+                  >Lý do khám</label
+                >
+                <select
+                  class="w-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white"
+                >
+                  <option value="">Chọn lý do khám</option>
+                  <option value="checkup">Khám tổng quát/định kỳ</option>
+                  <option value="followup">Tái khám</option>
+                  <option value="emergency">Triệu chứng cấp tính</option>
+                  <option value="other">Lý do khác</option>
+                </select>
+              </div>
+              <div>
+                <label
+                  class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 block"
+                  >Triệu chứng/Tình trạng cơ bản</label
+                >
+                <div class="relative">
+                  <div
+                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-600 dark:text-slate-300 flex items-center justify-between"
+                  >
+                    <span>Ho khan, tức ngực</span>
+                    <span
+                      class="flex items-center gap-1 text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full uppercase tracking-tighter"
+                    >
+                      <span class="material-symbols-outlined text-[14px]"
+                        >psychology</span
+                      >
+                      Phân tích bởi AI
+                    </span>
+                  </div>
+                </div>
+                <p class="mt-2 text-[11px] text-slate-400 italic">
+                  * Dữ liệu được trích xuất từ cuộc hội thoại với trợ lý ảo
+                  MediConnect.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lg:col-span-5 space-y-6">
+          <div
+            class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden sticky top-24"
+          >
+            <div class="p-6 border-b border-slate-100 dark:border-slate-800">
+              <h3
+                class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6"
+              >
+                Tóm tắt lịch hẹn
+              </h3>
+              <div class="flex gap-4 items-start">
+                <div
+                  class="w-16 h-16 shrink-0 rounded-xl bg-cover bg-center border border-slate-100 dark:border-slate-700"
+                  style="
+                    background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuByFbojMSUWEHxhQTJCPu6DcXFMMVDQdZqu2zyXreYzo0ehlyA5TvBGkEZqWQO2_jbFvXOg5KIGPsmD4oFm7ZZxacar2kTF5_bYiOwQGGaUfRIZwe-PAnfqKzh_tL2BMtA0OnX587PX9hDFN2dWZYjsGNKSA1XDlWEk3hzR_VwXF22d1exb8Cqn2OUft_q1J6CCTuccrJkXU7xrGWrVF38YlZ3wgN005HKpkSGhTNqMRk4SxA4QLle4VIYvzueWaxRCA08koK0ximzF&quot;);
+                  "
+                ></div>
+                <div class="space-y-1">
+                  <h4 class="font-bold text-slate-900 dark:text-white">
+                    PGS.TS. BS. Marcus Chen
+                  </h4>
+                  <p class="text-xs text-primary font-bold">
+                    Chuyên gia Nội hô hấp
+                  </p>
+                  <div class="space-y-1.5 pt-1">
+                    <p class="text-xs text-slate-500 flex items-center gap-1.5">
+                      <span
+                        class="material-symbols-outlined text-[16px] text-slate-400"
+                        >calendar_month</span
+                      >
+                      <span class="font-medium">08:30, Thứ Hai - 22/10</span>
+                    </p>
+                    <p class="text-xs text-slate-500 flex items-center gap-1.5">
+                      <span
+                        class="material-symbols-outlined text-[16px] text-slate-400"
+                        >schedule</span
+                      >
+                      <span class="font-medium">Thời lượng: 30 phút</span>
+                    </p>
+                    <p class="text-xs text-slate-500 flex items-center gap-1.5">
+                      <span
+                        class="material-symbols-outlined text-[16px] text-slate-400"
+                        >location_on</span
+                      >
+                      <span
+                        class="font-medium text-slate-600 dark:text-slate-400"
+                        >Địa điểm: Phòng khám MediConnect (Tầng 4)</span
+                      >
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-6 bg-slate-50/50 dark:bg-slate-800/30">
+              <div class="flex items-center justify-between mb-6">
+                <span
+                  class="text-sm font-bold text-slate-700 dark:text-slate-300"
+                  >Tổng tiền thanh toán</span
+                >
+                <span class="text-2xl font-black text-primary">500.000đ</span>
+              </div>
+              <div class="space-y-3">
+                <p
+                  class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2"
+                >
+                  Chọn hình thức thanh toán
+                </p>
+                <label
+                  class="relative flex items-center p-3 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:border-primary transition-all has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary bg-white dark:bg-slate-900"
+                >
+                  <input
+                    checked=""
+                    class="w-4 h-4 text-primary border-slate-300"
+                    name="payment_method"
+                    type="radio"
+                  />
+                  <div class="ml-3 flex items-center justify-between w-full">
+                    <span class="text-sm font-semibold dark:text-white"
+                      >Thẻ Quốc tế</span
+                    >
+                    <div class="flex gap-1.5">
+                      <img
+                        alt="Visa"
+                        class="h-4"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhq-2KWI4wuRofyaoSoAW0RLQ--a210gL7qS489lDL_h6bJMgY2cAd5MG3cDiz6LZICdLFeIG5FWJnWnfqWS1HnVBlabne81KesqzFJxko8EopOZFK8Ade2pISuS6bRNn2bHvhQaJGbTEzjWgipCXLKZibNY7azQ_g3Ug_3nQd7uIgaP9KLlbBJ3L-BI3tlbXMzMxFwB7Ykk9xPJ991CmPRSjEqNqcRJ2YHjtCJ5Us3M1rn6pvCPc11kglx4kggLeRKFebD3bVE_uq"
+                      />
+                      <img
+                        alt="Mastercard"
+                        class="h-4"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrG4Q3EdDThSLd8PLYk1Vj7I287LVk5itIt0u0bfNZneeWbIitcBL5MWsQHMMgw35IyCvXlb3X29FAbBkcXcYfTxdtK_2uTCgJMP_s7Mlzuj-DHjg_XW6jFQ6-RdAiecH91PY5d_VI8b6nQsQvZQImzIAFDFUW5O2w_ZDrVpeWN93BDkdlvqzzpZ0xLe5j3RWIMx1wHR4uTB9gJ0KsBdqeHEhh1HE-248ABrkPbz_L9h5XGNPA35LZwKNQZT-ezHoFkmpipfCJ45p3"
+                      />
+                    </div>
+                  </div>
+                </label>
+                <label
+                  class="relative flex items-center p-3 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:border-primary transition-all has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary bg-white dark:bg-slate-900"
+                >
+                  <input
+                    class="w-4 h-4 text-primary border-slate-300"
+                    name="payment_method"
+                    type="radio"
+                  />
+                  <div class="ml-3 flex items-center justify-between w-full">
+                    <span class="text-sm font-semibold dark:text-white"
+                      >Ví MoMo</span
+                    >
+                    <img
+                      alt="MoMo"
+                      class="h-5 w-5 rounded"
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuApyLVwz21QguY46GpG-k1wq7nX0DBt8btr19IodmmTvJeKL4CZXJSMmSHWLsbalNm4AxHD_2VwMUVgMr_muJiXUaMbpTCxWDGbfhWKce7Z1yqKJG0NBqo9Tthkb-f3g7BP_DmD-CBent1VjAXlq8U-tVtwRh0mZwm8LTJjvjya_hODu8wSpGLK7Y_YD0Rnk9jG226I1iZije1TUMwxJJc6bXy9-6npf5ixL41aUJajJYzPJiSBtRstlc5936egEEl7te0Lxsk7kcnz"
+                    />
+                  </div>
+                </label>
+                <label
+                  class="relative flex items-center p-3 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:border-primary transition-all has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary bg-white dark:bg-slate-900"
+                >
+                  <input
+                    class="w-4 h-4 text-primary border-slate-300"
+                    name="payment_method"
+                    type="radio"
+                  />
+                  <div class="ml-3 flex items-center justify-between w-full">
+                    <span class="text-sm font-semibold dark:text-white"
+                      >VNPAY</span
+                    >
+                    <div class="bg-blue-600 px-1 rounded">
+                      <span class="text-[8px] font-bold text-white uppercase"
+                        >VNPAY</span
+                      >
+                    </div>
+                  </div>
+                </label>
+                <label
+                  class="relative flex items-center p-3 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:border-primary transition-all has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary bg-white dark:bg-slate-900"
+                >
+                  <input
+                    class="w-4 h-4 text-primary border-slate-300"
+                    name="payment_method"
+                    type="radio"
+                  />
+                  <div class="ml-3">
+                    <span class="text-sm font-semibold dark:text-white"
+                      >Thanh toán tại chỗ</span
+                    >
+                  </div>
+                </label>
+              </div>
+            </div>
+            <div class="p-6">
+              <label class="flex items-start gap-3 cursor-pointer mb-6">
+                <input
+                  class="mt-1 w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary"
+                  required=""
+                  type="checkbox"
+                />
+                <div
+                  class="text-[12px] leading-snug text-slate-500 dark:text-slate-400"
+                >
+                  Tôi đồng ý với
+                  <a class="text-primary hover:underline font-bold" href="#"
+                    >chính sách hủy lịch</a
+                  >
+                  và các điều khoản dịch vụ của MediConnect.
+                </div>
+              </label>
+              <button
+                class="w-full py-4 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center justify-center gap-2 group"
+              >
+                <span
+                  class="material-symbols-outlined text-[20px] loading-spinner hidden group-active:block"
+                  >sync</span
+                >
+                <span>Xác nhận &amp; Thanh toán</span>
+              </button>
+              <button
+                class="w-full mt-3 py-3 text-slate-500 text-sm font-semibold hover:text-slate-800 transition-colors"
+              >
+                Quay lại
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer
+      class="w-full py-6 px-6 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark mt-12"
+    >
+      <div
+        class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4"
+      >
+        <div class="flex items-center gap-4">
+          <div
+            class="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800/30 rounded-full"
+          >
+            <span class="material-symbols-outlined text-emerald-600 text-[14px]"
+              >verified_user</span
+            >
+            <span
+              class="text-[10px] font-black uppercase text-emerald-600 tracking-wider"
+              >Tuân thủ HIPAA</span
+            >
+          </div>
+          <div
+            class="flex items-center gap-1.5 px-3 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full"
+          >
+            <span class="material-symbols-outlined text-slate-600 text-[14px]"
+              >encrypted</span
+            >
+            <span
+              class="text-[10px] font-black uppercase text-slate-600 tracking-wider"
+              >Mã hóa 256-bit</span
+            >
+          </div>
+        </div>
+        <p class="text-[11px] text-slate-400">
+          © 2024 MediConnect Healthcare Systems. Ngôn ngữ: Tiếng Việt
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

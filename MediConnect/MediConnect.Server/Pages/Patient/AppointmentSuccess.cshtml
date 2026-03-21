@@ -1,0 +1,41 @@
+@page
+@model MediConnect.Server.Pages.Patient.AppointmentSuccessModel
+@{
+    ViewData["Title"] = "Đặt lịch thành công";
+}
+
+<div class="max-w-[980px] mx-auto px-6 py-12">
+    <div class="text-center">
+        <div class="w-20 h-20 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto">
+            <span class="material-symbols-outlined text-4xl">check_circle</span>
+        </div>
+        <h1 class="text-4xl font-black mt-4">Đặt lịch thành công!</h1>
+        <p class="text-slate-500 mt-2">Yêu cầu lịch hẹn của bạn đã được ghi nhận.</p>
+    </div>
+
+    @if (Model.Appointment != null)
+    {
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-white border border-slate-200 rounded-xl p-5">
+                <h2 class="font-bold text-lg mb-3">Chi tiết lịch hẹn</h2>
+                <p><span class="text-slate-500">Bác sĩ:</span> @Model.Appointment.DoctorName</p>
+                <p><span class="text-slate-500">Chuyên khoa:</span> @Model.Appointment.SpecialtyName</p>
+                <p><span class="text-slate-500">Thời gian:</span> @Model.Appointment.AppointmentDate.ToString("dd/MM/yyyy") - @Model.Appointment.StartTime.ToString("HH:mm")</p>
+                <p><span class="text-slate-500">Mã lịch hẹn:</span> #@Model.Appointment.AppointmentId</p>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-xl p-5">
+                <h2 class="font-bold text-lg mb-3">Lưu ý trước khi đi khám</h2>
+                <ul class="list-disc ml-5 text-slate-600 space-y-1 text-sm">
+                    <li>Có mặt trước 15 phút để check-in.</li>
+                    <li>Mang theo giấy tờ tùy thân và thẻ BHYT (nếu có).</li>
+                    <li>Tuân thủ hướng dẫn của phòng khám.</li>
+                </ul>
+            </div>
+        </div>
+    }
+
+    <div class="mt-6 flex justify-center gap-3">
+        <a asp-page="/Patient/Dashboard" class="px-5 py-3 bg-primary text-white rounded-lg font-semibold no-underline">Về trang chủ</a>
+        <a asp-page="/Appointments/Index" class="px-5 py-3 border border-slate-300 rounded-lg font-semibold no-underline">Lịch hẹn của tôi</a>
+    </div>
+</div>

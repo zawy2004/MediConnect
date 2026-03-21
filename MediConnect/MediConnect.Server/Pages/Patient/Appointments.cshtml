@@ -1,0 +1,52 @@
+@page
+@model MediConnect.Server.Pages.Patient.AppointmentsModel
+@{
+    ViewData["Title"] = "Quản lý lịch hẹn";
+}
+
+@if (Model.Data != null)
+{
+    <div class="max-w-[1320px] mx-auto px-6 py-8 space-y-6">
+        <h1 class="text-4xl font-black">Quản lý lịch hẹn</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-white border border-slate-200 rounded-2xl p-4">
+                <p class="text-sm text-slate-500">Tổng lịch hẹn</p>
+                <p class="text-3xl font-black mt-1">@Model.Data.TotalAppointments</p>
+            </div>
+            <div class="bg-white border border-blue-200 rounded-2xl p-4 bg-blue-50">
+                <p class="text-sm text-blue-700">Sắp tới</p>
+                <p class="text-3xl font-black text-blue-800 mt-1">@Model.Data.PendingAppointments</p>
+            </div>
+            <div class="bg-white border border-green-200 rounded-2xl p-4 bg-green-50">
+                <p class="text-sm text-green-700">Đã hoàn thành</p>
+                <p class="text-3xl font-black text-green-800 mt-1">@Model.Data.CompletedAppointments</p>
+            </div>
+            <div class="bg-white border border-red-200 rounded-2xl p-4 bg-red-50">
+                <p class="text-sm text-red-700">Đã hủy</p>
+                <p class="text-3xl font-black text-red-800 mt-1">@Model.Data.CancelledAppointments</p>
+            </div>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-2xl p-5">
+            <h2 class="text-xl font-black mb-4">Lịch hẹn gần đây</h2>
+            <div class="space-y-3">
+                @foreach (var item in Model.Data.Appointments)
+                {
+                    <div class="border border-slate-200 rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                        <div>
+                            <p class="font-bold">@item.DoctorName</p>
+                            <p class="text-sm text-slate-500">@item.AppointmentDate.ToString("dd/MM/yyyy") @item.StartTime.ToString("HH:mm") • @(item.SpecialtyName ?? "Chuyên khoa")</p>
+                            <p class="text-xs text-slate-500">Lý do: @item.Reason</p>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">@item.Status</span>
+                    </div>
+                }
+                @if (Model.Data.Appointments.Count == 0)
+                {
+                    <p class="text-sm text-slate-500">Bạn chưa có lịch hẹn nào.</p>
+                }
+            </div>
+        </div>
+    </div>
+}

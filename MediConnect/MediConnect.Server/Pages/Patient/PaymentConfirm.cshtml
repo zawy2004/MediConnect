@@ -1,0 +1,48 @@
+@page
+@model MediConnect.Server.Pages.Patient.PaymentConfirmModel
+@{
+    ViewData["Title"] = "Xác nhận thanh toán";
+}
+
+@if (Model.Summary != null)
+{
+    <div class="max-w-[1080px] mx-auto px-6 py-8 space-y-6">
+        <h1 class="text-4xl font-black">Xác nhận thanh toán</h1>
+
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div class="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3">@Model.ErrorMessage</div>
+        }
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <section class="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
+                <h2 class="text-xl font-black">Thông tin lịch hẹn</h2>
+                <div class="text-sm text-slate-700 space-y-2">
+                    <p><span class="text-slate-500">Bác sĩ:</span> @Model.Summary.DoctorName</p>
+                    <p><span class="text-slate-500">Chuyên khoa:</span> @Model.Summary.SpecialtyName</p>
+                    <p><span class="text-slate-500">Thời gian khám:</span> @Model.Summary.AppointmentDate.ToString("dd/MM/yyyy") @Model.Summary.StartTime.ToString("HH:mm")</p>
+                    <p><span class="text-slate-500">Mã lịch hẹn:</span> #@Model.Summary.AppointmentId</p>
+                </div>
+            </section>
+
+            <aside class="bg-white border border-slate-200 rounded-2xl p-6 space-y-3 h-fit">
+                <h3 class="text-lg font-black">Tổng thanh toán</h3>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-slate-500">Phí khám</span>
+                    <span>@Model.Summary.Amount.ToString("N0")đ</span>
+                </div>
+                <hr />
+                <div class="flex items-center justify-between text-lg font-black">
+                    <span>Tổng</span>
+                    <span class="text-primary">@Model.Summary.Amount.ToString("N0")đ</span>
+                </div>
+
+                <form method="post">
+                    <input asp-for="AppointmentId" type="hidden" />
+                    <input asp-for="PaymentMethod" type="hidden" />
+                    <button type="submit" class="w-full py-2.5 bg-primary text-white rounded-xl font-semibold mt-2">Thanh toán ngay</button>
+                </form>
+            </aside>
+        </div>
+    </div>
+}

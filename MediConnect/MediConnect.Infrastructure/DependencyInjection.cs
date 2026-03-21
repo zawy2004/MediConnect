@@ -26,6 +26,13 @@ public static class DependencyInjection
         services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         services.AddScoped<ITimeSlotRepository, TimeSlotRepository>();
         services.AddScoped<IReviewRepository, ReviewRepository>();
+        services.AddScoped<IComplaintRepository, ComplaintRepository>();
+        services.AddScoped<ISystemLogRepository, SystemLogRepository>();
+        services.AddScoped<INotificationRepository, NotificationRepository>();
+        services.AddScoped<IPaymentRepository, PaymentRepository>();
+        services.AddScoped<IDoctorSpecialtyRepository, DoctorSpecialtyRepository>();
+        services.AddScoped<IAppointmentWaitlistRepository, AppointmentWaitlistRepository>();
+        services.AddScoped<IMedicalRecordRepository, MedicalRecordRepository>();
 
         return services;
     }

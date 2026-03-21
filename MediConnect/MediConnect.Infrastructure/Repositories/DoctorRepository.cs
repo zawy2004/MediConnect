@@ -53,4 +53,39 @@ public class DoctorRepository : IDoctorRepository
             .Include(d => d.Department)
             .FirstOrDefaultAsync(d => d.DoctorProfileId == doctorProfileId);
     }
+
+    public async Task<DoctorProfile?> GetByUserIdAsync(int userId)
+    {
+        return await _context.DoctorProfiles
+            .AsNoTracking()
+            .Include(d => d.User)
+                .ThenInclude(u => u.DoctorSpecialties)
+                    .ThenInclude(ds => ds.Specialty)
+            .Include(d => d.Department)
+            .FirstOrDefaultAsync(d => d.UserId == userId);
+    }
+
+    public async Task<List<DoctorProfile>> GetPendingApprovalAsync(int take)
+    {
+        return await _context.DoctorProfiles
+            .AsNoTracking()
+            .Include(d => d.User)
+            .Include(d => d.Department)
+            .Where(d => d.ApprovalStatus == DoctorApprovalStatus.Pending)
+            .OrderByDescending(d => d.CreatedAt)
+            .Take(take)
+            .ToListAsync();
+    }
+
+    public async Task<int> CountPendingApprovalAsync()
+    {
+        return await _context.DoctorProfiles
+            .CountAsync(d => d.ApprovalStatus == DoctorApprovalStatus.Pending);
+    }
+
+    public Task UpdateAsync(DoctorProfile profile)
+    {
+        _context.DoctorProfiles.Update(profile);
+        return Task.CompletedTask;
+    }
 }

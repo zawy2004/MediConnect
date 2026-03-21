@@ -31,6 +31,16 @@ public class TimeSlotRepository : ITimeSlotRepository
             .ToListAsync();
     }
 
+    public async Task<List<TimeSlot>> GetByDoctorAndDateRangeAsync(int doctorUserId, DateOnly fromDate, DateOnly toDate)
+    {
+        return await _context.TimeSlots
+            .AsNoTracking()
+            .Where(s => s.UserId == doctorUserId && s.SlotDate >= fromDate && s.SlotDate <= toDate)
+            .OrderBy(s => s.SlotDate)
+            .ThenBy(s => s.StartTime)
+            .ToListAsync();
+    }
+
     public Task UpdateAsync(TimeSlot slot)
     {
         _context.TimeSlots.Update(slot);

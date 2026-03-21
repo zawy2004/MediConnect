@@ -1,0 +1,65 @@
+@page
+@model MediConnect.Server.Pages.Admin.ZaloNotificationModel
+@{
+    ViewData["Title"] = "Thông báo Zalo";
+    ViewData["HideLayout"] = true;
+}
+
+<div class="min-h-screen bg-[#f8fafc] flex">
+    @await Html.PartialAsync("_AdminSidebar", "zalo")
+    <main class="flex-1 overflow-y-auto">
+        <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between">
+            <h1 class="text-3xl font-black">Quản lý Thông báo Zalo & AI MediAdmin</h1>
+            <input class="rounded-xl border-slate-200" placeholder="Tìm kiếm log gửi tin..." />
+        </header>
+
+        <div class="p-8 space-y-6">
+            <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white border rounded-2xl p-4"><p class="text-xs text-slate-500">Tỷ lệ gửi thành công</p><p class="text-2xl font-black mt-2">@Model.Data.SuccessRatePercent%</p></div>
+                <div class="bg-white border rounded-2xl p-4"><p class="text-xs text-slate-500">Tỷ lệ mở</p><p class="text-2xl font-black mt-2">@Model.Data.OpenRatePercent%</p></div>
+                <div class="bg-white border rounded-2xl p-4"><p class="text-xs text-slate-500">Giảm no-show</p><p class="text-2xl font-black mt-2">@Model.Data.NoShowReductionPercent%</p></div>
+                <div class="bg-primary text-white rounded-2xl p-4"><p class="text-xs">Tổng tin nhắn tháng này</p><p class="text-2xl font-black mt-2">@Model.Data.TotalMessages</p></div>
+            </section>
+
+            <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white border rounded-2xl p-5 space-y-4">
+                    <h2 class="text-lg font-bold">Nội dung nhắc hẹn AI</h2>
+                    <div class="p-4 rounded-xl bg-violet-50 border border-violet-100 text-sm text-slate-700">
+                        Xin chào bệnh nhân, đây là tin nhắc lịch khám tự động từ MediConnect.
+                    </div>
+                    <button class="w-full rounded-lg bg-violet-100 text-violet-700 px-4 py-2 font-semibold">Tùy chỉnh Prompt AI</button>
+                </div>
+
+                <div class="lg:col-span-2 bg-white border rounded-2xl overflow-hidden">
+                    <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+                        <h2 class="text-lg font-bold">Lịch sử gửi tin ZNS (Real-time)</h2>
+                        <button class="px-3 py-1.5 border rounded-lg text-sm">Làm mới</button>
+                    </div>
+                    <table class="w-full text-sm">
+                        <thead class="bg-slate-50 text-slate-500">
+                            <tr>
+                                <th class="text-left px-4 py-3">Bệnh nhân</th>
+                                <th class="text-left px-4 py-3">Loại tin</th>
+                                <th class="text-left px-4 py-3">Thời gian</th>
+                                <th class="text-left px-4 py-3">Trạng thái</th>
+                                <th class="text-left px-4 py-3">Chi tiết</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var message in Model.Data.Messages)
+                            {
+                                <tr class="border-t border-slate-100">
+                                    <td class="px-4 py-3">@message.UserName</td>
+                                    <td class="px-4 py-3">@message.Title</td>
+                                    <td class="px-4 py-3">@message.CreatedAt.ToString("HH:mm:ss")</td>
+                                    <td class="px-4 py-3">@message.Status</td>
+                                    <td class="px-4 py-3"><a href="#" class="text-primary no-underline text-sm">Xem Log</a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>

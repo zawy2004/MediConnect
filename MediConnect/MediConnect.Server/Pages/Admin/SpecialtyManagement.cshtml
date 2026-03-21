@@ -1,0 +1,76 @@
+@page
+@model MediConnect.Server.Pages.Admin.SpecialtyManagementModel
+@{
+    ViewData["Title"] = "Quản lý chuyên khoa";
+    ViewData["HideLayout"] = true;
+}
+
+<div class="min-h-screen bg-[#f8fafc] flex">
+    @await Html.PartialAsync("_AdminSidebar", "specialty")
+    <main class="flex-1 overflow-y-auto">
+        <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between">
+            <h1 class="text-3xl font-black">Quản lý Chuyên khoa & Khoa phòng</h1>
+            <a asp-page="/Admin/Dashboard" class="text-slate-500 no-underline">Quay lại dashboard</a>
+        </header>
+
+        <div class="p-8 space-y-6">
+            <div class="bg-violet-50 border border-violet-200 rounded-2xl p-4 flex items-center justify-between">
+                <p class="text-sm"><span class="font-bold text-violet-700">AI Insight:</span> Chuyên khoa Nhi đang có nhu cầu tăng cao, ưu tiên điều động thêm bác sĩ trực.</p>
+                <button class="px-4 py-2 bg-white border border-violet-200 text-violet-700 rounded-lg text-sm font-semibold">Thực hiện ngay</button>
+            </div>
+
+            <section class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+                <div class="xl:col-span-3 bg-white border rounded-2xl overflow-hidden">
+                    <table class="w-full text-sm">
+                        <thead class="bg-slate-50 text-slate-500">
+                            <tr>
+                                <th class="text-left px-4 py-3">Tên chuyên khoa</th>
+                                <th class="text-left px-4 py-3">Mô tả</th>
+                                <th class="text-left px-4 py-3">Bác sĩ phụ trách</th>
+                                <th class="text-left px-4 py-3">Trạng thái</th>
+                                <th class="text-left px-4 py-3">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var specialty in Model.Specialties)
+                            {
+                                <tr class="border-t border-slate-100">
+                                    <td class="px-4 py-3 font-semibold">@specialty.SpecialtyName</td>
+                                    <td class="px-4 py-3 text-slate-600">@specialty.Description</td>
+                                    <td class="px-4 py-3">@specialty.DoctorCount</td>
+                                    <td class="px-4 py-3">
+                                        <span class="text-xs px-2 py-1 rounded-full @(specialty.IsActive ? "bg-green-50 text-green-700" : "bg-slate-100 text-slate-500")">
+                                            @(specialty.IsActive ? "Hoạt động" : "Tạm dừng")
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3"><a asp-page="/Admin/SpecialtyConfig" asp-route-specialtyId="@specialty.SpecialtyId" class="text-primary no-underline text-sm">Cấu hình</a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="bg-white border rounded-2xl p-5 space-y-4">
+                    <h2 class="text-lg font-bold">Dự báo nhu cầu</h2>
+                    <div class="h-40 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-center text-slate-400 text-sm">Biểu đồ AI-FE-04</div>
+                    <p class="text-sm text-slate-600">Tỉ lệ lấp đầy <span class="font-bold text-emerald-600">92%</span></p>
+                    <button class="w-full px-4 py-2 border rounded-lg">Xuất báo cáo dự báo (PDF)</button>
+                </div>
+            </section>
+
+            <section class="bg-white border rounded-2xl p-5">
+                <h2 class="text-lg font-bold mb-3">Danh sách khoa/phòng</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    @foreach (var department in Model.Departments)
+                    {
+                        <div class="border border-slate-200 rounded-xl p-3">
+                            <p class="font-semibold">@department.DepartmentName</p>
+                            <p class="text-sm text-slate-500">@department.Description</p>
+                            <p class="text-xs text-slate-400 mt-1">@department.Location</p>
+                        </div>
+                    }
+                </div>
+            </section>
+        </div>
+    </main>
+</div>

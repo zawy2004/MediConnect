@@ -1,0 +1,17 @@
+using MediConnect.Application.DTOs;
+
+namespace MediConnect.Application.Interfaces;
+
+public interface IPatientPortalService
+{
+    Task<PatientPortalDashboardDto> GetDashboardAsync(int patientId);
+    Task<PatientDoctorScheduleDto?> GetDoctorScheduleAsync(int doctorUserId, DateOnly fromDate, int days);
+    Task<PatientDoctorProfileDto?> GetDoctorProfileAsync(int doctorProfileId);
+    Task<PatientAppointmentManagerDto> GetAppointmentManagerAsync(int patientId);
+    Task<PatientTriageResultDto> AnalyzeSymptomsAsync(int patientId, string symptomText);
+    Task<PatientPaymentConfirmDto?> GetPaymentConfirmAsync(int patientId, int appointmentId);
+    Task<PatientPaymentResultDto> CompletePaymentAsync(int patientId, int appointmentId, string paymentMethod);
+    Task<PatientBookingSuccessDto?> GetBookingSuccessAsync(int appointmentId);
+    Task<PatientProfilePortalDto?> GetProfileAsync(int patientId);
+    Task<bool> UpdateProfileAsync(int patientId, string fullName, string? phoneNumber, string? gender, DateOnly? dateOfBirth, string? address);
+}

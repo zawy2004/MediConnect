@@ -1,0 +1,75 @@
+@page
+@model MediConnect.Server.Pages.Doctor.PerformanceAnalysisModel
+@{
+    ViewData["Title"] = "Phân tích Hiệu suất";
+    ViewData["HideLayout"] = true;
+}
+
+<div class="min-h-screen bg-[#f8fafc] flex">
+    @await Html.PartialAsync("_DoctorSidebar", "performance")
+    <main class="flex-1 overflow-y-auto p-8 space-y-6">
+    <div class="flex items-center justify-between gap-3">
+        <h1 class="text-4xl md:text-5xl font-black">Phân tích Hiệu suất</h1>
+        <div class="inline-flex rounded-xl border border-slate-200 bg-white p-1 text-sm">
+            <button type="button" class="px-3 py-1.5 rounded-lg bg-primary text-white">Tháng</button>
+            <button type="button" class="px-3 py-1.5 rounded-lg text-slate-600">Quý</button>
+        </div>
+    </div>
+
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white border rounded-2xl p-4"><p class="text-xs text-slate-500">Tổng bệnh nhân</p><p class="text-4xl font-black mt-2">@Model.Data.TotalPatients</p></div>
+        <div class="bg-white border rounded-2xl p-4"><p class="text-xs text-slate-500">Tỷ lệ quay lại</p><p class="text-4xl font-black mt-2">@Model.Data.ReturnRatePercent%</p></div>
+        <div class="bg-white border rounded-2xl p-4"><p class="text-xs text-slate-500">Đánh giá TB</p><p class="text-4xl font-black mt-2">@Model.Data.AverageRating</p></div>
+        <div class="bg-white border rounded-2xl p-4"><p class="text-xs text-slate-500">Thời gian khám TB</p><p class="text-4xl font-black mt-2">@Model.Data.AverageConsultationMinutes phút</p></div>
+    </section>
+
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 bg-white border rounded-2xl p-5">
+            <h2 class="text-lg font-bold mb-3">Số lượng ca khám theo tuần</h2>
+            <div class="space-y-2">
+                @foreach (var item in Model.Data.WeeklyAppointments)
+                {
+                    <div class="flex items-center justify-between border border-slate-100 rounded-xl px-3 py-2">
+                        <span>@item.Date.ToString("dd/MM")</span>
+                        <span class="font-semibold">@item.Count</span>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="bg-white border rounded-2xl p-5">
+            <h2 class="text-lg font-bold mb-3">Cơ cấu bệnh lý điều trị</h2>
+            <div class="space-y-2">
+                @foreach (var d in Model.Data.DiseaseDistribution)
+                {
+                    <div class="flex items-center justify-between border border-slate-100 rounded-xl px-3 py-2">
+                        <span>@d.Keyword</span>
+                        <span class="font-semibold">@d.Weight</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-100 rounded-2xl p-5">
+            <h2 class="text-lg font-bold text-indigo-700">MediConnect AI Insights</h2>
+            <p class="text-sm text-indigo-700 mt-2">@Model.Data.AiInsight</p>
+        </div>
+
+        <div class="bg-white border rounded-2xl p-5">
+            <h2 class="text-lg font-bold mb-3">Phản hồi gần đây</h2>
+            <div class="space-y-3">
+                @foreach (var feedback in Model.Data.RecentFeedbacks)
+                {
+                    <div class="border border-slate-100 rounded-xl p-3">
+                        <p class="font-semibold">@feedback.PatientName</p>
+                        <p class="text-xs text-slate-500">@feedback.CreatedAt.ToString("dd/MM/yyyy") • @feedback.Rating/5</p>
+                        <p class="text-sm text-slate-600 mt-1">@feedback.Comment</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+    </main>
+</div>

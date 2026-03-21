@@ -1,0 +1,102 @@
+@page
+@model MediConnect.Server.Pages.Admin.UserManagementModel
+@{
+    ViewData["Title"] = "Quản lý người dùng";
+    ViewData["HideLayout"] = true;
+}
+
+<div class="min-h-screen bg-[#f8fafc] flex">
+    @await Html.PartialAsync("_AdminSidebar", "users")
+    <main class="flex-1 overflow-y-auto">
+        <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between">
+            <h1 class="text-3xl font-black">Quản lý Người dùng</h1>
+            <a asp-page="/Admin/Dashboard" class="text-slate-500 no-underline">Quay lại dashboard</a>
+        </header>
+
+        <div class="p-8 space-y-6">
+            <div class="flex items-center gap-1 p-1 bg-slate-100 rounded-xl w-fit">
+                <button class="px-5 py-2 text-sm font-bold bg-white shadow-sm rounded-lg text-primary">Tất cả người dùng</button>
+                <button class="px-5 py-2 text-sm font-semibold text-slate-500">Bác sĩ chờ duyệt</button>
+            </div>
+
+            <form method="get" class="bg-white border rounded-2xl p-5 flex flex-wrap items-center gap-3">
+                <input asp-for="SearchTerm" placeholder="Tìm theo Tên, Email hoặc Vai trò..." class="rounded-xl border-slate-200 min-w-[300px]" />
+                <select asp-for="RoleFilter" class="rounded-xl border-slate-200">
+                    <option value="">Tất cả vai trò</option>
+                    <option value="ADMIN">ADMIN</option>
+                    <option value="DOCTOR">DOCTOR</option>
+                    <option value="PATIENT">PATIENT</option>
+                </select>
+                <button class="px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold">Áp dụng bộ lọc</button>
+            </form>
+
+            <section class="bg-white border rounded-2xl p-5 space-y-3">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-bold">Bác sĩ chờ phê duyệt (UC-35)</h2>
+                    <a asp-page="/Admin/UserManagement" class="text-primary text-sm no-underline">Xem tất cả yêu cầu</a>
+                </div>
+                @if (Model.PendingDoctors.Count == 0)
+                {
+                    <p class="text-sm text-slate-500">Không có hồ sơ bác sĩ chờ duyệt.</p>
+                }
+                else
+                {
+                    <div class="space-y-2">
+                        @foreach (var doctor in Model.PendingDoctors)
+                        {
+                            <div class="border border-slate-200 rounded-xl p-3 flex flex-wrap items-center justify-between gap-3">
+                                <div>
+                                    <p class="font-semibold">@doctor.FullName</p>
+                                    <p class="text-sm text-slate-500">@doctor.Email • @doctor.DepartmentName • @doctor.YearsOfExperience năm</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <form method="post" asp-page-handler="ApproveDoctor">
+                                        <input type="hidden" name="doctorProfileId" value="@doctor.DoctorProfileId" />
+                                        <button class="px-3 py-2 rounded-lg bg-green-100 text-green-700 text-sm font-semibold">Duyệt</button>
+                                    </form>
+                                    <form method="post" asp-page-handler="RejectDoctor">
+                                        <input type="hidden" name="doctorProfileId" value="@doctor.DoctorProfileId" />
+                                        <button class="px-3 py-2 rounded-lg bg-red-100 text-red-700 text-sm font-semibold">Từ chối</button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </section>
+
+            <section class="bg-white border rounded-2xl overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead class="bg-slate-50 text-slate-500">
+                        <tr>
+                            <th class="text-left px-4 py-3">Người dùng</th>
+                            <th class="text-left px-4 py-3">Vai trò / Đặc điểm</th>
+                            <th class="text-left px-4 py-3">Trạng thái</th>
+                            <th class="text-left px-4 py-3">Lần cuối</th>
+                            <th class="text-left px-4 py-3">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Users)
+                        {
+                            <tr class="border-t border-slate-100">
+                                <td class="px-4 py-3">
+                                    <p class="font-semibold">@user.FullName</p>
+                                    <p class="text-xs text-slate-500">@user.Email</p>
+                                </td>
+                                <td class="px-4 py-3">@user.RoleName</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-xs px-2 py-1 rounded-full @(user.IsActive ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600")">
+                                        @(user.IsActive ? "Hoạt động" : "Tạm khóa")
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-slate-500">@user.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td class="px-4 py-3 text-slate-400">• • •</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </main>
+</div>

@@ -42,6 +42,35 @@
                     </a>
                 </div>
                 <nav class="hidden lg:flex items-center gap-8">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        if (User.IsInRole("PATIENT"))
+                        {
+                            <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Patient/Dashboard">Dashboard</a>
+                            <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Patient/DoctorSearch">Tìm bác sĩ AI</a>
+                        }
+                        else if (User.IsInRole("DOCTOR"))
+                        {
+                            <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Doctor/Dashboard">Doctor Dashboard</a>
+                            <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Doctor/Profile">Hồ sơ chuyên môn</a>
+                            <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Doctor/ProfessionalRegistration">Đăng ký chuyên môn</a>
+                            <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Doctor/ConfirmAppointmentRequest">Yêu cầu hẹn khám</a>
+                            <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Doctor/Waitlist">Danh sách chờ</a>
+                            <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Doctor/PerformanceAnalysis">Hiệu suất</a>
+                            <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Doctor/SpecialtyProfile">Profile public</a>
+                            <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Doctor/Membership">Gói thành viên</a>
+                        }
+                        else if (User.IsInRole("ADMIN"))
+                        {
+                            <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Admin/Dashboard">Admin Dashboard</a>
+                            <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Admin/UserManagement">Quản lý người dùng</a>
+                            <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Admin/SpecialtyManagement">Chuyên khoa</a>
+                            <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Admin/Statistics">Thống kê</a>
+                            <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Admin/SystemMonitoring">Giám sát</a>
+                            <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Admin/ComplaintManagement">Khiếu nại</a>
+                            <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Admin/ZaloNotification">Zalo</a>
+                        }
+                    }
                     <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Doctors/Index">Tìm bác sĩ</a>
                     <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Appointments/Index">Lịch hẹn</a>
                     <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Specialties/Index">Chuyên khoa</a>

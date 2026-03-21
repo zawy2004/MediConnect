@@ -1,0 +1,69 @@
+@page
+@model MediConnect.Server.Pages.Patient.SearchDoctorsModel
+@{
+    ViewData["Title"] = "Tìm & lọc bác sĩ";
+}
+
+<div class="max-w-[1320px] mx-auto px-6 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <aside class="lg:col-span-3 bg-white border border-slate-200 rounded-2xl p-5 h-fit">
+            <h2 class="text-xl font-black mb-4">Bộ lọc</h2>
+            <form method="get" class="space-y-4">
+                <div>
+                    <label class="text-sm text-slate-500">Từ khóa</label>
+                    <input asp-for="SearchTerm" class="w-full mt-1 rounded-xl border-slate-200" placeholder="Tên bác sĩ, chuyên khoa..." />
+                </div>
+                <div>
+                    <label class="text-sm text-slate-500">Chuyên khoa</label>
+                    <select asp-for="SpecialtyId" asp-items="Model.SpecialtyList" class="w-full mt-1 rounded-xl border-slate-200">
+                        <option value="">Tất cả</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-sm text-slate-500">Khoa</label>
+                    <select asp-for="DepartmentId" asp-items="Model.DepartmentList" class="w-full mt-1 rounded-xl border-slate-200">
+                        <option value="">Tất cả</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-sm text-slate-500">Đánh giá tối thiểu</label>
+                    <select asp-for="MinRating" class="w-full mt-1 rounded-xl border-slate-200">
+                        <option value="">Bất kỳ</option>
+                        <option value="4">Từ 4.0</option>
+                        <option value="4.5">Từ 4.5</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-sm text-slate-500">Bảo hiểm</label>
+                    <input asp-for="Insurance" class="w-full mt-1 rounded-xl border-slate-200" placeholder="Ví dụ: BHYT" />
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-primary text-white rounded-xl font-semibold">Áp dụng</button>
+            </form>
+        </aside>
+
+        <section class="lg:col-span-9 space-y-4">
+            <div class="flex items-center justify-between">
+                <h1 class="text-4xl font-black">@Model.Doctors.Count bác sĩ phù hợp</h1>
+                <a asp-page="/Patient/SymptomAssessment" class="text-primary no-underline font-semibold">AI đề xuất</a>
+            </div>
+
+            @foreach (var doctor in Model.Doctors)
+            {
+                <div class="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold">@doctor.FullName</h2>
+                        <p class="text-slate-600 text-sm mt-1">@doctor.DepartmentName • @doctor.YearsOfExperience năm kinh nghiệm</p>
+                        <p class="text-slate-500 text-sm mt-1">@string.Join(", ", doctor.Specialties)</p>
+                        <p class="text-sm mt-1">⭐ @doctor.AverageRating.ToString("0.0") (@doctor.TotalReviews đánh giá)</p>
+                        <p class="text-xs text-slate-500 mt-1">Bảo hiểm: @(string.IsNullOrWhiteSpace(doctor.InsuranceAccepted) ? "Chưa cập nhật" : doctor.InsuranceAccepted)</p>
+                    </div>
+                    <div class="flex gap-2 flex-wrap">
+                        <a asp-page="/Patient/DoctorSchedule" asp-route-doctorUserId="@doctor.UserId" class="px-4 py-2 border rounded-xl no-underline">Xem lịch</a>
+                        <a asp-page="/Patient/DoctorProfile" asp-route-doctorProfileId="@doctor.DoctorProfileId" class="px-4 py-2 border rounded-xl no-underline">Hồ sơ</a>
+                        <a asp-page="/Patient/DoctorProfile" asp-route-doctorProfileId="@doctor.DoctorProfileId" class="px-4 py-2 bg-primary text-white rounded-xl no-underline">Đặt lịch</a>
+                    </div>
+                </div>
+            }
+        </section>
+    </div>
+</div>

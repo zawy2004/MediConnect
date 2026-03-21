@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using MediConnect.Application.DTOs;
 using MediConnect.Application.Interfaces;
+using MediConnect.Domain.Constants;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -62,6 +63,13 @@ public class LoginModel : PageModel
             CookieAuthenticationDefaults.AuthenticationScheme,
             principal);
 
-        return RedirectToPage("/Index");
+        var targetPage = result.RoleName?.ToUpperInvariant() switch
+        {
+            RoleNames.Admin => "/Admin/Dashboard",
+            RoleNames.Doctor => "/Doctor/Dashboard",
+            _ => "/Patient/Dashboard"
+        };
+
+        return RedirectToPage(targetPage);
     }
 }

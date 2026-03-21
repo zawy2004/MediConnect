@@ -1,0 +1,83 @@
+@page
+@model MediConnect.Server.Pages.Patient.DashboardModel
+@{
+    ViewData["Title"] = "Dashboard bệnh nhân";
+}
+
+<div class="max-w-[1280px] mx-auto px-6 py-8 space-y-6">
+    <section class="flex items-center justify-between gap-3">
+        <div>
+            <h1 class="text-4xl font-black">Patient Dashboard</h1>
+            <p class="text-slate-500 mt-1">Xin chào @Model.Data.PatientName</p>
+        </div>
+        <a asp-page="/Patient/Profile" class="px-4 py-2 rounded-xl border border-slate-300 no-underline">Hồ sơ cá nhân</a>
+    </section>
+
+    <section class="bg-blue-50 border border-blue-200 rounded-2xl p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <p class="text-xs uppercase tracking-wider text-primary font-bold">@Model.Data.HealthAlertTitle</p>
+            <p class="text-slate-700 mt-2">@Model.Data.HealthAlertMessage</p>
+        </div>
+        <a asp-page="/Patient/SymptomAssessment" class="px-4 py-2 rounded-xl bg-primary text-white no-underline">Kiểm tra triệu chứng</a>
+    </section>
+
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white border border-slate-200 rounded-2xl p-5"><p class="text-sm text-slate-500">Lịch sắp tới</p><p class="text-4xl font-black mt-2">@Model.Data.UpcomingAppointments</p></div>
+        <div class="bg-white border border-slate-200 rounded-2xl p-5"><p class="text-sm text-slate-500">Đã hoàn thành</p><p class="text-4xl font-black mt-2">@Model.Data.CompletedAppointments</p></div>
+        <div class="bg-white border border-slate-200 rounded-2xl p-5"><p class="text-sm text-slate-500">Đã hủy</p><p class="text-4xl font-black mt-2">@Model.Data.CancelledAppointments</p></div>
+    </section>
+
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-black">Lịch hẹn của tôi</h2>
+                <a asp-page="/Patient/Appointments" class="text-primary no-underline text-sm font-semibold">Xem tất cả</a>
+            </div>
+            @if (Model.Data.Schedule.Count == 0)
+            {
+                <p class="text-slate-500">Bạn chưa có lịch hẹn nào.</p>
+            }
+            else
+            {
+                <div class="space-y-3">
+                    @foreach (var item in Model.Data.Schedule.Take(6))
+                    {
+                        <div class="border border-slate-200 rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                            <div>
+                                <p class="font-semibold">@item.DoctorName</p>
+                                <p class="text-sm text-slate-500">@item.SpecialtyName • @item.AppointmentDate.ToString("dd/MM/yyyy") • @item.StartTime.ToString("HH:mm")</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-1 text-xs rounded-full @Model.GetBadgeClass(item.Status)">@item.Status</span>
+                                <form method="post" asp-page-handler="Cancel">
+                                    <input type="hidden" name="appointmentId" value="@item.AppointmentId" />
+                                    <button type="submit" class="px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-sm">Hủy</button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="space-y-4">
+            <div class="bg-white border border-slate-200 rounded-2xl p-5">
+                <h3 class="font-black mb-3">Quick Actions</h3>
+                <div class="space-y-2 text-sm">
+                    <a asp-page="/Patient/SymptomAssessment" class="block px-3 py-2 rounded-xl bg-slate-50 text-slate-700 no-underline">AI Symptom Check</a>
+                    <a asp-page="/Patient/SearchDoctors" class="block px-3 py-2 rounded-xl bg-slate-50 text-slate-700 no-underline">Find Doctor</a>
+                    <a asp-page="/Patient/Appointments" class="block px-3 py-2 rounded-xl bg-slate-50 text-slate-700 no-underline">My Appointments</a>
+                </div>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-2xl p-5">
+                <h3 class="font-black mb-3">Health Insights</h3>
+                <ul class="space-y-2 text-sm text-slate-600">
+                    @foreach (var insight in Model.Data.Insights)
+                    {
+                        <li>• @insight</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </section>
+</div>

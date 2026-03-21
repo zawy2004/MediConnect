@@ -1,0 +1,78 @@
+@page
+@model MediConnect.Server.Pages.Patient.ProfileModel
+@{
+    ViewData["Title"] = "Hồ sơ bệnh nhân";
+}
+
+@if (Model.Data != null)
+{
+    <div class="max-w-[1320px] mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <section class="lg:col-span-8 bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
+            <div class="flex items-center justify-between">
+                <h1 class="text-4xl font-black">Hồ sơ bệnh nhân</h1>
+                <span class="text-xs px-3 py-1 bg-blue-50 text-blue-700 rounded-full">@Model.Data.Email</span>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+            {
+                <div class="bg-green-50 border border-green-200 text-green-700 rounded-xl px-4 py-3">@Model.StatusMessage</div>
+            }
+
+            <form method="post" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="FullName" class="text-sm text-slate-500">Họ tên</label>
+                    <input asp-for="FullName" class="w-full mt-1 rounded-xl border-slate-200" />
+                </div>
+                <div>
+                    <label asp-for="PhoneNumber" class="text-sm text-slate-500">Điện thoại</label>
+                    <input asp-for="PhoneNumber" class="w-full mt-1 rounded-xl border-slate-200" />
+                </div>
+                <div>
+                    <label asp-for="DateOfBirth" class="text-sm text-slate-500">Ngày sinh</label>
+                    <input asp-for="DateOfBirth" type="date" class="w-full mt-1 rounded-xl border-slate-200" />
+                </div>
+                <div>
+                    <label asp-for="Gender" class="text-sm text-slate-500">Giới tính</label>
+                    <select asp-for="Gender" class="w-full mt-1 rounded-xl border-slate-200">
+                        <option value="">Chọn</option>
+                        <option value="MALE">Nam</option>
+                        <option value="FEMALE">Nữ</option>
+                        <option value="OTHER">Khác</option>
+                    </select>
+                </div>
+                <div class="md:col-span-2">
+                    <label asp-for="Address" class="text-sm text-slate-500">Địa chỉ</label>
+                    <input asp-for="Address" class="w-full mt-1 rounded-xl border-slate-200" />
+                </div>
+                <div class="md:col-span-2">
+                    <button type="submit" class="px-5 py-2.5 bg-primary text-white rounded-xl font-semibold">Cập nhật hồ sơ</button>
+                </div>
+            </form>
+        </section>
+
+        <aside class="lg:col-span-4 space-y-4">
+            <div class="bg-white border border-slate-200 rounded-2xl p-5">
+                <h2 class="text-xl font-black mb-2">Chỉ số sức khỏe gần đây</h2>
+                <div class="space-y-2 text-sm">
+                    @foreach (var metric in Model.Data.WeightTrend)
+                    {
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                            <span class="text-slate-500">@metric.Label</span>
+                            <span class="font-semibold">@metric.Value</span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-5">
+                <h3 class="text-lg font-black mb-2">Nhắc nhở</h3>
+                <ul class="space-y-2 text-sm text-slate-600">
+                    @foreach (var alert in Model.Data.Alerts)
+                    {
+                        <li class="bg-amber-50 border border-amber-200 rounded-xl p-2">@alert</li>
+                    }
+                </ul>
+            </div>
+        </aside>
+    </div>
+}

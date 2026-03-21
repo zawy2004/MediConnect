@@ -7,4 +7,5 @@ public interface ISpecialtyRepository
     Task<List<Specialty>> GetActiveAsync();
     Task<Specialty?> GetByIdAsync(int specialtyId);
     Task<int> CountActiveAsync();
+    Task UpdateAsync(Specialty specialty);
 }
