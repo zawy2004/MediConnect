@@ -4,44 +4,126 @@
     ViewData["Title"] = "Đánh giá triệu chứng bằng AI";
 }
 
-<div class="max-w-[1240px] mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
-    <section class="lg:col-span-7 bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
-        <h1 class="text-4xl font-black">AI Health Triage Assistant</h1>
-        <p class="text-slate-500">Mô tả triệu chứng để nhận gợi ý mức độ ưu tiên và bác sĩ phù hợp.</p>
+<main class="max-w-7xl mx-auto w-full px-6 py-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        <div class="lg:col-span-2">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="text-5xl font-black leading-tight">Trợ lý đánh giá triệu chứng</h2>
+                    <p class="text-slate-500 mt-1 flex items-center gap-2"><span class="material-symbols-outlined text-sm text-emerald-500">lock</span>Phiên phân loại y tế bảo mật và tuân thủ tiêu chuẩn an toàn dữ liệu</p>
+                </div>
+                <div class="min-w-[240px]">
+                    <div class="flex justify-between text-xs font-bold uppercase tracking-wider text-slate-400"><span>Tiến trình phân tích</span><span>@(Model.Result?.RiskScore ?? 65)%</span></div>
+                    <div class="h-2 w-full bg-slate-200 rounded-full overflow-hidden mt-2"><div class="h-full bg-primary" style="width:@(Model.Result?.RiskScore ?? 65)%"></div></div>
+                </div>
+            </div>
 
-        <form method="post" class="space-y-4">
-            <div>
-                <label asp-for="SymptomText" class="text-sm text-slate-500">Triệu chứng</label>
-                <textarea asp-for="SymptomText" rows="5" class="w-full mt-1 rounded-xl border-slate-200" placeholder="Ví dụ: đau đầu 2 ngày, sốt nhẹ, chóng mặt..."></textarea>
-                <span asp-validation-for="SymptomText" class="text-red-500 text-sm"></span>
-            </div>
-            <button type="submit" class="px-5 py-2.5 rounded-xl bg-primary text-white font-semibold">Phân tích</button>
-        </form>
-    </section>
+            <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                <div class="p-6 space-y-6 min-h-[420px]">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20"><span class="material-symbols-outlined">smart_toy</span></div>
+                        <div class="max-w-[85%]">
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Trợ lý AI MediConnect</span>
+                            <div class="bg-slate-100 p-4 rounded-xl rounded-tl-none text-sm mt-1">Chào bạn! Tôi là trợ lý sức khỏe của bạn. Vui lòng mô tả các triệu chứng bạn đang gặp phải, chúng đã kéo dài bao lâu và mức độ nghiêm trọng.</div>
+                        </div>
+                    </div>
 
-    <aside class="lg:col-span-5 bg-white border border-slate-200 rounded-2xl p-6 space-y-3">
-        <h2 class="text-xl font-black">Kết quả đánh giá</h2>
-        @if (Model.Result != null)
-        {
-            <div class="rounded-xl border border-amber-200 bg-amber-50 p-3">
-                <p class="text-sm text-amber-700">Mức độ ưu tiên</p>
-                <p class="font-bold text-amber-900">@((Model.Result.RiskScore >= 80) ? "Cao" : (Model.Result.RiskScore >= 50 ? "Trung bình" : "Thấp"))</p>
+                    @if (Model.Result != null && !string.IsNullOrWhiteSpace(Model.Result.SymptomText))
+                    {
+                        <div class="flex items-start gap-4 flex-row-reverse">
+                            <div class="w-10 h-10 rounded-full bg-slate-200"></div>
+                            <div class="max-w-[85%] text-right">
+                                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Bạn</span>
+                                <div class="bg-primary text-white p-4 rounded-xl rounded-tr-none text-sm mt-1 text-left">@Model.Result.SymptomText</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20"><span class="material-symbols-outlined">smart_toy</span></div>
+                            <div class="max-w-[85%]">
+                                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Trợ lý AI MediConnect</span>
+                                <div class="bg-slate-100 p-4 rounded-xl rounded-tl-none text-sm mt-1">@Model.Result.AssistantReply</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="p-6 border-t border-slate-200 bg-slate-50">
+                    <form method="post" class="space-y-3">
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1.5 rounded-full bg-white border border-slate-200 text-xs font-semibold text-slate-600">Đau đầu</span>
+                            <span class="px-3 py-1.5 rounded-full bg-white border border-slate-200 text-xs font-semibold text-slate-600">Đau người</span>
+                            <span class="px-3 py-1.5 rounded-full bg-white border border-slate-200 text-xs font-semibold text-slate-600">Mệt mỏi</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <textarea asp-for="SymptomText" rows="2" class="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm" placeholder="Nhập triệu chứng của bạn tại đây..."></textarea>
+                            <button type="submit" class="w-12 h-12 rounded-xl bg-primary text-white"><span class="material-symbols-outlined">send</span></button>
+                        </div>
+                        <span asp-validation-for="SymptomText" class="text-red-500 text-sm"></span>
+                    </form>
+                </div>
             </div>
-            <p class="text-sm text-slate-700">@Model.Result.AssistantReply</p>
-            <p class="text-xs text-slate-500">Chuyên khoa gợi ý: @Model.Result.SuggestedSpecialty • Risk score: @Model.Result.RiskScore/100</p>
-            <div class="space-y-2">
-                @foreach (var suggestion in Model.Result.SuggestedDoctors)
-                {
-                    <a asp-page="/Patient/DoctorProfile" asp-route-doctorProfileId="@suggestion.DoctorProfileId" class="block border border-slate-200 rounded-xl p-3 no-underline hover:bg-slate-50">
-                        <p class="font-semibold text-slate-800">@suggestion.FullName</p>
-                        <p class="text-xs text-slate-500">@(suggestion.DepartmentName ?? "Chưa cập nhật") • @string.Join(", ", suggestion.Specialties)</p>
-                    </a>
-                }
+
+        </div>
+
+        <aside class="space-y-6">
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-slate-900 flex items-center gap-2"><span class="material-symbols-outlined text-red-500 text-xl">emergency</span>Lịch tư vấn khẩn cấp</h3>
+                    <span class="px-2 py-0.5 rounded-full bg-red-100 text-[10px] font-bold text-red-600">LIVE</span>
+                </div>
+                <div class="flex items-center gap-4 bg-red-50 p-3 rounded-lg border border-red-100">
+                    <div class="flex-1"><div class="text-sm font-bold text-red-700">Còn 2 chỗ trống ưu tiên</div><p class="text-[11px] text-red-500">Trong khung giờ hành chính hôm nay</p></div>
+                    <button class="bg-red-500 text-white text-[11px] font-bold px-3 py-1.5 rounded-md">Yêu cầu</button>
+                </div>
             </div>
-        }
-        else
-        {
-            <p class="text-sm text-slate-500">Kết quả phân tích sẽ hiển thị tại đây sau khi bạn nhập triệu chứng.</p>
-        }
-    </aside>
-</div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-5 border-b border-slate-100">
+                    <div class="flex items-center justify-between mb-2"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Đề xuất chuyên khoa</span><span class="material-symbols-outlined text-primary text-lg">respiratory_rate</span></div>
+                    <h3 class="text-2xl font-black">@Model.Result?.SuggestedSpecialty</h3>
+                    <p class="text-xs text-slate-500 mt-1">Dựa trên triệu chứng của bạn</p>
+                </div>
+
+                <div class="p-5 bg-slate-50/50">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <div class="text-xs font-bold text-slate-700">Lịch trống hôm nay</div>
+                            <div class="text-[10px] text-slate-400">Thứ Hai, 22 Tháng 5</div>
+                        </div>
+                        <button class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-primary"><span class="material-symbols-outlined text-base">calendar_month</span></button>
+                    </div>
+                    <div class="grid grid-cols-4 gap-2 mb-5">
+                        <button class="py-2 rounded-lg border border-slate-200 bg-white text-xs font-bold">14:00</button>
+                        <button class="py-2 rounded-lg border border-slate-200 bg-white text-xs font-bold">14:30</button>
+                        <button class="py-2 rounded-lg border border-primary bg-primary/5 text-primary text-xs font-bold">15:00</button>
+                        <button class="py-2 rounded-lg border border-slate-200 bg-white text-xs font-bold">15:30</button>
+                    </div>
+
+                    <div class="bg-white rounded-xl border-2 border-primary overflow-hidden">
+                        <div class="bg-primary px-3 py-1.5 flex items-center gap-2"><span class="material-symbols-outlined text-white text-sm">stars</span><span class="text-[10px] font-black text-white uppercase">Bác sĩ tối ưu nhất</span></div>
+                        <div class="p-4">
+                            @if (Model.Result?.SuggestedDoctors?.Count > 0)
+                            {
+                                var topDoctor = Model.Result.SuggestedDoctors[0];
+                                <h4 class="font-bold">@topDoctor.FullName</h4>
+                                <p class="text-xs text-primary font-semibold">@(topDoctor.DepartmentName ?? "Chưa cập nhật")</p>
+                                <div class="grid grid-cols-2 gap-3 mt-4">
+                                    <a asp-page="/Patient/DoctorProfile" asp-route-doctorProfileId="@topDoctor.DoctorProfileId" class="w-full bg-slate-100 text-slate-700 py-2.5 rounded-lg text-xs font-bold no-underline text-center">Xem hồ sơ</a>
+                                    <a asp-page="/Patient/DoctorProfile" asp-route-doctorProfileId="@topDoctor.DoctorProfileId" class="w-full bg-primary text-white py-2.5 rounded-lg text-xs font-bold no-underline text-center">Đặt lịch ngay</a>
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-sm text-slate-500">Chưa có bác sĩ gợi ý.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-100 border border-slate-200 text-[11px] text-slate-500">
+                <strong>Thông báo miễn trừ trách nhiệm y tế:</strong> Công cụ AI chỉ mang tính tham khảo và không thay thế chẩn đoán chuyên môn.
+            </div>
+        </aside>
+    </div>
+</main>

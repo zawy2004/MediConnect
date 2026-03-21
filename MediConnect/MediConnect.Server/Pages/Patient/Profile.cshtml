@@ -6,13 +6,35 @@
 
 @if (Model.Data != null)
 {
-    <div class="max-w-[1320px] mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <section class="lg:col-span-8 bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
-            <div class="flex items-center justify-between">
-                <h1 class="text-4xl font-black">Hồ sơ bệnh nhân</h1>
-                <span class="text-xs px-3 py-1 bg-blue-50 text-blue-700 rounded-full">@Model.Data.Email</span>
+    <div class="max-w-[1320px] mx-auto px-6 py-8 space-y-6">
+        <section class="bg-white border border-slate-200 rounded-2xl p-6 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-20 h-20 rounded-full bg-slate-100 border"></div>
+                <div>
+                    <h1 class="text-4xl font-black">@Model.FullName</h1>
+                    <p class="text-slate-500 text-sm mt-1">Thành viên từ 2023</p>
+                </div>
+            </div>
+            <div class="hidden md:flex gap-3">
+                <div class="text-center px-4 py-2 bg-slate-50 rounded-xl"><p class="text-[10px] font-bold text-slate-400 uppercase">Nhóm máu</p><p class="text-lg font-bold text-red-500">@Model.Data.BloodType</p></div>
+                <div class="text-center px-4 py-2 bg-slate-50 rounded-xl"><p class="text-[10px] font-bold text-slate-400 uppercase">BMI</p><p class="text-lg font-bold text-emerald-500">@Model.Data.Bmi</p></div>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <section class="lg:col-span-8 space-y-4">
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 text-white relative overflow-hidden">
+                <p class="text-xs font-bold uppercase tracking-wider">Cảnh báo mùa đông (AI-Generated)</p>
+                <h2 class="text-2xl font-black mt-2">Nguy cơ cúm mùa & bệnh hô hấp tăng cao</h2>
+                <p class="text-blue-100 mt-2">Dựa trên hồ sơ sức khỏe gần đây, hệ thống khuyến nghị giữ ấm và tiêm nhắc lại vắc xin cúm.</p>
+                <div class="mt-4 flex gap-3">
+                    <button class="px-4 py-2 rounded-lg bg-white/20 text-sm font-bold">Xem hướng dẫn</button>
+                    <button class="px-4 py-2 rounded-lg bg-white text-primary text-sm font-bold">Đặt lịch tiêm phòng</button>
+                </div>
             </div>
 
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
+                <h3 class="text-xl font-black">Thông tin cá nhân</h3>
             @if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
             {
                 <div class="bg-green-50 border border-green-200 text-green-700 rounded-xl px-4 py-3">@Model.StatusMessage</div>
@@ -48,6 +70,18 @@
                     <button type="submit" class="px-5 py-2.5 bg-primary text-white rounded-xl font-semibold">Cập nhật hồ sơ</button>
                 </div>
             </form>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-6">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-xl font-black">Lịch sử khám bệnh</h3>
+                    <a asp-page="/Patient/Appointments" class="text-primary text-sm no-underline font-semibold">Xem tất cả</a>
+                </div>
+                <div class="space-y-3 text-sm">
+                    <div class="p-3 rounded-xl border border-slate-100 bg-slate-50">Kiểm tra Nội hô hấp • 22/10/2023</div>
+                    <div class="p-3 rounded-xl border border-slate-100 bg-slate-50">Khám Răng hàm mặt • 15/05/2023</div>
+                </div>
+            </div>
         </section>
 
         <aside class="lg:col-span-4 space-y-4">
@@ -64,15 +98,25 @@
                 </div>
             </div>
 
-            <div class="bg-white border border-slate-200 rounded-2xl p-5">
-                <h3 class="text-lg font-black mb-2">Nhắc nhở</h3>
+            <div class="bg-slate-900 text-white border border-slate-800 rounded-2xl p-5">
+                <h3 class="text-lg font-black mb-2">AI Health Insights</h3>
                 <ul class="space-y-2 text-sm text-slate-600">
                     @foreach (var alert in Model.Data.Alerts)
                     {
-                        <li class="bg-amber-50 border border-amber-200 rounded-xl p-2">@alert</li>
+                        <li class="bg-white/5 border border-white/10 text-slate-200 rounded-xl p-2">@alert</li>
                     }
                 </ul>
             </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-5">
+                <h3 class="text-lg font-black mb-2">Khuyến nghị cá nhân</h3>
+                <div class="space-y-3 text-sm text-slate-600">
+                    <p>Khám tổng quát định kỳ • Dự kiến: 15/12/2023</p>
+                    <p>Thay đổi lối sống • Tăng vận động 30 phút/ngày</p>
+                </div>
+                <a asp-page="/Patient/SearchDoctors" class="block text-center mt-4 px-4 py-2.5 bg-primary text-white rounded-xl no-underline font-semibold">Đặt lịch khám tiếp theo</a>
+            </div>
         </aside>
+        </div>
     </div>
 }

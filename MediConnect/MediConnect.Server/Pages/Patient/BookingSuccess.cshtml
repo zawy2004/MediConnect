@@ -6,24 +6,58 @@
 
 @if (Model.Data != null)
 {
-    <div class="max-w-[920px] mx-auto px-6 py-10">
-        <div class="bg-white border border-green-200 rounded-2xl p-8 text-center space-y-4">
+    <div class="max-w-[1120px] mx-auto px-6 py-10">
+        <div class="text-center mb-8">
             <div class="size-16 mx-auto rounded-full bg-green-100 text-green-700 flex items-center justify-center">
-                <span class="material-symbols-outlined text-3xl">check</span>
+                <span class="material-symbols-outlined text-4xl">check_circle</span>
             </div>
-            <h1 class="text-4xl font-black">Đặt lịch thành công!</h1>
-            <p class="text-slate-500">Mã lịch hẹn #@Model.Data.AppointmentId • Mã giao dịch @Model.Data.TransactionId</p>
-
-            <div class="bg-slate-50 rounded-xl p-4 text-left max-w-[520px] mx-auto text-sm text-slate-700 space-y-2">
-                <p><span class="text-slate-500">Bác sĩ:</span> @Model.Data.DoctorName</p>
-                <p><span class="text-slate-500">Thời gian:</span> @Model.Data.AppointmentDate.ToString("dd/MM/yyyy") @Model.Data.StartTime.ToString("HH:mm")</p>
-                <p><span class="text-slate-500">Trạng thái:</span> @Model.Data.Status</p>
-            </div>
-
-            <div class="flex justify-center gap-3 pt-2">
-                <a asp-page="/Patient/Appointments" class="px-4 py-2 border border-slate-300 rounded-xl no-underline">Xem lịch hẹn</a>
-                <a asp-page="/Patient/Dashboard" class="px-4 py-2 bg-primary text-white rounded-xl no-underline">Về dashboard</a>
-            </div>
+            <h1 class="text-4xl font-black mt-3">Đặt lịch thành công!</h1>
+            <p class="text-slate-500 mt-2">Yêu cầu đặt lịch của bạn đã được xác nhận.</p>
         </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div class="lg:col-span-7 space-y-5">
+                <div class="bg-white border border-slate-200 rounded-2xl p-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <h2 class="text-xl font-black">Chi tiết lịch hẹn</h2>
+                        <div class="text-right">
+                            <p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Booking ID</p>
+                            <p class="font-black text-primary">@(Model.Data.BookingCode)</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 rounded-xl p-4 text-sm space-y-2">
+                        <p><span class="text-slate-500">Bác sĩ:</span> @Model.Data.DoctorName</p>
+                        <p><span class="text-slate-500">Thời gian:</span> @Model.Data.AppointmentDate.ToString("dd/MM/yyyy") @Model.Data.StartTime.ToString("HH:mm")</p>
+                        <p><span class="text-slate-500">Trạng thái:</span> @Model.Data.Status</p>
+                        <p><span class="text-slate-500">Mã giao dịch:</span> @(Model.Data.TransactionId ?? "-")</p>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-2xl p-6">
+                    <h3 class="text-lg font-black mb-3">Lịch khám cá nhân của bạn</h3>
+                    <div class="grid grid-cols-7 gap-2 text-center">
+                        @for (var i = 16; i <= 22; i++)
+                        {
+                            var active = i == Model.Data.AppointmentDate.Day;
+                            <div class="aspect-square flex items-center justify-center rounded-xl @(active ? "bg-primary text-white" : "bg-slate-50 text-slate-400")">@i</div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <aside class="lg:col-span-5 space-y-4">
+                <div class="bg-white border border-slate-200 rounded-2xl p-6">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-slate-400 mb-3">Lưu ý trước khi đi khám</h3>
+                    <ul class="space-y-3 text-sm text-slate-600">
+                        <li class="flex gap-2"><span class="material-symbols-outlined text-primary text-base">badge</span>Mang theo CCCD/Bảo hiểm y tế bản gốc.</li>
+                        <li class="flex gap-2"><span class="material-symbols-outlined text-primary text-base">history_toggle_off</span>Có mặt trước 15 phút để làm thủ tục check-in.</li>
+                        <li class="flex gap-2"><span class="material-symbols-outlined text-primary text-base">folder_open</span>Mang theo kết quả xét nghiệm cũ (nếu có).</li>
+                    </ul>
+                </div>
+
+                <a asp-page="/Patient/Dashboard" class="block w-full py-3.5 bg-primary text-white rounded-xl font-bold text-center no-underline">Về trang chủ</a>
+                <a asp-page="/Patient/Appointments" class="block w-full py-3 border-2 border-primary text-primary rounded-xl font-bold text-center no-underline">Tải phiếu khám (PDF)</a>
+            </aside>
+            </div>
     </div>
 }

@@ -6,47 +6,88 @@
 
 @if (Model.Data != null)
 {
-    <div class="max-w-[1320px] mx-auto px-6 py-8 space-y-6">
-        <h1 class="text-4xl font-black">Quản lý lịch hẹn</h1>
+    <div class="max-w-[1000px] mx-auto px-4 py-8">
+        <div class="flex flex-wrap justify-between items-end gap-3 pb-6">
+            <div>
+                <h1 class="text-5xl font-black tracking-tight">Lịch hẹn của tôi</h1>
+                <p class="text-[#4c739a] mt-2 text-lg">Quản lý các cuộc hẹn sắp tới và xem lịch sử y tế của bạn.</p>
+            </div>
+            <a asp-page="/Patient/SearchDoctors" class="bg-primary text-white font-bold py-3 px-6 rounded-lg no-underline flex items-center gap-2"><span class="material-symbols-outlined">add_circle</span>Đặt lịch mới</a>
+        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="bg-white border border-slate-200 rounded-2xl p-4">
-                <p class="text-sm text-slate-500">Tổng lịch hẹn</p>
-                <p class="text-3xl font-black mt-1">@Model.Data.TotalAppointments</p>
+        <div class="mb-8 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-5 flex items-center justify-between border-b border-slate-200">
+                <h3 class="text-lg font-bold">Tháng hiện tại</h3>
+                <div class="flex bg-slate-100 p-1 rounded-lg">
+                    <button class="px-4 py-1.5 text-xs font-bold rounded-md bg-white shadow-sm text-primary">Tháng</button>
+                    <button class="px-4 py-1.5 text-xs font-bold rounded-md text-slate-500">Tuần</button>
+                </div>
             </div>
-            <div class="bg-white border border-blue-200 rounded-2xl p-4 bg-blue-50">
-                <p class="text-sm text-blue-700">Sắp tới</p>
-                <p class="text-3xl font-black text-blue-800 mt-1">@Model.Data.PendingAppointments</p>
-            </div>
-            <div class="bg-white border border-green-200 rounded-2xl p-4 bg-green-50">
-                <p class="text-sm text-green-700">Đã hoàn thành</p>
-                <p class="text-3xl font-black text-green-800 mt-1">@Model.Data.CompletedAppointments</p>
-            </div>
-            <div class="bg-white border border-red-200 rounded-2xl p-4 bg-red-50">
-                <p class="text-sm text-red-700">Đã hủy</p>
-                <p class="text-3xl font-black text-red-800 mt-1">@Model.Data.CancelledAppointments</p>
+            <div class="p-5 grid grid-cols-7 gap-2 text-center text-sm">
+                @for (var i = 1; i <= 28; i++)
+                {
+                    var active = i == DateTime.Today.Day;
+                    <div class="h-14 flex items-center justify-center rounded-xl @(active ? "border-2 border-primary bg-primary/10 text-primary font-bold" : "border border-transparent hover:border-primary/30")">@i</div>
+                }
             </div>
         </div>
 
-        <div class="bg-white border border-slate-200 rounded-2xl p-5">
-            <h2 class="text-xl font-black mb-4">Lịch hẹn gần đây</h2>
-            <div class="space-y-3">
-                @foreach (var item in Model.Data.Appointments)
-                {
-                    <div class="border border-slate-200 rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                        <div>
-                            <p class="font-bold">@item.DoctorName</p>
-                            <p class="text-sm text-slate-500">@item.AppointmentDate.ToString("dd/MM/yyyy") @item.StartTime.ToString("HH:mm") • @(item.SpecialtyName ?? "Chuyên khoa")</p>
-                            <p class="text-xs text-slate-500">Lý do: @item.Reason</p>
-                        </div>
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">@item.Status</span>
-                    </div>
-                }
-                @if (Model.Data.Appointments.Count == 0)
-                {
-                    <p class="text-sm text-slate-500">Bạn chưa có lịch hẹn nào.</p>
-                }
+        <div class="pb-6 border-b border-slate-200 mb-6 flex gap-10">
+            <span class="border-b-[3px] border-primary text-slate-900 pb-3 text-sm font-bold">Sắp tới (@Model.Data.PendingAppointments)</span>
+            <span class="text-slate-400 pb-3 text-sm font-bold">Lịch hẹn cũ</span>
+        </div>
+
+        <label class="flex w-full h-14 mb-8 shadow-sm">
+            <div class="flex w-full items-center rounded-xl border border-slate-200 bg-white px-4 gap-2">
+                <span class="material-symbols-outlined text-slate-400">search</span>
+                <input class="w-full border-none focus:ring-0 text-base" placeholder="Tìm kiếm theo tên bác sĩ, chuyên khoa hoặc bệnh viện" />
             </div>
+        </label>
+
+        <h2 class="text-3xl font-black pb-4">Sắp tới trong tuần này</h2>
+        <div class="space-y-4">
+            @foreach (var item in Model.Data.Appointments.Take(6))
+            {
+                var statusClass = item.Status.Contains("CONFIRM", StringComparison.OrdinalIgnoreCase) || item.Status.Contains("CONFIRMED", StringComparison.OrdinalIgnoreCase)
+                    ? "bg-green-100 text-green-700 border-green-200"
+                    : item.Status.Contains("PENDING", StringComparison.OrdinalIgnoreCase)
+                        ? "bg-amber-100 text-amber-700 border-amber-200"
+                        : item.Status.Contains("CANCEL", StringComparison.OrdinalIgnoreCase)
+                            ? "bg-red-100 text-red-700 border-red-200"
+                            : "bg-blue-100 text-blue-700 border-blue-200";
+
+                <div class="bg-white rounded-xl p-5 border border-slate-200 flex flex-col md:flex-row gap-6 hover:border-primary/50 transition-all shadow-sm">
+                    <div class="w-24 h-24 rounded-lg bg-slate-100 border"></div>
+                    <div class="flex-grow">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h3 class="text-2xl font-bold">@item.DoctorName</h3>
+                                <p class="text-primary font-semibold text-sm">@(item.SpecialtyName ?? "Chuyên khoa")</p>
+                            </div>
+                            <span class="text-xs font-bold px-3 py-1 rounded-full border @statusClass">@item.Status</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 text-sm text-slate-500">
+                            <div class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">calendar_today</span>@item.AppointmentDate.ToString("dd/MM/yyyy")</div>
+                            <div class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">schedule</span>@item.StartTime.ToString("HH:mm") - @item.EndTime.ToString("HH:mm")</div>
+                            <div class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">description</span>@(string.IsNullOrWhiteSpace(item.Reason) ? "Khám định kỳ" : item.Reason)</div>
+                        </div>
+
+                        <div class="flex gap-3 flex-wrap">
+                            <a asp-page="/Patient/DoctorProfile" class="bg-primary/10 text-primary hover:bg-primary hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-all no-underline">Đổi lịch</a>
+                            <form method="post" asp-page-handler="Cancel" class="inline">
+                                <input type="hidden" name="appointmentId" value="@item.AppointmentId" />
+                                <button type="submit" class="bg-slate-100 text-slate-600 hover:bg-red-50 hover:text-red-600 px-4 py-2 rounded-lg text-sm font-bold transition-all">Hủy lịch hẹn</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (Model.Data.Appointments.Count == 0)
+            {
+                <div class="bg-white rounded-xl border border-slate-200 p-6 text-slate-500">Bạn chưa có lịch hẹn nào.</div>
+            }
         </div>
     </div>
 }

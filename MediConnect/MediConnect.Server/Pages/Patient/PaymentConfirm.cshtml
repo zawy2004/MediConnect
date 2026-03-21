@@ -6,42 +6,77 @@
 
 @if (Model.Summary != null)
 {
-    <div class="max-w-[1080px] mx-auto px-6 py-8 space-y-6">
-        <h1 class="text-4xl font-black">Xác nhận thanh toán</h1>
+    <div class="max-w-[1180px] mx-auto px-6 py-8 space-y-6">
+        <div class="flex items-center justify-between mb-2">
+            <h1 class="text-4xl font-black">Xác nhận & Thanh toán</h1>
+            <span class="text-sm font-bold text-primary px-3 py-1 bg-primary/10 rounded-full">Bước cuối cùng</span>
+        </div>
+        <div class="relative w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+            <div class="absolute inset-y-0 left-0 w-full bg-primary"></div>
+        </div>
+        <div class="flex justify-between text-[10px] font-bold uppercase tracking-widest text-slate-400"><span>Chọn bác sĩ & thời gian</span><span class="text-primary">Xác nhận & thanh toán</span></div>
 
         @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
         {
             <div class="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3">@Model.ErrorMessage</div>
         }
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <section class="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
-                <h2 class="text-xl font-black">Thông tin lịch hẹn</h2>
-                <div class="text-sm text-slate-700 space-y-2">
-                    <p><span class="text-slate-500">Bác sĩ:</span> @Model.Summary.DoctorName</p>
-                    <p><span class="text-slate-500">Chuyên khoa:</span> @Model.Summary.SpecialtyName</p>
-                    <p><span class="text-slate-500">Thời gian khám:</span> @Model.Summary.AppointmentDate.ToString("dd/MM/yyyy") @Model.Summary.StartTime.ToString("HH:mm")</p>
-                    <p><span class="text-slate-500">Mã lịch hẹn:</span> #@Model.Summary.AppointmentId</p>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <section class="lg:col-span-7 space-y-6">
+                <div class="bg-white border border-slate-200 rounded-2xl p-6">
+                    <h2 class="text-xl font-black mb-5 flex items-center gap-2"><span class="material-symbols-outlined text-primary">person</span>Thông tin bệnh nhân</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><p class="text-[11px] font-bold text-slate-400 uppercase">Họ và tên</p><div class="mt-1 bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold">@Model.Summary.PatientName</div></div>
+                        <div><p class="text-[11px] font-bold text-slate-400 uppercase">Số điện thoại</p><div class="mt-1 bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold">@(Model.Summary.PhoneNumber ?? "Chưa cập nhật")</div></div>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-2xl p-6">
+                    <h2 class="text-xl font-black mb-5 flex items-center gap-2"><span class="material-symbols-outlined text-primary">monitor_heart</span>Tình trạng sức khỏe</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-sm font-bold text-slate-700">Lý do khám</label>
+                            <select class="w-full mt-2 bg-slate-50 border-slate-200 rounded-xl px-4 py-3 text-sm">
+                                <option>Khám tổng quát/định kỳ</option>
+                                <option>Tái khám</option>
+                                <option>Triệu chứng cấp tính</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-sm font-bold text-slate-700">Triệu chứng/Tình trạng cơ bản</label>
+                            <div class="mt-2 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-600">Ho khan, tức ngực</div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            <aside class="bg-white border border-slate-200 rounded-2xl p-6 space-y-3 h-fit">
-                <h3 class="text-lg font-black">Tổng thanh toán</h3>
-                <div class="flex items-center justify-between text-sm">
-                    <span class="text-slate-500">Phí khám</span>
-                    <span>@Model.Summary.Amount.ToString("N0")đ</span>
-                </div>
-                <hr />
-                <div class="flex items-center justify-between text-lg font-black">
-                    <span>Tổng</span>
-                    <span class="text-primary">@Model.Summary.Amount.ToString("N0")đ</span>
+            <aside class="lg:col-span-5 bg-white border border-slate-200 rounded-2xl overflow-hidden h-fit">
+                <div class="p-6 border-b border-slate-100">
+                    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Tóm tắt lịch hẹn</h3>
+                    <div class="space-y-2 text-sm">
+                        <p><span class="text-slate-500">Bác sĩ:</span> <span class="font-semibold">@Model.Summary.DoctorName</span></p>
+                        <p><span class="text-slate-500">Chuyên khoa:</span> <span class="font-semibold">@Model.Summary.SpecialtyName</span></p>
+                        <p><span class="text-slate-500">Thời gian:</span> <span class="font-semibold">@Model.Summary.AppointmentDate.ToString("dd/MM/yyyy") @Model.Summary.StartTime.ToString("HH:mm")</span></p>
+                        <p><span class="text-slate-500">Địa điểm:</span> <span class="font-semibold">@(Model.Summary.Location ?? "MediConnect")</span></p>
+                        <p><span class="text-slate-500">Mã lịch hẹn:</span> <span class="font-semibold">#@Model.Summary.AppointmentId</span></p>
+                    </div>
                 </div>
 
-                <form method="post">
-                    <input asp-for="AppointmentId" type="hidden" />
-                    <input asp-for="PaymentMethod" type="hidden" />
-                    <button type="submit" class="w-full py-2.5 bg-primary text-white rounded-xl font-semibold mt-2">Thanh toán ngay</button>
-                </form>
+                <div class="p-6 bg-slate-50/50 space-y-4">
+                    <div class="flex items-center justify-between"><span class="text-sm font-bold text-slate-700">Tổng tiền thanh toán</span><span class="text-2xl font-black text-primary">@Model.Summary.Amount.ToString("N0")đ</span></div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Chọn hình thức thanh toán</p>
+                    <label class="flex items-center p-3 rounded-xl border border-primary bg-white"><input type="radio" checked class="text-primary" /><span class="ml-3 text-sm font-semibold">Thẻ Quốc tế</span></label>
+                    <label class="flex items-center p-3 rounded-xl border border-slate-200 bg-white"><input type="radio" class="text-primary" /><span class="ml-3 text-sm font-semibold">Ví MoMo</span></label>
+                    <label class="flex items-center p-3 rounded-xl border border-slate-200 bg-white"><input type="radio" class="text-primary" /><span class="ml-3 text-sm font-semibold">VNPAY</span></label>
+                    <label class="flex items-center p-3 rounded-xl border border-slate-200 bg-white"><input type="radio" class="text-primary" /><span class="ml-3 text-sm font-semibold">Thanh toán tại chỗ</span></label>
+
+                    <form method="post" class="pt-2">
+                        <input asp-for="AppointmentId" type="hidden" />
+                        <input asp-for="PaymentMethod" type="hidden" value="VNPAY" />
+                        <button type="submit" class="w-full py-3.5 bg-primary text-white rounded-xl font-bold">Xác nhận & Thanh toán</button>
+                    </form>
+                    <a asp-page="/Patient/DoctorProfile" class="block text-center text-sm text-slate-500 no-underline">Quay lại</a>
+                </div>
             </aside>
         </div>
     </div>

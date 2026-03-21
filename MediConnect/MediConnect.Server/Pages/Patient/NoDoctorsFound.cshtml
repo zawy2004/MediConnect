@@ -4,17 +4,68 @@
     ViewData["Title"] = "Không có bác sĩ phù hợp";
 }
 
-<div class="max-w-[980px] mx-auto px-6 py-12">
-    <div class="bg-white border border-slate-200 rounded-2xl p-10 text-center">
-        <div class="size-16 mx-auto rounded-full bg-slate-100 text-slate-500 flex items-center justify-center">
-            <span class="material-symbols-outlined text-3xl">search_off</span>
-        </div>
-        <h1 class="text-4xl font-black mt-4">Không có bác sĩ nào phù hợp bộ lọc</h1>
-        <p class="text-slate-500 mt-3">Bạn có thể nới rộng bộ lọc hoặc thử tìm theo triệu chứng với AI.</p>
-        <p class="text-xs text-slate-400 mt-2">@Model.FilterSummary</p>
-        <div class="mt-6 flex justify-center gap-3">
-            <a asp-page="/Patient/SearchDoctors" class="px-4 py-2 border border-slate-300 rounded-xl no-underline">Xóa bộ lọc</a>
-            <a asp-page="/Patient/SymptomAssessment" class="px-4 py-2 bg-primary text-white rounded-xl no-underline">Dùng AI để gợi ý</a>
+<div class="max-w-[1440px] mx-auto px-6 lg:px-12 py-8">
+    <div class="flex flex-col lg:flex-row gap-8">
+        <aside class="w-full lg:w-72 shrink-0">
+            <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm sticky top-24">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-bold">Bộ lọc</h2>
+                    <a asp-page="/Patient/SearchDoctors" class="text-primary text-xs font-bold uppercase tracking-wider no-underline">Đặt lại</a>
+                </div>
+                <div class="space-y-3 text-sm">
+                    <div class="p-3 rounded-lg bg-primary/5 border border-primary/20">
+                        <p class="font-bold text-primary">Gợi ý AI (AI-FE-01)</p>
+                        <p class="text-xs text-slate-500 mt-1">Tối ưu hóa theo triệu chứng và hồ sơ bệnh án.</p>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-50 border border-slate-100">@Model.FilterSummary</div>
+                    <a asp-page="/Patient/SearchDoctors" class="block text-center py-2.5 bg-primary text-white rounded-lg font-bold no-underline">Áp dụng lại bộ lọc</a>
+                </div>
+            </div>
+        </aside>
+
+        <section class="flex-1">
+            <nav class="flex items-center gap-2 mb-4 text-sm text-slate-500">
+                <a href="#" class="hover:text-primary no-underline">Trang chủ</a><span>/</span><span class="text-slate-900">Tìm kiếm MediConnect</span>
+            </nav>
+
+            <div class="flex items-center justify-between gap-4 mb-6 flex-wrap">
+                <div>
+                    <h1 class="text-4xl font-black tracking-tight">0 Bác sĩ phù hợp với bộ lọc của bạn</h1>
+                    <p class="text-slate-500 mt-1">Xếp hạng AI cho Tim mạch tại Hà Nội với bảo hiểm Aetna</p>
+                </div>
+                <button class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold opacity-50">Điểm phù hợp AI</button>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mb-6">
+                <span class="px-3 py-1.5 bg-primary/10 text-primary rounded-full text-xs font-bold border border-primary/20">Gợi ý AI đang bật</span>
+                <span class="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-full text-xs font-bold border border-slate-200">Tim mạch</span>
+                <span class="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-full text-xs font-bold border border-slate-200">7 ngày tới</span>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-xl p-12 shadow-sm text-center">
+                <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 mb-6 mx-auto">
+                    <span class="material-symbols-outlined text-5xl">search_off</span>
+                </div>
+                <h3 class="text-3xl font-bold max-w-xl mx-auto">Rất tiếc, chúng tôi không tìm thấy bác sĩ nào phù hợp với các tiêu chí hiện tại của bạn.</h3>
+                <p class="text-slate-500 text-sm max-w-md mx-auto mt-3">Bạn có thể thử đặt lại bộ lọc hoặc xem tất cả lịch trống trong ngày để có nhiều lựa chọn hơn.</p>
+
+                <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a asp-page="/Patient/SearchDoctors" class="px-8 py-3.5 bg-primary text-white rounded-lg font-bold no-underline flex items-center gap-2">Xem lịch tổng quát <span class="material-symbols-outlined text-lg">arrow_forward</span></a>
+                    <a asp-page="/Patient/SearchDoctors" class="px-8 py-3.5 border-2 border-primary text-primary rounded-lg font-bold no-underline">Đặt lại tất cả bộ lọc</a>
+                </div>
+
+                <div class="mt-8 inline-flex items-center gap-2 py-3 px-5 bg-primary/5 border border-primary/10 rounded-full text-xs">
+                    <span class="material-symbols-outlined text-primary text-lg">auto_awesome</span>
+                    <span><span class="font-bold">Gợi ý AI:</span> Thử mở rộng khoảng cách hoặc thay đổi chuyên khoa để nhận đề xuất mới.</span>
+                </div>
+            </div>
+
+            <div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-40">
+                <button class="flex items-center gap-3 bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl font-bold">
+                    <span class="material-symbols-outlined">map</span>
+                    Xem bản đồ
+                </button>
+            </div>
         </div>
     </div>
 </div>

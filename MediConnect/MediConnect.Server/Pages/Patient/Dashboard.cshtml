@@ -5,26 +5,29 @@
 }
 
 <div class="max-w-[1280px] mx-auto px-6 py-8 space-y-6">
-    <section class="flex items-center justify-between gap-3">
+    <section class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center justify-between gap-4">
         <div>
-            <h1 class="text-4xl font-black">Patient Dashboard</h1>
-            <p class="text-slate-500 mt-1">Xin chào @Model.Data.PatientName</p>
+            <p class="text-xs font-bold text-amber-800 uppercase tracking-wider">Cảnh báo mùa lạnh từ MediConnect AI</p>
+            <p class="text-sm text-amber-700 mt-1">@Model.Data.HealthAlertMessage</p>
         </div>
-        <a asp-page="/Patient/Profile" class="px-4 py-2 rounded-xl border border-slate-300 no-underline">Hồ sơ cá nhân</a>
+        <a asp-page="/Patient/Profile" class="px-4 py-2 rounded-lg bg-amber-600 text-white no-underline text-sm font-bold">Xem chi tiết</a>
     </section>
 
-    <section class="bg-blue-50 border border-blue-200 rounded-2xl p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <section class="bg-gradient-to-r from-primary to-blue-500 rounded-2xl p-8 text-white relative overflow-hidden">
         <div>
-            <p class="text-xs uppercase tracking-wider text-primary font-bold">@Model.Data.HealthAlertTitle</p>
-            <p class="text-slate-700 mt-2">@Model.Data.HealthAlertMessage</p>
+            <p class="text-xs uppercase tracking-wider font-bold">Trí tuệ nhân tạo y tế</p>
+            <h1 class="text-4xl font-black mt-2">Hỗ trợ sức khỏe thông minh</h1>
+            <p class="text-blue-100 mt-3 max-w-2xl">Sử dụng MediConnect AI để phân tích hồ sơ bệnh án, nhắc nhở lịch khám và gợi ý chăm sóc sức khỏe cá nhân hóa.</p>
+            <a asp-page="/Patient/SymptomAssessment" class="inline-block mt-6 px-5 py-2.5 rounded-lg bg-white text-primary no-underline font-bold">Xem báo cáo sức khỏe AI</a>
         </div>
-        <a asp-page="/Patient/SymptomAssessment" class="px-4 py-2 rounded-xl bg-primary text-white no-underline">Kiểm tra triệu chứng</a>
+        <span class="material-symbols-outlined absolute right-4 bottom-[-28px] text-[220px] opacity-10">psychology</span>
     </section>
 
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-white border border-slate-200 rounded-2xl p-5"><p class="text-sm text-slate-500">Lịch sắp tới</p><p class="text-4xl font-black mt-2">@Model.Data.UpcomingAppointments</p></div>
-        <div class="bg-white border border-slate-200 rounded-2xl p-5"><p class="text-sm text-slate-500">Đã hoàn thành</p><p class="text-4xl font-black mt-2">@Model.Data.CompletedAppointments</p></div>
-        <div class="bg-white border border-slate-200 rounded-2xl p-5"><p class="text-sm text-slate-500">Đã hủy</p><p class="text-4xl font-black mt-2">@Model.Data.CancelledAppointments</p></div>
+    <section class="flex flex-wrap gap-3">
+        <a asp-page="/Patient/SymptomAssessment" class="px-4 py-2 bg-white border border-slate-200 rounded-full text-sm no-underline text-slate-700">Kiểm tra triệu chứng</a>
+        <a asp-page="/Patient/SearchDoctors" class="px-4 py-2 bg-white border border-slate-200 rounded-full text-sm no-underline text-slate-700">Tìm bác sĩ nhanh</a>
+        <a asp-page="/Patient/Appointments" class="px-4 py-2 bg-white border border-slate-200 rounded-full text-sm no-underline text-slate-700">Hỏi về lịch hẹn</a>
+        <a asp-page="/Patient/Profile" class="px-4 py-2 bg-primary text-white rounded-full text-sm no-underline">Dịch vụ mới</a>
     </section>
 
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -32,6 +35,11 @@
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-xl font-black">Lịch hẹn của tôi</h2>
                 <a asp-page="/Patient/Appointments" class="text-primary no-underline text-sm font-semibold">Xem tất cả</a>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-3"><p class="text-xs text-blue-700">Sắp tới</p><p class="text-2xl font-black text-blue-800">@Model.Data.UpcomingAppointments</p></div>
+                <div class="bg-green-50 border border-green-200 rounded-xl p-3"><p class="text-xs text-green-700">Hoàn thành</p><p class="text-2xl font-black text-green-800">@Model.Data.CompletedAppointments</p></div>
+                <div class="bg-red-50 border border-red-200 rounded-xl p-3"><p class="text-xs text-red-700">Đã hủy</p><p class="text-2xl font-black text-red-800">@Model.Data.CancelledAppointments</p></div>
             </div>
             @if (Model.Data.Schedule.Count == 0)
             {
@@ -61,20 +69,12 @@
         </div>
 
         <div class="space-y-4">
-            <div class="bg-white border border-slate-200 rounded-2xl p-5">
-                <h3 class="font-black mb-3">Quick Actions</h3>
-                <div class="space-y-2 text-sm">
-                    <a asp-page="/Patient/SymptomAssessment" class="block px-3 py-2 rounded-xl bg-slate-50 text-slate-700 no-underline">AI Symptom Check</a>
-                    <a asp-page="/Patient/SearchDoctors" class="block px-3 py-2 rounded-xl bg-slate-50 text-slate-700 no-underline">Find Doctor</a>
-                    <a asp-page="/Patient/Appointments" class="block px-3 py-2 rounded-xl bg-slate-50 text-slate-700 no-underline">My Appointments</a>
-                </div>
-            </div>
-            <div class="bg-white border border-slate-200 rounded-2xl p-5">
-                <h3 class="font-black mb-3">Health Insights</h3>
+            <div class="bg-primary/10 border border-primary/20 rounded-2xl p-5">
+                <h3 class="font-black mb-3 text-slate-800">Nhắc nhở sức khỏe AI</h3>
                 <ul class="space-y-2 text-sm text-slate-600">
                     @foreach (var insight in Model.Data.Insights)
                     {
-                        <li>• @insight</li>
+                        <li class="bg-white border border-slate-200 rounded-xl p-2">@insight</li>
                     }
                 </ul>
             </div>
