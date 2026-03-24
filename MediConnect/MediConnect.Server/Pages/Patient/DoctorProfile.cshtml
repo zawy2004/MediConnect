@@ -9,9 +9,9 @@
     var doctor = Model.Data.Doctor;
     <div class="max-w-[1280px] mx-auto w-full px-6 py-8">
         <div class="flex flex-wrap gap-2 mb-6 text-sm text-slate-500">
-            <a href="#" class="hover:text-primary no-underline">Trang chủ</a>
+            <a asp-page="/Patient/Dashboard" class="hover:text-primary no-underline">Trang chủ</a>
             <span>/</span>
-            <a href="#" class="hover:text-primary no-underline">Bác sĩ</a>
+            <a asp-page="/Patient/SearchDoctors" class="hover:text-primary no-underline">Bác sĩ</a>
             <span>/</span>
             <span class="font-bold text-slate-900">@doctor.FullName</span>
         </div>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container": "#edeeef",
+                        "surface-variant": "#e1e3e4",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#005db5",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-surface-variant": "#424752",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#535f70",
+                        "inverse-primary": "#a8c8ff",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e7e8e9",
+                        "surface-bright": "#f8f9fa",
+                        "on-secondary-container": "#596576",
+                        "surface-dim": "#d9dadb",
+                        "surface": "#f8f9fa",
+                        "on-background": "#191c1d",
+                        "secondary-fixed-dim": "#bbc7db",
+                        "secondary-fixed": "#d7e3f8",
+                        "tertiary-container": "#a04401",
+                        "on-primary-fixed": "#001b3d",
+                        "primary-fixed-dim": "#a8c8ff",
+                        "primary-fixed": "#d6e3ff",
+                        "tertiary": "#7b3200",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb691",
+                        "inverse-surface": "#2e3132",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-primary-container": "#cadcff",
+                        "on-tertiary-container": "#ffd1bc",
+                        "tertiary-fixed": "#ffdbcb",
+                        "on-tertiary-fixed-variant": "#783100",
+                        "on-tertiary-fixed": "#341100",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#d7e3f8",
+                        "on-secondary-fixed": "#101c2b",
+                        "outline-variant": "#c2c6d4",
+                        "background": "#f8f9fa",
+                        "primary-container": "#005fb8",
+                        "on-surface": "#191c1d",
+                        "on-secondary-fixed-variant": "#3c4858",
+                        "primary": "#00488d",
+                        "outline": "#727783",
+                        "on-primary-fixed-variant": "#00468b",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f3f4f5",
+                        "on-tertiary": "#ffffff"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .font-headline { font-family: 'Manrope', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-background min-h-screen">
+<!-- SideNavBar Implementation -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-8 px-4 bg-slate-50 dark:bg-slate-950 w-64 z-50">
+<div class="mb-10 px-2">
+<h1 class="text-xl font-bold tracking-tight text-blue-900 dark:text-blue-100">MediConnect</h1>
+<p class="text-xs text-slate-500 font-medium">Clinical Atelier</p>
+</div>
+<nav class="flex-1 space-y-2">
+<!-- Dashboard -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 dark:text-slate-400 font-medium hover:text-blue-600 dark:hover:text-blue-300 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined group-active:scale-90 transition-transform" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<!-- Patients -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 dark:text-slate-400 font-medium hover:text-blue-600 dark:hover:text-blue-300 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined group-active:scale-90 transition-transform" data-icon="group">group</span>
+<span>Patients</span>
+</a>
+<!-- Appointments -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 dark:text-slate-400 font-medium hover:text-blue-600 dark:hover:text-blue-300 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined group-active:scale-90 transition-transform" data-icon="calendar_today">calendar_today</span>
+<span>Appointments</span>
+</a>
+<!-- Messages -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 dark:text-slate-400 font-medium hover:text-blue-600 dark:hover:text-blue-300 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined group-active:scale-90 transition-transform" data-icon="chat_bubble">chat_bubble</span>
+<span>Messages</span>
+</a>
+<!-- Profile (ACTIVE) -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 dark:text-blue-400 font-bold border-r-4 border-blue-600 dark:border-blue-400 bg-blue-50/50 dark:bg-blue-900/20 group" href="#">
+<span class="material-symbols-outlined group-active:scale-90 transition-transform" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
+<span>Profile</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 px-2 flex items-center gap-3">
+<img alt="Dr. Profile Picture" class="w-10 h-10 rounded-full object-cover" data-alt="Close up portrait of a professional doctor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCik3pM76f1O76dHtSA-erd8etvan-cLz_rH40xFFcdbCjV7oki-ikjHc2mPnNrvvj0rlM01o1-HsGDF6tMN8HOFGPSnsqhpRcTm9n41Dule7aL8ig4qD_0fI0VFGbhC2NWpOS3BoqtTRN7BDqnM1uCbvHj4cC1TCqHpNKjDslynTSXSEyci92EGdeb6Jo9V2eYwrV2_yPK35OP9GCFktYL6kpTetonnkBur2Hrw5p0_AgzCeOq7FkjlpSBDVo3zP6AkXQ7L84ULpa6"/>
+<div>
+<p class="text-sm font-bold text-on-surface">Dr. James Smith</p>
+<p class="text-xs text-slate-500">Administrator</p>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen">
+<!-- TopAppBar Implementation -->
+<header class="flex justify-between items-center w-full h-16 px-8 sticky top-0 z-40 bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl">
+<h2 class="text-lg font-black text-blue-800 dark:text-blue-200 font-headline">MediConnect Dashboard</h2>
+<div class="flex items-center gap-6">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="bg-surface-container-low border-none rounded-full pl-10 pr-4 py-1.5 text-sm w-64 focus:ring-2 focus:ring-primary/20" placeholder="Tìm kiếm..." type="text"/>
+</div>
+<div class="flex items-center gap-4 text-slate-600">
+<button class="hover:text-blue-600 transition-all"><span class="material-symbols-outlined" data-icon="notifications">notifications</span></button>
+<button class="hover:text-blue-600 transition-all"><span class="material-symbols-outlined" data-icon="help_outline">help_outline</span></button>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="p-8 max-w-5xl mx-auto">
+<div class="mb-10 flex justify-between items-end">
+<div>
+<h3 class="text-3xl font-extrabold text-on-surface font-headline tracking-tight">Cập nhật Hồ sơ Chuyên môn</h3>
+<p class="text-on-surface-variant mt-2">Quản lý danh tính số và thông tin chuyên ngành của bạn tại MediConnect.</p>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-2.5 text-sm font-semibold text-secondary hover:bg-surface-container-high rounded-xl transition-all">Hủy</button>
+<button class="px-8 py-2.5 text-sm font-bold text-white bg-gradient-to-br from-primary to-primary-container rounded-xl shadow-lg shadow-primary/10 hover:opacity-90 transition-all active:scale-95">Lưu thay đổi</button>
+</div>
+</div>
+<!-- Form Sections -->
+<div class="space-y-8">
+<!-- Section 1: Thông tin cơ bản -->
+<section class="bg-surface-container-lowest p-8 rounded-xl">
+<div class="flex items-start gap-8">
+<div class="relative group cursor-pointer">
+<div class="w-32 h-32 rounded-full overflow-hidden bg-surface-container-highest flex items-center justify-center ring-4 ring-surface-container-low">
+<img alt="Doctor Avatar" class="w-full h-full object-cover" data-alt="Professional medical profile picture of a doctor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhJChBPHdLpsS1nlNcp_8EqFsDbKF5njBkRH2t5J-umw1gXC7g1iw3SXvJfvd83MJjDQtYWw1JWyoFbCaDN_qCkbCfcOTL3b165XVMxcL7dw1WxICbD8Gxtzwb7IypmCMdmIlHp81POI_Qp8QUyZwfEz-mBJAKhqbJ4FHfIyvuh78YRZC6BBUcJbGib6jejU9DmUkz8LLiGyjtW0t2M5EI0H-9xU_Rf0OtjUARTlo2lQxgUTD9igf4VtYrKmfmLgO5JO2--QMc-s1O"/>
+</div>
+<div class="absolute inset-0 flex items-center justify-center bg-on-surface/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-white" data-icon="photo_camera">photo_camera</span>
+</div>
+</div>
+<div class="flex-1 grid grid-cols-2 gap-6">
+<div class="col-span-2">
+<label class="block text-xs font-bold text-outline-variant uppercase tracking-wider mb-2 px-1">Họ và Tên</label>
+<input class="w-full bg-surface-container-highest border-none rounded-t-lg border-b-2 border-transparent focus:border-primary focus:ring-0 text-on-surface font-medium py-3 px-4 transition-all" type="text" value="GS.TS. BS. James Smith"/>
+</div>
+<div>
+<label class="block text-xs font-bold text-outline-variant uppercase tracking-wider mb-2 px-1">Email liên hệ</label>
+<input class="w-full bg-surface-container-highest border-none rounded-t-lg border-b-2 border-transparent focus:border-primary focus:ring-0 text-on-surface font-medium py-3 px-4 transition-all" type="email" value="james.smith@mediconnect.vn"/>
+</div>
+<div>
+<label class="block text-xs font-bold text-outline-variant uppercase tracking-wider mb-2 px-1">Số điện thoại</label>
+<input class="w-full bg-surface-container-highest border-none rounded-t-lg border-b-2 border-transparent focus:border-primary focus:ring-0 text-on-surface font-medium py-3 px-4 transition-all" type="tel" value="+84 901 234 567"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: Học hàm & Học vị -->
+<section class="bg-surface-container-low p-8 rounded-xl grid grid-cols-1 md:grid-cols-2 gap-10">
+<div>
+<h4 class="text-sm font-bold text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="school">school</span>
+                            Học hàm &amp; Học vị
+                        </h4>
+<div class="grid grid-cols-2 gap-3">
+<label class="flex items-center justify-between p-4 rounded-xl bg-surface-container-lowest border-2 border-primary-container/30 cursor-pointer">
+<span class="text-sm font-bold text-on-primary-fixed-variant">Giáo sư</span>
+<input checked="" class="rounded-full text-primary focus:ring-primary border-outline-variant" type="checkbox"/>
+</label>
+<label class="flex items-center justify-between p-4 rounded-xl bg-surface-container-lowest border-2 border-transparent hover:border-outline-variant/30 cursor-pointer transition-all">
+<span class="text-sm font-medium text-on-surface-variant">Phó giáo sư</span>
+<input class="rounded-full text-primary focus:ring-primary border-outline-variant" type="checkbox"/>
+</label>
+<label class="flex items-center justify-between p-4 rounded-xl bg-surface-container-lowest border-2 border-primary-container/30 cursor-pointer transition-all">
+<span class="text-sm font-bold text-on-primary-fixed-variant">Tiến sĩ</span>
+<input checked="" class="rounded-full text-primary focus:ring-primary border-outline-variant" type="checkbox"/>
+</label>
+<label class="flex items-center justify-between p-4 rounded-xl bg-surface-container-lowest border-2 border-transparent hover:border-outline-variant/30 cursor-pointer transition-all">
+<span class="text-sm font-medium text-on-surface-variant">Thạc sĩ</span>
+<input class="rounded-full text-primary focus:ring-primary border-outline-variant" type="checkbox"/>
+</label>
+</div>
+</div>
+<div>
+<h4 class="text-sm font-bold text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="stethoscope">stethoscope</span>
+                            Chuyên khoa
+                        </h4>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-highest border-none rounded-t-lg border-b-2 border-transparent focus:border-primary focus:ring-0 text-on-surface font-medium py-3 px-4 transition-all">
+<option>Tim mạch</option>
+<option>Nội tiết</option>
+<option>Thần kinh</option>
+<option>Xương khớp</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-outline" data-icon="expand_more">expand_more</span>
+</div>
+<div class="mt-6">
+<h4 class="text-sm font-bold text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="payments">payments</span>
+                                Phí khám bệnh
+                            </h4>
+<div class="relative">
+<input class="w-full bg-surface-container-highest border-none rounded-t-lg border-b-2 border-transparent focus:border-primary focus:ring-0 text-on-surface font-black text-xl py-3 pl-4 pr-16 transition-all" type="text" value="500,000"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-on-surface-variant">VND</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Kinh nghiệm & Giới thiệu -->
+<section class="bg-surface-container-lowest p-8 rounded-xl shadow-sm shadow-black/5">
+<h4 class="text-sm font-bold text-primary mb-6 flex items-center gap-2 uppercase tracking-wide">
+<span class="material-symbols-outlined text-sm" data-icon="description">description</span>
+                        Kinh nghiệm &amp; Giới thiệu
+                    </h4>
+<textarea class="w-full bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/10 text-on-surface leading-relaxed p-6" placeholder="Chia sẻ về quá trình công tác và những thành tựu nổi bật của bạn..." rows="6">Hơn 20 năm kinh nghiệm trong lĩnh vực Tim mạch can thiệp. Từng công tác tại các bệnh viện lớn tại Anh và Hoa Kỳ. Chuyên gia tư vấn cấp cao về các bệnh lý van tim và rối loạn nhịp. Tác giả của hơn 50 bài báo khoa học quốc tế.</textarea>
+</section>
+<!-- Section 5: Chứng chỉ & Giấy phép -->
+<section class="bg-surface p-0 rounded-xl overflow-hidden">
+<div class="flex items-center justify-between mb-6">
+<h4 class="text-sm font-bold text-primary flex items-center gap-2 uppercase tracking-wide">
+<span class="material-symbols-outlined text-sm" data-icon="verified">verified</span>
+                            Chứng chỉ &amp; Giấy phép
+                        </h4>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary-fixed text-on-primary-fixed rounded-lg font-bold text-sm hover:bg-primary-fixed-dim transition-all group">
+<span class="material-symbols-outlined text-lg group-hover:rotate-90 transition-transform" data-icon="add">add</span>
+                            Tải lên mới
+                        </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Cert 1 -->
+<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl border border-outline-variant/10 group hover:shadow-md transition-all">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-red-50 flex items-center justify-center text-red-600">
+<span class="material-symbols-outlined" data-icon="picture_as_pdf">picture_as_pdf</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Giấy phép hành nghề BYT.pdf</p>
+<p class="text-xs text-on-surface-variant">Cập nhật 12/05/2023 • 2.4 MB</p>
+</div>
+</div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span></button>
+<button class="p-2 text-outline hover:text-error transition-colors"><span class="material-symbols-outlined text-lg" data-icon="delete">delete</span></button>
+</div>
+</div>
+<!-- Cert 2 -->
+<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl border border-outline-variant/10 group hover:shadow-md transition-all">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
+<span class="material-symbols-outlined" data-icon="picture_as_pdf">picture_as_pdf</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Chứng chỉ Tim mạch Hoa Kỳ.pdf</p>
+<p class="text-xs text-on-surface-variant">Cập nhật 08/01/2024 • 1.1 MB</p>
+</div>
+</div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span></button>
+<button class="p-2 text-outline hover:text-error transition-colors"><span class="material-symbols-outlined text-lg" data-icon="delete">delete</span></button>
+</div>
+</div>
+</div>
+</section>
+<!-- Mobile Padding -->
+<div class="h-20"></div>
+</div>
+</div>
+</main>
+<!-- FAB Suppression check: FAB is suppressed on Profile/Settings as per instructions -->
+</body></html>

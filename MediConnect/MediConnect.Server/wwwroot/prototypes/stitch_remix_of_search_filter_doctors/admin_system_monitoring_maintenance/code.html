@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Giám sát &amp; Bảo trì MediAdmin AI - MediConnect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a",
+                        "card-border": "#e2e8f0",
+                        "ai-purple": "#8b5cf6",
+                        "success": "#10b981",
+                        "warning": "#f59e0b",
+                        "danger": "#ef4444"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.375rem", "lg": "0.5rem", "xl": "1rem", "2xl": "1.5rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        .card-shadow {
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .chart-grid {
+            background-image: linear-gradient(to right, #e2e8f0 1px, transparent 1px), linear-gradient(to bottom, #e2e8f0 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .dark .chart-grid {
+            background-image: linear-gradient(to right, #1e293b 1px, transparent 1px), linear-gradient(to bottom, #1e293b 1px, transparent 1px);
+        }
+        .tab-active {
+            @apply border-primary text-primary border-b-2;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 transition-colors duration-200">
+<div class="flex h-screen overflow-hidden">
+<aside class="w-64 flex-shrink-0 bg-white dark:bg-slate-900 border-r border-card-border dark:border-slate-800 flex flex-col h-full">
+<div class="p-6 flex flex-col h-full">
+<div class="flex items-center gap-3 mb-10 px-2">
+<div class="size-9 bg-primary rounded-lg flex items-center justify-center text-white shadow-md shadow-primary/20">
+<span class="material-symbols-outlined fill-icon">shield</span>
+</div>
+<h2 class="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white uppercase">MEDIADMIN</h2>
+</div>
+<nav class="flex flex-col gap-1.5 grow">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<p class="text-sm font-semibold">Bảng điều khiển</p>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined">group</span>
+<p class="text-sm font-semibold">Quản lý người dùng</p>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-primary transition-all" href="#">
+<span class="material-symbols-outlined fill-icon">settings_suggest</span>
+<p class="text-sm font-bold">Giám sát &amp; Bảo trì</p>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<p class="text-sm font-semibold">Thống kê báo cáo</p>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined">terminal</span>
+<p class="text-sm font-semibold">Cấu hình API</p>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800">
+<div class="flex items-center gap-3 px-2">
+<div class="aspect-square rounded-full size-10 border border-primary/20 p-0.5">
+<img alt="Admin avatar" class="w-full h-full rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCz__Z1hyr50RDlr5OZfUT-Q7tC42l5yoYY3p0rGKtnnl6wrXjwdUCl7dJ4gOd4k0_MYp_QFOlClUcUHXzDBgYQ8kmBDaEm4kD0Q-8A3sg9PwDTnVLJmZiboqQsNiOlexlgPpYhcnTF2vMCCtXAGwUKGoLqRcj6GO0fJfEE982drqihmbXaK7ARsQXHzn56372ckdMB6fqQGrwEtIvulgIZPhbRzyKOJAxOrDzZvR1X6guIx4KSl0sGiGNG1hButC4Ar4YmP84scdY8"/>
+</div>
+<div class="flex flex-col overflow-hidden">
+<h1 class="text-slate-900 dark:text-white text-[11px] font-bold leading-tight truncate">Admin Alex Nguyễn</h1>
+<p class="text-slate-500 text-[9px] font-medium uppercase">Quản trị viên Hệ thống</p>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col overflow-hidden bg-slate-50/50 dark:bg-slate-950/20">
+<header class="bg-white dark:bg-slate-900 border-b border-card-border dark:border-slate-800 px-8 py-4 z-30">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-xl font-bold text-slate-800 dark:text-white">Giám sát &amp; Bảo trì MediAdmin AI</h1>
+<p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">Hệ thống quản lý MediConnect (UC-31, UC-32)</p>
+</div>
+<div class="flex items-center gap-4">
+<button class="size-10 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-full flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-all">
+<span class="material-symbols-outlined">refresh</span>
+</button>
+</div>
+</div>
+</header>
+<div class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-8">
+<div class="flex gap-8">
+<button class="px-2 py-4 text-sm font-bold tab-active transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">list_alt</span> Nhật ký Hệ thống (Logs)
+                    </button>
+<button class="px-2 py-4 text-sm font-semibold text-slate-500 hover:text-primary transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">backup</span> Sao lưu &amp; Khôi phục
+                    </button>
+<button class="px-2 py-4 text-sm font-semibold text-slate-500 hover:text-primary transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">psychology</span> Dự báo Tải trọng AI
+                    </button>
+</div>
+</div>
+<div class="flex flex-1 overflow-hidden">
+<div class="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-8">
+<div class="bg-gradient-to-r from-ai-purple/10 to-primary/10 border border-ai-purple/20 p-5 rounded-2xl flex items-start gap-4 shadow-sm">
+<div class="size-12 bg-ai-purple text-white rounded-xl flex items-center justify-center flex-shrink-0 animate-pulse">
+<span class="material-symbols-outlined fill-icon">auto_awesome</span>
+</div>
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] font-black uppercase tracking-widest text-ai-purple">AI Insight Analysis</span>
+<span class="size-1 bg-ai-purple rounded-full"></span>
+<span class="text-[10px] font-bold text-slate-400">Ngay bây giờ</span>
+</div>
+<h4 class="text-sm font-bold text-slate-900 dark:text-white">Cảnh báo: Lỗi đăng nhập tăng 50% trong 15 phút qua</h4>
+<p class="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">Phân tích AI: Có dấu hiệu tấn công Brute-force từ dải IP nước ngoài. Đã tự động kích hoạt xác thực 2 lớp (2FA) cho toàn bộ tài khoản Admin.</p>
+</div>
+<button class="ml-auto bg-white/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 px-4 py-2 rounded-lg text-xs font-bold border border-slate-200 dark:border-slate-700 transition-all">
+                            Chặn IP
+                        </button>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-2xl border border-card-border dark:border-slate-800 card-shadow overflow-hidden">
+<div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<h3 class="font-bold text-slate-800 dark:text-white">Nhật ký Hoạt động Thời gian thực</h3>
+<div class="flex gap-2">
+<div class="relative">
+<input class="pl-9 pr-4 py-1.5 text-xs bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg focus:ring-primary w-48" placeholder="Tìm kiếm logs..." type="text"/>
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+</div>
+<select class="text-[11px] font-bold bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5">
+<option>Tất cả cấp độ</option>
+<option class="text-danger">Error</option>
+<option class="text-warning">Warning</option>
+<option class="text-primary">Info</option>
+</select>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
+<th class="px-6 py-3 text-[11px] font-black text-slate-400 uppercase tracking-widest">Thời gian</th>
+<th class="px-6 py-3 text-[11px] font-black text-slate-400 uppercase tracking-widest">Cấp độ</th>
+<th class="px-6 py-3 text-[11px] font-black text-slate-400 uppercase tracking-widest">Hoạt động</th>
+<th class="px-6 py-3 text-[11px] font-black text-slate-400 uppercase tracking-widest">Người dùng</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all">
+<td class="px-6 py-4 text-xs font-medium text-slate-500">14:22:15 24/05/2024</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded-md bg-danger/10 text-danger text-[10px] font-bold">ERROR</span>
+</td>
+<td class="px-6 py-4 text-xs font-bold text-slate-700 dark:text-slate-300">Login Failure - Incorrect password (x5)</td>
+<td class="px-6 py-4 text-xs text-slate-500">hung_tm_admin</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all">
+<td class="px-6 py-4 text-xs font-medium text-slate-500">14:21:05 24/05/2024</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded-md bg-warning/10 text-warning text-[10px] font-bold">WARNING</span>
+</td>
+<td class="px-6 py-4 text-xs font-bold text-slate-700 dark:text-slate-300">High Disk Usage Detected (88%)</td>
+<td class="px-6 py-4 text-xs text-slate-500">System</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all">
+<td class="px-6 py-4 text-xs font-medium text-slate-500">14:20:44 24/05/2024</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded-md bg-primary/10 text-primary text-[10px] font-bold">INFO</span>
+</td>
+<td class="px-6 py-4 text-xs font-bold text-slate-700 dark:text-slate-300">Database Backup Successful</td>
+<td class="px-6 py-4 text-xs text-slate-500">CronJob_System</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all">
+<td class="px-6 py-4 text-xs font-medium text-slate-500">14:18:22 24/05/2024</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded-md bg-primary/10 text-primary text-[10px] font-bold">INFO</span>
+</td>
+<td class="px-6 py-4 text-xs font-bold text-slate-700 dark:text-slate-300">User Profile Updated</td>
+<td class="px-6 py-4 text-xs text-slate-500">mai_nt_doctor</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+<div class="bg-white dark:bg-slate-900 rounded-2xl border border-card-border dark:border-slate-800 card-shadow p-6 flex flex-col">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">cloud_upload</span>
+                                    Sao lưu nhanh (UC-32)
+                                </h3>
+<span class="text-[10px] font-bold bg-success/10 text-success px-2 py-1 rounded-full">Ổn định</span>
+</div>
+<div class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-5 mb-6 border border-slate-100 dark:border-slate-800">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-bold text-slate-600 dark:text-slate-400">Tiến trình sao lưu hiện tại</span>
+<span class="text-xs font-black text-primary">74%</span>
+</div>
+<div class="w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+<div class="h-full bg-primary transition-all duration-500" style="width: 74%"></div>
+</div>
+<p class="text-[10px] text-slate-400 mt-2">Đang nén dữ liệu hồ sơ bệnh án (Patients_DB_2024_05.gz)...</p>
+</div>
+<button class="w-full py-3 bg-primary text-white rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg">backup</span> Sao lưu toàn bộ ngay bây giờ
+                            </button>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-2xl border border-card-border dark:border-slate-800 card-shadow p-6">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-ai-purple">analytics</span>
+                                    Dự báo Tải trọng AI
+                                </h3>
+</div>
+<div class="relative h-32 chart-grid border-l border-b border-slate-200 dark:border-slate-800 mb-4 overflow-hidden">
+<svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 400 100">
+<path d="M0,80 L50,75 L100,85 L150,60 L200,70 L250,30 L300,40 L350,15 L400,20" fill="none" stroke="#8b5cf6" stroke-dasharray="4 2" stroke-width="2"></path>
+<circle cx="250" cy="30" fill="#ef4444" r="3"></circle>
+</svg>
+<div class="absolute top-2 right-2 p-2 bg-danger/10 border border-danger/20 rounded-lg">
+<p class="text-[10px] font-black text-danger uppercase">Cao điểm dự kiến</p>
+</div>
+</div>
+<div class="bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200/50 dark:border-yellow-700/30 p-4 rounded-xl">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-warning text-lg">info</span>
+<div>
+<p class="text-xs font-bold text-slate-800 dark:text-yellow-100">Dự báo hệ thống quá tải vào 09:00 AM ngày mai</p>
+<p class="text-[11px] text-slate-600 dark:text-yellow-200/70 mt-1 italic">Gợi ý: Nâng cấp tài nguyên server (Auto-scaling) từ 08:30 AM để tránh gián đoạn.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-2xl border border-card-border dark:border-slate-800 card-shadow overflow-hidden">
+<div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
+<h3 class="font-bold text-slate-800 dark:text-white">Lịch sử bản sao lưu</h3>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
+<th class="px-6 py-3 text-[11px] font-black text-slate-400 uppercase tracking-widest">Tên file</th>
+<th class="px-6 py-3 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">Ngày tạo</th>
+<th class="px-6 py-3 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">Dung lượng</th>
+<th class="px-6 py-3 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right">Hành động</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400">description</span>
+<p class="text-xs font-bold text-slate-700 dark:text-slate-300">backup_full_20240523.sql.gz</p>
+</div>
+</td>
+<td class="px-6 py-4 text-center text-xs text-slate-500">23/05/2024 02:00</td>
+<td class="px-6 py-4 text-center text-xs font-bold text-slate-600 dark:text-slate-400">1.2 GB</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-all" title="Khôi phục">
+<span class="material-symbols-outlined text-lg">history</span>
+</button>
+<button class="p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all" title="Tải về">
+<span class="material-symbols-outlined text-lg">download</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400">description</span>
+<p class="text-xs font-bold text-slate-700 dark:text-slate-300">backup_full_20240522.sql.gz</p>
+</div>
+</td>
+<td class="px-6 py-4 text-center text-xs text-slate-500">22/05/2024 02:00</td>
+<td class="px-6 py-4 text-center text-xs font-bold text-slate-600 dark:text-slate-400">1.18 GB</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-all" title="Khôi phục">
+<span class="material-symbols-outlined text-lg">history</span>
+</button>
+<button class="p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all" title="Tải về">
+<span class="material-symbols-outlined text-lg">download</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<aside class="w-80 bg-white dark:bg-slate-900 border-l border-card-border dark:border-slate-800 hidden 2xl:flex flex-col">
+<div class="p-6 border-b border-slate-100 dark:border-slate-800">
+<div class="flex items-center justify-between">
+<h3 class="font-bold text-slate-800 dark:text-white uppercase text-xs tracking-widest">Thông báo Real-time</h3>
+<span class="px-1.5 py-0.5 bg-danger text-white text-[9px] font-black rounded-full">3 MỚI</span>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-4">
+<div class="p-4 bg-red-50 dark:bg-red-900/10 border-l-4 border-danger rounded-r-xl">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[10px] font-bold text-danger uppercase tracking-tighter">Server Load</span>
+<span class="text-[10px] text-slate-400">14:45</span>
+</div>
+<p class="text-xs font-bold text-slate-800 dark:text-red-100">High server load detected: 85%</p>
+<p class="text-[10px] text-slate-500 dark:text-red-200/60 mt-1">Hệ thống đang hoạt động gần giới hạn tối đa.</p>
+</div>
+<div class="p-4 bg-orange-50 dark:bg-orange-900/10 border-l-4 border-warning rounded-r-xl">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[10px] font-bold text-warning uppercase tracking-tighter">Security</span>
+<span class="text-[10px] text-slate-400">14:40</span>
+</div>
+<p class="text-xs font-bold text-slate-800 dark:text-orange-100">Xác thực 2 lớp (2FA) kích hoạt</p>
+<p class="text-[10px] text-slate-500 dark:text-orange-200/60 mt-1">Đã áp dụng cho 12 tài khoản Admin mới.</p>
+</div>
+<div class="p-4 bg-blue-50 dark:bg-blue-900/10 border-l-4 border-primary rounded-r-xl">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[10px] font-bold text-primary uppercase tracking-tighter">Backup</span>
+<span class="text-[10px] text-slate-400">14:30</span>
+</div>
+<p class="text-xs font-bold text-slate-800 dark:text-blue-100">Sao lưu tự động bắt đầu</p>
+<p class="text-[10px] text-slate-500 dark:text-blue-200/60 mt-1">Hồ sơ bệnh án tháng 05/2024.</p>
+</div>
+<div class="p-4 bg-slate-50 dark:bg-slate-800/50 border-l-4 border-slate-300 rounded-r-xl opacity-60">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Maintenance</span>
+<span class="text-[10px] text-slate-400">10:15</span>
+</div>
+<p class="text-xs font-bold text-slate-800 dark:text-slate-300">Cập nhật Schema Database</p>
+<p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Hoàn tất nâng cấp cơ sở dữ liệu v2.4.</p>
+</div>
+</div>
+<div class="p-6 border-t border-slate-100 dark:border-slate-800">
+<button class="w-full py-2.5 text-xs font-bold text-slate-500 hover:text-primary transition-all border border-slate-200 dark:border-slate-700 rounded-xl">
+                            Đánh dấu tất cả là đã đọc
+                        </button>
+</div>
+</aside>
+</div>
+</main>
+</div>
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden">
+<div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-card-border dark:border-slate-800">
+<div class="p-8 text-center">
+<div class="size-16 bg-danger/10 text-danger rounded-full flex items-center justify-center mx-auto mb-6">
+<span class="material-symbols-outlined text-4xl fill-icon">warning</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Xác nhận khôi phục dữ liệu?</h3>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-8 leading-relaxed">
+                    Hành động này sẽ ghi đè toàn bộ dữ liệu hiện tại bằng bản sao lưu ngày <span class="font-bold">23/05/2024</span>. 
+                    Dữ liệu phát sinh sau thời điểm này sẽ bị <span class="text-danger font-bold uppercase">mất hoàn toàn</span>.
+                </p>
+<div class="grid grid-cols-2 gap-4">
+<button class="py-3 px-6 text-sm font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 rounded-xl hover:bg-slate-200 transition-all">
+                        Hủy bỏ
+                    </button>
+<button class="py-3 px-6 text-sm font-bold text-white bg-danger rounded-xl hover:bg-danger/90 transition-all shadow-lg shadow-danger/20">
+                        Tôi xác nhận
+                    </button>
+</div>
+</div>
+</div>
+</div>
+
+</body></html>

@@ -9,11 +9,14 @@ public class AdminModel : PageModel
 {
     public IReadOnlyList<FlowScreen> Screens { get; } =
     [
+        new("admin-dashboard", "Dashboard quản trị", "Tổng quan số liệu vận hành hệ thống."),
+        new("admin-user-management", "Quản lý người dùng", "Duyệt và quản trị tài khoản người dùng."),
+        new("admin-specialty-management", "Quản lý chuyên khoa", "Danh sách và phân công chuyên khoa/khoa."),
         new("admin-specialty-config", "Cấu hình chuyên khoa", "Thiết lập chuyên khoa, mô tả và bác sĩ phụ trách."),
-        new("doctor-dashboard-9", "Báo cáo & phân tích", "Bảng báo cáo tổng hợp và AI anomaly detection."),
-        new("doctor-dashboard-4", "Theo dõi hiệu suất", "Dashboard phân tích hiệu suất toàn hệ thống."),
-        new("doctor-dashboard-6", "Phê duyệt lịch hẹn", "Xác nhận hoặc từ chối yêu cầu khám."),
-        new("doctor-dashboard-12", "Hồ sơ y tế tổng quan", "Xem hồ sơ bệnh án và tài liệu kết quả."),
+        new("admin-statistics", "Thống kê", "Báo cáo KPI và tăng trưởng theo thời gian."),
+        new("admin-system-monitoring", "Giám sát hệ thống", "Theo dõi logs, tài nguyên và trạng thái dịch vụ."),
+        new("admin-complaint-management", "Khiếu nại & hỗ trợ", "Quản lý ticket và phản hồi hỗ trợ."),
+        new("admin-zalo-notification", "Thông báo Zalo", "Cấu hình và theo dõi thông báo Zalo."),
     ];
 
     public sealed record FlowScreen(string Key, string Title, string Description);

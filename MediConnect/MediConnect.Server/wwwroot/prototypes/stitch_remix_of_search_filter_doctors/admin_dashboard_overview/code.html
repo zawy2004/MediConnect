@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bảng điều khiển Quản trị MediAdmin AI - MediConnect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a",
+                        "card-border": "#e2e8f0",
+                        "ai-purple": "#8b5cf6",
+                        "success": "#10b981",
+                        "warning": "#f59e0b",
+                        "danger": "#ef4444"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.375rem", "lg": "0.5rem", "xl": "1rem", "2xl": "1.5rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        .card-shadow {
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .status-dot {
+            @apply size-2 rounded-full;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 transition-colors duration-200">
+<div class="flex h-screen overflow-hidden">
+<aside class="w-64 flex-shrink-0 bg-white dark:bg-slate-900 border-r border-card-border dark:border-slate-800 flex flex-col h-full">
+<div class="p-6 flex flex-col h-full">
+<div class="flex items-center gap-3 mb-10 px-2">
+<div class="size-9 bg-primary rounded-lg flex items-center justify-center text-white shadow-md shadow-primary/20">
+<span class="material-symbols-outlined fill-icon">shield</span>
+</div>
+<h2 class="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white uppercase">MEDIADMIN</h2>
+</div>
+<nav class="flex flex-col gap-1.5 grow">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-primary transition-all" href="#">
+<span class="material-symbols-outlined fill-icon">dashboard</span>
+<p class="text-sm font-bold">Bảng điều khiển</p>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined">group</span>
+<p class="text-sm font-semibold">Quản lý người dùng</p>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined">medical_services</span>
+<p class="text-sm font-semibold">Cấu hình chuyên khoa</p>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<p class="text-sm font-semibold">Thống kê báo cáo</p>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined">description</span>
+<p class="text-sm font-semibold">Theo dõi Log hệ thống</p>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800">
+<div class="flex items-center gap-3 px-2">
+<div class="aspect-square rounded-full size-10 border border-primary/20 p-0.5">
+<img alt="Admin avatar" class="w-full h-full rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCz__Z1hyr50RDlr5OZfUT-Q7tC42l5yoYY3p0rGKtnnl6wrXjwdUCl7dJ4gOd4k0_MYp_QFOlClUcUHXzDBgYQ8kmBDaEm4kD0Q-8A3sg9PwDTnVLJmZiboqQsNiOlexlgPpYhcnTF2vMCCtXAGwUKGoLqRcj6GO0fJfEE982drqihmbXaK7ARsQXHzn56372ckdMB6fqQGrwEtIvulgIZPhbRzyKOJAxOrDzZvR1X6guIx4KSl0sGiGNG1hButC4Ar4YmP84scdY8"/>
+</div>
+<div class="flex flex-col overflow-hidden">
+<h1 class="text-slate-900 dark:text-white text-[11px] font-bold leading-tight truncate">Admin Alex Nguyễn</h1>
+<p class="text-slate-500 text-[9px] font-medium uppercase">Quản trị viên Hệ thống</p>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col overflow-y-auto custom-scrollbar">
+<header class="bg-white dark:bg-slate-900 border-b border-card-border dark:border-slate-800 px-8 py-4 flex items-center justify-between sticky top-0 z-30">
+<div class="flex items-center gap-4">
+<h1 class="text-xl font-bold text-slate-800 dark:text-white">Tổng quan Hệ thống</h1>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 size-4 bg-danger text-white text-[8px] font-bold flex items-center justify-center rounded-full border-2 border-white dark:border-slate-900">12</span>
+</button>
+<div class="h-8 w-px bg-slate-200 dark:bg-slate-700"></div>
+<div class="flex items-center gap-3">
+<div class="text-right hidden sm:block">
+<p class="text-sm font-bold text-slate-900 dark:text-white">Admin Alex Nguyễn</p>
+<p class="text-[10px] text-slate-500 font-medium">Quản trị viên Hệ thống</p>
+</div>
+<button class="flex items-center gap-2 px-3 py-1.5 text-danger bg-red-50 dark:bg-red-900/20 rounded-lg text-xs font-bold hover:bg-red-100 transition-all">
+<span class="material-symbols-outlined text-sm">logout</span>
+                        Đăng xuất
+                    </button>
+</div>
+</div>
+</header>
+<div class="p-8 space-y-8">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-card-border dark:border-slate-800 card-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="size-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined">person_search</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-xs font-bold text-success flex items-center gap-0.5">
+<span class="material-symbols-outlined text-sm">trending_up</span> +12%
+                            </span>
+<div class="w-16 h-6 mt-1">
+<svg class="w-full h-full text-success" preserveAspectRatio="none" viewBox="0 0 100 20">
+<path d="M0,15 Q25,5 50,15 T100,10" fill="none" stroke="currentColor" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+</div>
+<h3 class="text-slate-500 text-sm font-semibold">Tổng người dùng</h3>
+<div class="flex items-baseline gap-2 mt-1">
+<p class="text-2xl font-extrabold text-slate-900 dark:text-white">24,852</p>
+<p class="text-xs text-slate-400 font-medium">(18.2k BN / 6.6k BS)</p>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-card-border dark:border-slate-800 card-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="size-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 flex items-center justify-center">
+<span class="material-symbols-outlined">calendar_today</span>
+</div>
+<span class="text-xs font-bold text-slate-400">Hôm nay</span>
+</div>
+<h3 class="text-slate-500 text-sm font-semibold">Lịch hẹn hôm nay</h3>
+<div class="flex items-baseline gap-2 mt-1">
+<p class="text-2xl font-extrabold text-slate-900 dark:text-white">1,420</p>
+<span class="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">Đang xử lý: 82</span>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-card-border dark:border-slate-800 card-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="size-10 rounded-xl bg-green-50 dark:bg-green-900/20 text-success flex items-center justify-center">
+<span class="material-symbols-outlined">analytics</span>
+</div>
+<div class="flex gap-2">
+<span class="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold">Stable</span>
+</div>
+</div>
+<h3 class="text-slate-500 text-sm font-semibold">Sức khỏe hệ thống</h3>
+<div class="mt-2 space-y-1.5">
+<div class="flex items-center justify-between text-xs font-bold">
+<span class="text-slate-500">Uptime: <span class="text-success">99.9%</span></span>
+<span class="text-slate-500">Error: <span class="text-danger">0.01%</span></span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+<div class="bg-success h-full w-[99.9%]"></div>
+</div>
+<p class="text-[10px] text-slate-400 font-medium">Server Load: 24% (Central Cluster)</p>
+</div>
+</div>
+</div>
+<section class="bg-gradient-to-br from-slate-900 to-indigo-950 p-8 rounded-3xl text-white relative overflow-hidden border border-white/10 shadow-2xl">
+<div class="absolute -right-20 -top-20 size-80 bg-primary/20 rounded-full blur-[80px]"></div>
+<div class="absolute -left-20 -bottom-20 size-80 bg-ai-purple/20 rounded-full blur-[80px]"></div>
+<div class="relative z-10">
+<div class="flex items-center gap-3 mb-6">
+<div class="bg-white/10 backdrop-blur-md p-2 rounded-xl border border-white/20">
+<span class="material-symbols-outlined fill-icon text-ai-purple">auto_awesome</span>
+</div>
+<div>
+<h2 class="text-xl font-extrabold tracking-tight">AI-FE-04: Phân tích Dự báo Nhu cầu</h2>
+<p class="text-sm text-slate-400 font-medium">Cập nhật lúc: 10:45 AM - Dựa trên dữ liệu chuỗi thời gian</p>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<div class="bg-white/5 backdrop-blur-md border border-white/10 p-6 rounded-2xl flex items-start gap-4">
+<div class="size-12 bg-danger/20 rounded-full flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-danger">warning</span>
+</div>
+<div>
+<h4 class="text-danger font-bold uppercase text-xs tracking-wider mb-1">Cảnh báo tải trọng</h4>
+<p class="text-lg font-semibold leading-snug text-slate-100">Chuyên khoa <span class="text-danger">Tim mạch</span> dự kiến quá tải <span class="underline decoration-danger/50 underline-offset-4">20%</span> vào tuần tới.</p>
+<p class="text-sm text-slate-400 mt-2">Nguyên nhân: Sự thay đổi thời tiết khu vực miền Nam tác động đến bệnh nhân cao tuổi.</p>
+</div>
+</div>
+<div class="bg-white/5 backdrop-blur-md border border-white/10 p-6 rounded-2xl flex items-start gap-4">
+<div class="size-12 bg-success/20 rounded-full flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-success">lightbulb</span>
+</div>
+<div>
+<h4 class="text-success font-bold uppercase text-xs tracking-wider mb-1">Đề xuất tối ưu</h4>
+<p class="text-lg font-semibold leading-snug text-slate-100">Gợi ý mở thêm <span class="text-success">2 ca khám buổi sáng</span> tại các phòng khám vệ tinh khu vực Quận 7.</p>
+<button class="mt-4 px-4 py-2 bg-primary hover:bg-primary/90 text-white text-xs font-bold rounded-lg transition-all flex items-center gap-2">
+                                    Áp dụng đề xuất <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-2 space-y-8">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<section class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-card-border dark:border-slate-800 card-shadow">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-bold text-slate-900 dark:text-white">Phân bổ Chuyên khoa</h3>
+<button class="p-2 hover:bg-slate-50 rounded-lg text-slate-400"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+<div class="flex items-center justify-center py-4">
+<div class="relative size-48">
+<svg class="size-full" viewBox="0 0 32 32">
+<circle cx="16" cy="16" fill="#e2e8f0" r="16"></circle>
+<circle cx="16" cy="16" fill="transparent" r="16" stroke="#137fec" stroke-dasharray="60 100" stroke-width="32"></circle>
+<circle cx="16" cy="16" fill="transparent" r="16" stroke="#8b5cf6" stroke-dasharray="25 100" stroke-dashoffset="-60" stroke-width="32"></circle>
+<circle cx="16" cy="16" fill="transparent" r="16" stroke="#10b981" stroke-dasharray="15 100" stroke-dashoffset="-85" stroke-width="32"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-2xl font-black text-slate-800 dark:text-white">12</span>
+<span class="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Khoa</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 mt-6">
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-primary"></div>
+<span class="text-xs font-semibold text-slate-600">Tim mạch (60%)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-ai-purple"></div>
+<span class="text-xs font-semibold text-slate-600">Hô hấp (25%)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-success"></div>
+<span class="text-xs font-semibold text-slate-600">Nội tiết (15%)</span>
+</div>
+</div>
+</section>
+<section class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-card-border dark:border-slate-800 card-shadow">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-bold text-slate-900 dark:text-white">Xu hướng đặt lịch</h3>
+<select class="text-xs font-bold bg-slate-50 border-none rounded-lg focus:ring-0">
+<option>7 ngày qua</option>
+<option>30 ngày qua</option>
+</select>
+</div>
+<div class="h-48 flex items-end justify-between gap-1">
+<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-t-lg relative group h-[40%]">
+<div class="absolute inset-x-0 bottom-0 bg-primary/20 group-hover:bg-primary/40 transition-all rounded-t-lg h-full"></div>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-t-lg relative group h-[55%]">
+<div class="absolute inset-x-0 bottom-0 bg-primary/20 group-hover:bg-primary/40 transition-all rounded-t-lg h-full"></div>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-t-lg relative group h-[45%]">
+<div class="absolute inset-x-0 bottom-0 bg-primary/20 group-hover:bg-primary/40 transition-all rounded-t-lg h-full"></div>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-t-lg relative group h-[70%]">
+<div class="absolute inset-x-0 bottom-0 bg-primary/60 group-hover:bg-primary/80 transition-all rounded-t-lg h-full"></div>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-t-lg relative group h-[60%]">
+<div class="absolute inset-x-0 bottom-0 bg-primary/20 group-hover:bg-primary/40 transition-all rounded-t-lg h-full"></div>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-t-lg relative group h-[85%]">
+<div class="absolute inset-x-0 bottom-0 bg-primary/20 group-hover:bg-primary/40 transition-all rounded-t-lg h-full"></div>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-t-lg relative group h-[95%]">
+<div class="absolute inset-x-0 bottom-0 bg-primary/20 group-hover:bg-primary/40 transition-all rounded-t-lg h-full"></div>
+</div>
+</div>
+<div class="flex justify-between mt-4 text-[10px] font-bold text-slate-400 uppercase">
+<span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span>
+</div>
+</section>
+</div>
+<section class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-card-border dark:border-slate-800 card-shadow">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-bold text-slate-900 dark:text-white">Phê duyệt Bác sĩ mới</h3>
+<span class="text-xs font-bold text-primary px-3 py-1 bg-primary/5 rounded-full">4 yêu cầu chờ</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="border-b border-slate-100 dark:border-slate-800">
+<tr>
+<th class="pb-4 text-xs font-bold text-slate-400 uppercase">Bác sĩ</th>
+<th class="pb-4 text-xs font-bold text-slate-400 uppercase">Chuyên khoa</th>
+<th class="pb-4 text-xs font-bold text-slate-400 uppercase">Ngày đăng ký</th>
+<th class="pb-4 text-xs font-bold text-slate-400 uppercase text-right">Hành động</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-50 dark:divide-slate-800">
+<tr>
+<td class="py-4">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full bg-slate-100 overflow-hidden shrink-0">
+<img alt="Avatar" class="size-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvJMZ10p0ZevUpI2uBSva-FtRumhsDY5SV-cFU4roaKaD2Qj2XxUQTLReCuQyTwXNHIjRxMzFLDbAyDEoviSekKIodUrMZ-Fdws5O3Bs-ZdGwRYdsh_LdiQFlCz4nzEi9HBOD663B-14YgOHPjLku-2ehQZk9-8dxmfdPxjBB5eFNYMxtDSsXZzCAHylwD6vokHvjs5-1qC2uAyEH6mfpTavm1C_mHicWLZeZoAOX7d0_LBy2RkmYcB4B-5k2hjdpY2Co-SwARRrqO"/>
+</div>
+<span class="text-sm font-bold text-slate-700 dark:text-white">BS. Trần Mạnh Hùng</span>
+</div>
+</td>
+<td class="py-4"><span class="text-xs font-medium text-slate-600">Nhi khoa</span></td>
+<td class="py-4"><span class="text-xs text-slate-500">2 giờ trước</span></td>
+<td class="py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-1.5 rounded-lg bg-red-50 text-danger hover:bg-red-100"><span class="material-symbols-outlined text-lg">close</span></button>
+<button class="p-1.5 rounded-lg bg-green-50 text-success hover:bg-green-100"><span class="material-symbols-outlined text-lg">check</span></button>
+</div>
+</td>
+</tr>
+<tr>
+<td class="py-4">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full bg-slate-100 overflow-hidden shrink-0">
+<img alt="Avatar" class="size-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCK3_c1y2FIdPXkjj-ifapmkxMwVTL8DdAZSUe53vYNqixbFRb2u68i4iZIFlzaCCELcpC-k0bPprlpthQV230hWLRSrv7Ch-0oGd2uj7_8Qhs_6vS_E8r92U-Dfa3EkRSh2F2ZQzeBcVqLuJ-PN9z-BQNJuvAQpHJAZwsxnCRlihq6zFHbj4joMFVWpdYXFb8gWwW5tGy1QSAbEqw0UtIYFDBNs65QghmXAxNCP6VoL3y-K_HEoDbHzWIPTTwk0ejkTJ5uADhv8pwu"/>
+</div>
+<span class="text-sm font-bold text-slate-700 dark:text-white">PGS.TS Nguyễn Thu Hà</span>
+</div>
+</td>
+<td class="py-4"><span class="text-xs font-medium text-slate-600">Da liễu</span></td>
+<td class="py-4"><span class="text-xs text-slate-500">Hôm qua</span></td>
+<td class="py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-1.5 rounded-lg bg-red-50 text-danger hover:bg-red-100"><span class="material-symbols-outlined text-lg">close</span></button>
+<button class="p-1.5 rounded-lg bg-green-50 text-success hover:bg-green-100"><span class="material-symbols-outlined text-lg">check</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+<div class="lg:col-span-1 space-y-8">
+<section class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-card-border dark:border-slate-800 card-shadow">
+<h3 class="font-bold text-slate-900 dark:text-white mb-6">Thao tác nhanh</h3>
+<div class="grid grid-cols-1 gap-3">
+<button class="flex items-center justify-between w-full p-4 bg-slate-50 dark:bg-slate-800 hover:bg-primary/5 hover:text-primary rounded-xl border border-slate-100 dark:border-slate-700 transition-all group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">person_add</span>
+<span class="text-sm font-bold">Quản lý người dùng</span>
+</div>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+<button class="flex items-center justify-between w-full p-4 bg-slate-50 dark:bg-slate-800 hover:bg-primary/5 hover:text-primary rounded-xl border border-slate-100 dark:border-slate-700 transition-all group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">settings_applications</span>
+<span class="text-sm font-bold">Cấu hình chuyên khoa</span>
+</div>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+<button class="flex items-center justify-between w-full p-4 bg-slate-50 dark:bg-slate-800 hover:bg-primary/5 hover:text-primary rounded-xl border border-slate-100 dark:border-slate-700 transition-all group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">file_export</span>
+<span class="text-sm font-bold">Xuất báo cáo thống kê</span>
+</div>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+<button class="flex items-center justify-between w-full p-4 bg-slate-50 dark:bg-slate-800 hover:bg-primary/5 hover:text-primary rounded-xl border border-slate-100 dark:border-slate-700 transition-all group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">history_edu</span>
+<span class="text-sm font-bold">Theo dõi Log hệ thống</span>
+</div>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</section>
+<section class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-card-border dark:border-slate-800 card-shadow">
+<h3 class="font-bold text-slate-900 dark:text-white mb-4">Hoạt động Log mới nhất</h3>
+<div class="space-y-4">
+<div class="flex gap-3">
+<div class="relative">
+<div class="size-2 bg-success rounded-full mt-1.5 z-10 relative"></div>
+<div class="absolute top-4 left-1 w-px h-full bg-slate-100 dark:bg-slate-800"></div>
+</div>
+<div>
+<p class="text-xs font-bold text-slate-800 dark:text-white">Admin: Cập nhật cấu hình API</p>
+<p class="text-[10px] text-slate-400">10:42 AM - Thành công</p>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="relative">
+<div class="size-2 bg-warning rounded-full mt-1.5 z-10 relative"></div>
+<div class="absolute top-4 left-1 w-px h-full bg-slate-100 dark:bg-slate-800"></div>
+</div>
+<div>
+<p class="text-xs font-bold text-slate-800 dark:text-white">System: Tự động sao lưu dữ liệu</p>
+<p class="text-[10px] text-slate-400">09:00 AM - Cần kiểm tra dung lượng</p>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="relative">
+<div class="size-2 bg-danger rounded-full mt-1.5 z-10 relative"></div>
+</div>
+<div>
+<p class="text-xs font-bold text-slate-800 dark:text-white">User: Phát hiện đăng nhập bất thường</p>
+<p class="text-[10px] text-slate-400">08:15 AM - IP: 192.168.1.45</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 py-2 text-primary text-xs font-bold border border-primary/20 rounded-xl hover:bg-primary/5 transition-all">
+                            Xem tất cả nhật ký
+                        </button>
+</section>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

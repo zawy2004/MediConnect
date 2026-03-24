@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quản lý Thông báo Zalo &amp; AI MediAdmin - MediConnect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a",
+                        "card-border": "#e2e8f0",
+                        "ai-purple": "#8b5cf6",
+                        "success": "#10b981",
+                        "warning": "#f59e0b",
+                        "danger": "#ef4444",
+                        "zalo-blue": "#0068ff"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.375rem", "lg": "0.5rem", "xl": "1rem", "2xl": "1.5rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        .card-shadow {
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .chart-bar {
+            transition: height 1s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 transition-colors duration-200">
+<div class="flex h-screen overflow-hidden">
+<aside class="w-64 flex-shrink-0 bg-white dark:bg-slate-900 border-r border-card-border dark:border-slate-800 flex flex-col h-full">
+<div class="p-6 flex flex-col h-full">
+<div class="flex items-center gap-3 mb-10 px-2">
+<div class="size-9 bg-primary rounded-lg flex items-center justify-center text-white shadow-md shadow-primary/20">
+<span class="material-symbols-outlined fill-icon">medical_services</span>
+</div>
+<h2 class="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white uppercase">MEDIADMIN</h2>
+</div>
+<nav class="flex flex-col gap-1.5 grow">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<p class="text-sm font-semibold">Bảng điều khiển</p>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined">group</span>
+<p class="text-sm font-semibold">Quản lý người dùng</p>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-primary transition-all" href="#">
+<span class="material-symbols-outlined fill-icon">chat_bubble</span>
+<p class="text-sm font-bold">Thông báo Zalo (ZNS)</p>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined">support_agent</span>
+<p class="text-sm font-semibold">Quản lý khiếu nại</p>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined">settings_suggest</span>
+<p class="text-sm font-semibold">Giám sát &amp; Bảo trì</p>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800">
+<div class="flex items-center gap-3 px-2">
+<div class="aspect-square rounded-full size-10 border border-primary/20 p-0.5">
+<img alt="Admin avatar" class="w-full h-full rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCz__Z1hyr50RDlr5OZfUT-Q7tC42l5yoYY3p0rGKtnnl6wrXjwdUCl7dJ4gOd4k0_MYp_QFOlClUcUHXzDBgYQ8kmBDaEm4kD0Q-8A3sg9PwDTnVLJmZiboqQsNiOlexlgPpYhcnTF2vMCCtXAGwUKGoLqRcj6GO0fJfEE982drqihmbXaK7ARsQXHzn56372ckdMB6fqQGrwEtIvulgIZPhbRzyKOJAxOrDzZvR1X6guIx4KSl0sGiGNG1hButC4Ar4YmP84scdY8"/>
+</div>
+<div class="flex flex-col overflow-hidden">
+<h1 class="text-slate-900 dark:text-white text-[11px] font-bold leading-tight truncate">Admin Alex Nguyễn</h1>
+<p class="text-slate-500 text-[9px] font-medium uppercase">Quản trị viên Hệ thống</p>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col overflow-hidden bg-slate-50/50 dark:bg-slate-950/20">
+<header class="bg-white dark:bg-slate-900 border-b border-card-border dark:border-slate-800 px-8 py-4 z-30">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-xl font-bold text-slate-800 dark:text-white">Quản lý Thông báo Zalo &amp; AI MediAdmin</h1>
+<p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">Zalo Notification Service (ZNS) &amp; AI Engine (UC-31)</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<input class="pl-10 pr-4 py-2 w-80 text-sm bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-xl focus:ring-primary focus:border-primary transition-all" placeholder="Tìm kiếm log gửi tin..." type="text"/>
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 bg-zalo-blue/10 rounded-lg">
+<div class="size-2 bg-zalo-blue rounded-full animate-pulse"></div>
+<span class="text-[10px] font-bold text-zalo-blue uppercase">Zalo API Connected</span>
+</div>
+</div>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto custom-scrollbar p-8">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+<div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-card-border dark:border-slate-800 card-shadow">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tỷ lệ gửi thành công</p>
+<div class="flex items-end justify-between">
+<div>
+<h3 class="text-2xl font-extrabold text-slate-800 dark:text-white">98.2%</h3>
+<p class="text-[10px] text-success font-bold flex items-center gap-0.5"><span class="material-symbols-outlined text-xs">trending_up</span> +0.4%</p>
+</div>
+<div class="flex gap-1 h-12 items-end">
+<div class="w-1.5 bg-primary/20 rounded-full h-8"></div>
+<div class="w-1.5 bg-primary/20 rounded-full h-10"></div>
+<div class="w-1.5 bg-primary rounded-full h-12"></div>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-card-border dark:border-slate-800 card-shadow">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tỷ lệ mở (Open Rate)</p>
+<div class="flex items-end justify-between">
+<div>
+<h3 class="text-2xl font-extrabold text-slate-800 dark:text-white">84.5%</h3>
+<p class="text-[10px] text-success font-bold flex items-center gap-0.5"><span class="material-symbols-outlined text-xs">trending_up</span> +1.2%</p>
+</div>
+<div class="flex gap-1 h-12 items-end">
+<div class="w-1.5 bg-ai-purple/20 rounded-full h-10"></div>
+<div class="w-1.5 bg-ai-purple/20 rounded-full h-7"></div>
+<div class="w-1.5 bg-ai-purple rounded-full h-11"></div>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-card-border dark:border-slate-800 card-shadow">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Giảm No-show</p>
+<div class="flex items-end justify-between">
+<div>
+<h3 class="text-2xl font-extrabold text-slate-800 dark:text-white">-32.0%</h3>
+<p class="text-[10px] text-success font-bold flex items-center gap-0.5"><span class="material-symbols-outlined text-xs">arrow_downward</span> Cải thiện đáng kể</p>
+</div>
+<div class="flex gap-1 h-12 items-end">
+<div class="w-1.5 bg-success/20 rounded-full h-6"></div>
+<div class="w-1.5 bg-success/20 rounded-full h-9"></div>
+<div class="w-1.5 bg-success rounded-full h-12"></div>
+</div>
+</div>
+</div>
+<div class="bg-zalo-blue p-5 rounded-2xl card-shadow relative overflow-hidden">
+<p class="text-[10px] font-bold text-white/70 uppercase tracking-widest mb-1">Tổng tin nhắn tháng này</p>
+<h3 class="text-2xl font-extrabold text-white">45,280</h3>
+<p class="text-[10px] text-white/60 font-medium">Hạn mức ZNS: 50,000</p>
+<span class="material-symbols-outlined absolute -right-2 -bottom-2 text-white/10 text-7xl">chat</span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-1 space-y-8">
+<div class="bg-white dark:bg-slate-900 rounded-2xl border border-card-border dark:border-slate-800 card-shadow overflow-hidden">
+<div class="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2">
+<span class="material-symbols-outlined text-ai-purple fill-icon">auto_awesome</span>
+<h3 class="font-bold text-slate-800 dark:text-white">Nội dung nhắc hẹn AI</h3>
+</div>
+<div class="p-6">
+<div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 mb-4 border-l-4 border-ai-purple">
+<p class="text-[10px] font-bold text-ai-purple uppercase mb-2">Preview Tin nhắn Zalo</p>
+<div class="space-y-2 text-sm text-slate-700 dark:text-slate-300">
+<p>Xin chào <span class="font-bold text-primary">Anh Minh Hoàng</span>,</p>
+<p>Đây là tin nhắc từ <span class="font-bold">MediConnect</span>. Anh có lịch hẹn với <span class="font-bold">BS. Lê Quang Mạnh</span> vào lúc <span class="font-bold">09:00 ngày mai</span>.</p>
+<p>✨ <span class="italic text-slate-500 text-xs">Chuẩn bị: Vui lòng mang theo kết quả xét nghiệm cũ và nhịn ăn sáng để làm nội soi.</span></p>
+<p class="mt-4 text-[11px] text-slate-400">Trân trọng!</p>
+</div>
+</div>
+<button class="w-full py-2.5 text-xs font-bold text-ai-purple bg-ai-purple/10 rounded-xl hover:bg-ai-purple/20 transition-all">Tùy chỉnh Prompt AI</button>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-2xl border border-card-border dark:border-slate-800 card-shadow overflow-hidden">
+<div class="p-5 border-b border-slate-100 dark:border-slate-800">
+<h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400">settings</span>
+                                Cấu hình nhắc hẹn
+                            </h3>
+</div>
+<div class="p-6 space-y-5">
+<div>
+<label class="text-[10px] font-bold text-slate-400 uppercase block mb-2">Khoảng thời gian nhắc</label>
+<div class="grid grid-cols-2 gap-2">
+<label class="flex items-center gap-2 p-2 border border-slate-200 dark:border-slate-700 rounded-lg cursor-pointer hover:bg-slate-50">
+<input checked="" class="rounded text-primary focus:ring-primary size-4" type="checkbox"/>
+<span class="text-xs font-medium">24h trước</span>
+</label>
+<label class="flex items-center gap-2 p-2 border border-slate-200 dark:border-slate-700 rounded-lg cursor-pointer hover:bg-slate-50">
+<input checked="" class="rounded text-primary focus:ring-primary size-4" type="checkbox"/>
+<span class="text-xs font-medium">1h trước</span>
+</label>
+</div>
+</div>
+<div>
+<label class="text-[10px] font-bold text-slate-400 uppercase block mb-2">Quản lý ZNS Template</label>
+<select class="w-full text-xs bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg py-2">
+<option>Template: Nhắc hẹn khám bệnh (ID: 29910)</option>
+<option>Template: Kết quả xét nghiệm (ID: 29911)</option>
+<option>Template: Chúc mừng sinh nhật (ID: 29915)</option>
+</select>
+</div>
+<div>
+<label class="text-[10px] font-bold text-slate-400 uppercase block mb-2">Kênh dự phòng (Fallback)</label>
+<div class="flex gap-2">
+<button class="flex-1 py-2 text-xs font-bold border border-primary text-primary bg-primary/5 rounded-lg flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-sm">sms</span> SMS
+                                    </button>
+<button class="flex-1 py-2 text-xs font-bold border border-slate-200 dark:border-slate-700 text-slate-500 rounded-lg flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-sm">mail</span> Email
+                                    </button>
+</div>
+<p class="text-[9px] text-slate-400 mt-2 italic">* Tự động gửi nếu ZNS không được phân phối sau 5 phút.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-2">
+<div class="bg-white dark:bg-slate-900 rounded-2xl border border-card-border dark:border-slate-800 card-shadow h-full flex flex-col overflow-hidden">
+<div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<h3 class="font-bold text-slate-800 dark:text-white">Lịch sử gửi tin ZNS (Real-time)</h3>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 text-xs font-bold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">filter_alt</span>
+</button>
+<button class="px-3 py-1.5 text-xs font-bold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">refresh</span> Làm mới
+                                </button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead class="sticky top-0 bg-slate-50 dark:bg-slate-800/80 backdrop-blur-sm z-10">
+<tr class="border-b border-slate-100 dark:border-slate-700">
+<th class="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Bệnh nhân</th>
+<th class="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Loại tin</th>
+<th class="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Thời gian</th>
+<th class="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Trạng thái</th>
+<th class="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Chi tiết</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all">
+<td class="px-6 py-4">
+<p class="text-xs font-bold text-slate-700 dark:text-slate-200">Lê Hải Yến</p>
+<p class="text-[10px] text-slate-500">098***2123</p>
+</td>
+<td class="px-6 py-4">
+<span class="text-[10px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">Nhắc hẹn</span>
+</td>
+<td class="px-6 py-4 text-[11px] text-slate-500">14:20:05</td>
+<td class="px-6 py-4">
+<span class="px-2 py-0.5 rounded-full bg-success/10 text-success text-[10px] font-bold flex items-center w-fit gap-1">
+<span class="size-1.5 bg-success rounded-full"></span> Đã nhận
+                                            </span>
+</td>
+<td class="px-6 py-4">
+<button class="text-primary hover:underline text-[10px] font-bold">Xem Log</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all">
+<td class="px-6 py-4">
+<p class="text-xs font-bold text-slate-700 dark:text-slate-200">Nguyễn Quốc Cường</p>
+<p class="text-[10px] text-slate-500">091***4455</p>
+</td>
+<td class="px-6 py-4">
+<span class="text-[10px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">Kết quả XN</span>
+</td>
+<td class="px-6 py-4 text-[11px] text-slate-500">14:18:22</td>
+<td class="px-6 py-4">
+<span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold flex items-center w-fit gap-1">
+<span class="size-1.5 bg-primary rounded-full"></span> Đã gửi
+                                            </span>
+</td>
+<td class="px-6 py-4">
+<button class="text-primary hover:underline text-[10px] font-bold">Xem Log</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all">
+<td class="px-6 py-4">
+<p class="text-xs font-bold text-slate-700 dark:text-slate-200">Trần Thế Anh</p>
+<p class="text-[10px] text-slate-500">097***8899</p>
+</td>
+<td class="px-6 py-4">
+<span class="text-[10px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">Nhắc hẹn</span>
+</td>
+<td class="px-6 py-4 text-[11px] text-slate-500">14:15:40</td>
+<td class="px-6 py-4">
+<div class="flex flex-col gap-1">
+<span class="px-2 py-0.5 rounded-full bg-danger/10 text-danger text-[10px] font-bold flex items-center w-fit gap-1">
+<span class="size-1.5 bg-danger rounded-full"></span> Thất bại
+                                                </span>
+<span class="text-[8px] text-slate-400">Đã chuyển sang SMS (Fallback)</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<button class="text-primary hover:underline text-[10px] font-bold">Xem Log</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all">
+<td class="px-6 py-4">
+<p class="text-xs font-bold text-slate-700 dark:text-slate-200">Vũ Thị Lan</p>
+<p class="text-[10px] text-slate-500">034***5678</p>
+</td>
+<td class="px-6 py-4">
+<span class="text-[10px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">Cận lâm sàng</span>
+</td>
+<td class="px-6 py-4 text-[11px] text-slate-500">14:10:11</td>
+<td class="px-6 py-4">
+<span class="px-2 py-0.5 rounded-full bg-success/10 text-success text-[10px] font-bold flex items-center w-fit gap-1 text-nowrap">
+<span class="size-1.5 bg-success rounded-full"></span> Đã xem (Open)
+                                            </span>
+</td>
+<td class="px-6 py-4">
+<button class="text-primary hover:underline text-[10px] font-bold">Xem Log</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20">
+<div class="flex items-center justify-between text-[11px] font-bold text-slate-500">
+<p>Đang hiển thị 4 trong số 15,240 log gần nhất</p>
+<div class="flex gap-2">
+<button class="px-2 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded shadow-sm hover:bg-slate-50">Trước</button>
+<button class="px-2 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded shadow-sm hover:bg-slate-50">Sau</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

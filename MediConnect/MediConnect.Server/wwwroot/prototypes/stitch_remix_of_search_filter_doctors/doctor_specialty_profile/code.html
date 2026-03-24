@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Hồ sơ Chuyên môn &amp; Quản lý Lịch - MediConnect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a",
+                        "card-border": "#e2e8f0",
+                        "ai-purple": "#8b5cf6",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.375rem", "lg": "0.5rem", "xl": "1rem", "2xl": "1.5rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        .card-shadow {
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .calendar-day {
+            @apply aspect-square flex flex-col items-center justify-center p-1 border border-slate-100 dark:border-slate-800 transition-all cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 transition-colors duration-200">
+<div class="flex h-screen overflow-hidden">
+<aside class="w-64 flex-shrink-0 bg-white dark:bg-slate-900 border-r border-card-border dark:border-slate-800 flex flex-col h-full">
+<div class="p-6 flex flex-col h-full">
+<div class="flex items-center gap-3 mb-10 px-2">
+<div class="size-9 bg-primary rounded-lg flex items-center justify-center text-white shadow-md shadow-primary/20">
+<span class="material-symbols-outlined fill-icon">shield_with_heart</span>
+</div>
+<h2 class="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">MediConnect</h2>
+</div>
+<nav class="flex flex-col gap-1.5 grow">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-primary transition-all" href="#">
+<span class="material-symbols-outlined fill-icon">account_circle</span>
+<p class="text-sm font-bold">Hồ sơ chuyên môn</p>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<p class="text-sm font-semibold">Quản lý lịch khám</p>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<p class="text-sm font-semibold">Phân tích hiệu suất</p>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined">payments</span>
+<p class="text-sm font-semibold">Tài chính &amp; Gói cước</p>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800">
+<div class="flex items-center gap-3 px-2">
+<div class="aspect-square rounded-full size-10 border border-primary/20 p-0.5">
+<div class="w-full h-full rounded-full bg-center bg-no-repeat bg-cover" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCz__Z1hyr50RDlr5OZfUT-Q7tC42l5yoYY3p0rGKtnnl6wrXjwdUCl7dJ4gOd4k0_MYp_QFOlClUcUHXzDBgYQ8kmBDaEm4kD0Q-8A3sg9PwDTnVLJmZiboqQsNiOlexlgPpYhcnTF2vMCCtXAGwUKGoLqRcj6GO0fJfEE982drqihmbXaK7ARsQXHzn56372ckdMB6fqQGrwEtIvulgIZPhbRzyKOJAxOrDzZvR1X6guIx4KSl0sGiGNG1hButC4Ar4YmP84scdY8");'></div>
+</div>
+<div class="flex flex-col">
+<h1 class="text-slate-900 dark:text-white text-xs font-bold leading-tight">PGS.TS. BS. James Smith</h1>
+<p class="text-slate-500 text-[10px] font-medium uppercase">Tim Mạch</p>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col overflow-y-auto custom-scrollbar">
+<header class="bg-white dark:bg-slate-900 border-b border-card-border dark:border-slate-800 px-8 py-8">
+<div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+<div class="flex items-center gap-6">
+<div class="size-24 rounded-full ring-4 ring-primary/10 overflow-hidden shrink-0">
+<img alt="Doctor profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCz__Z1hyr50RDlr5OZfUT-Q7tC42l5yoYY3p0rGKtnnl6wrXjwdUCl7dJ4gOd4k0_MYp_QFOlClUcUHXzDBgYQ8kmBDaEm4kD0Q-8A3sg9PwDTnVLJmZiboqQsNiOlexlgPpYhcnTF2vMCCtXAGwUKGoLqRcj6GO0fJfEE982drqihmbXaK7ARsQXHzn56372ckdMB6fqQGrwEtIvulgIZPhbRzyKOJAxOrDzZvR1X6guIx4KSl0sGiGNG1hButC4Ar4YmP84scdY8"/>
+</div>
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-3xl font-extrabold text-slate-900 dark:text-white">PGS.TS. BS. James Smith</h1>
+<span class="bg-green-100 dark:bg-green-900/30 text-green-600 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Đã xác thực</span>
+</div>
+<p class="text-lg font-semibold text-primary mt-1">Chuyên khoa Tim mạch - Bệnh viện Đại học Y Dược</p>
+<div class="flex items-center gap-4 mt-2 text-slate-500 text-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span> Thành viên từ 2022</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">stars</span> 15 năm kinh nghiệm</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2 w-full lg:w-auto">
+<div class="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-2xl border border-indigo-100 dark:border-indigo-800/50">
+<div class="flex items-center justify-between gap-4 mb-2">
+<span class="text-xs font-bold text-indigo-600 uppercase">Trạng thái Gói</span>
+<span class="text-xs font-extrabold text-indigo-700 bg-white dark:bg-indigo-800 px-2 py-0.5 rounded-lg">Premium v1.2</span>
+</div>
+<p class="text-sm font-bold text-slate-700 dark:text-slate-300">Hết hạn: <span class="text-indigo-600">25/12/2024</span></p>
+<button class="w-full mt-3 py-2 bg-indigo-600 text-white text-xs font-bold rounded-xl hover:bg-indigo-700 transition-all">Gia hạn / Nâng cấp</button>
+</div>
+</div>
+</div>
+</header>
+<div class="p-8 space-y-8">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-1 space-y-8">
+<section class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-card-border dark:border-slate-800 card-shadow">
+<h3 class="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">description</span> Thông tin chuyên môn
+                        </h3>
+<div class="space-y-4">
+<div>
+<h4 class="text-xs font-bold text-slate-400 uppercase mb-1">Tiểu sử</h4>
+<p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed italic text-justify">
+                                    Chuyên gia đầu ngành về can thiệp tim mạch, đã thực hiện hơn 5.000 ca phẫu thuật thành công. Từng tu nghiệp tại Johns Hopkins Hospital, Hoa Kỳ.
+                                </p>
+</div>
+<div>
+<h4 class="text-xs font-bold text-slate-400 uppercase mb-2">Thành tựu &amp; Bằng cấp</h4>
+<ul class="space-y-2">
+<li class="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300 font-medium">
+<span class="material-symbols-outlined text-primary text-sm mt-0.5">school</span> Bằng TS. Y khoa loại xuất sắc
+                                    </li>
+<li class="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300 font-medium">
+<span class="material-symbols-outlined text-primary text-sm mt-0.5">emoji_events</span> Giải thưởng Thầy thuốc ưu tú 2023
+                                    </li>
+</ul>
+</div>
+</div>
+</section>
+<section class="bg-gradient-to-br from-blue-600 to-indigo-700 p-6 rounded-2xl text-white shadow-xl relative overflow-hidden">
+<div class="absolute -right-6 -bottom-6 size-32 bg-white/10 rounded-full blur-2xl"></div>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined fill-icon text-blue-200">auto_awesome</span>
+<h3 class="font-bold">Phân tích AI MediConnect</h3>
+</div>
+<div class="space-y-4 relative z-10">
+<div class="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/20">
+<p class="text-xs font-bold text-blue-100 uppercase mb-1">Xu hướng khu vực</p>
+<p class="text-sm font-medium leading-snug">Gia tăng 15% bệnh lý hô hấp &amp; tim mạch trong bán kính 10km quanh khu vực phòng khám của bạn.</p>
+</div>
+<div class="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/20">
+<p class="text-xs font-bold text-blue-100 uppercase mb-1">Khuyến nghị</p>
+<p class="text-sm font-medium leading-snug">Cân nhắc mở rộng lịch khám vào tối Thứ 5 để đón đầu lượng bệnh nhân tăng cao.</p>
+</div>
+</div>
+</section>
+<section class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-card-border dark:border-slate-800 card-shadow">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-bold text-slate-900 dark:text-white">Gói Premium &amp; Quyền lợi</h3>
+<span class="material-symbols-outlined text-ai-purple">workspace_premium</span>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
+<span class="material-symbols-outlined text-green-500">check_circle</span>
+<span class="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase">Ưu tiên thời gian làm việc</span>
+</div>
+<div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 opacity-60">
+<span class="material-symbols-outlined text-slate-400">lock</span>
+<span class="text-xs font-semibold text-slate-400 uppercase">Ưu tiên chọn bệnh nhân tiềm năng</span>
+</div>
+<button class="w-full text-primary text-xs font-bold py-2 border border-primary/20 rounded-xl hover:bg-primary/5">Xem lịch sử thanh toán</button>
+</div>
+</section>
+</div>
+<div class="lg:col-span-2 space-y-8">
+<section class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-card-border dark:border-slate-800 card-shadow">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+<div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">Quản lý Lịch khám (AI-Driven)</h3>
+<p class="text-sm text-slate-500">Tối ưu hóa hiệu suất làm việc bằng trí tuệ nhân tạo</p>
+</div>
+<div class="flex flex-wrap gap-2">
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-white text-xs font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">
+<span class="material-symbols-outlined text-lg">auto_mode</span> Tối ưu hóa bằng AI
+                                </button>
+<button class="flex items-center gap-2 px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl hover:bg-slate-50 transition-all">
+                                    Cập nhật tự động
+                                </button>
+</div>
+</div>
+<div class="border border-slate-100 dark:border-slate-800 rounded-2xl overflow-hidden">
+<div class="bg-slate-50 dark:bg-slate-800 p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<h4 class="font-bold text-slate-700 dark:text-slate-300">Tháng 12, 2024</h4>
+<div class="flex gap-2">
+<button class="p-1 hover:bg-white dark:hover:bg-slate-700 rounded shadow-sm"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="p-1 hover:bg-white dark:hover:bg-slate-700 rounded shadow-sm"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+<div class="grid grid-cols-7 text-center py-3 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+<div class="text-[10px] font-extrabold text-slate-400 uppercase">T2</div>
+<div class="text-[10px] font-extrabold text-slate-400 uppercase">T3</div>
+<div class="text-[10px] font-extrabold text-slate-400 uppercase">T4</div>
+<div class="text-[10px] font-extrabold text-slate-400 uppercase">T5</div>
+<div class="text-[10px] font-extrabold text-slate-400 uppercase">T6</div>
+<div class="text-[10px] font-extrabold text-slate-400 uppercase">T7</div>
+<div class="text-[10px] font-extrabold text-red-400 uppercase">CN</div>
+</div>
+<div class="grid grid-cols-7 bg-white dark:bg-slate-900">
+<div class="calendar-day opacity-20"><span class="text-sm font-bold">25</span></div>
+<div class="calendar-day opacity-20"><span class="text-sm font-bold">26</span></div>
+<div class="calendar-day opacity-20"><span class="text-sm font-bold">27</span></div>
+<div class="calendar-day opacity-20"><span class="text-sm font-bold">28</span></div>
+<div class="calendar-day opacity-20"><span class="text-sm font-bold">29</span></div>
+<div class="calendar-day opacity-20"><span class="text-sm font-bold">30</span></div>
+<div class="calendar-day"><span class="text-sm font-bold">1</span></div>
+<div class="calendar-day"><span class="text-sm font-bold">2</span></div>
+<div class="calendar-day bg-primary/5 relative">
+<span class="text-sm font-bold text-primary">3</span>
+<div class="absolute bottom-1 flex gap-0.5">
+<div class="size-1 rounded-full bg-primary"></div>
+<div class="size-1 rounded-full bg-primary"></div>
+</div>
+</div>
+<div class="calendar-day"><span class="text-sm font-bold">4</span></div>
+<div class="calendar-day bg-red-50 dark:bg-red-900/10 group">
+<span class="text-sm font-bold text-red-500">5</span>
+<span class="text-[8px] font-bold text-red-400 hidden group-hover:block uppercase">Từ chối</span>
+</div>
+<div class="calendar-day"><span class="text-sm font-bold">6</span></div>
+<div class="calendar-day"><span class="text-sm font-bold">7</span></div>
+<div class="calendar-day"><span class="text-sm font-bold text-red-500">8</span></div>
+<div class="calendar-day ring-2 ring-primary ring-inset"><span class="text-sm font-bold">9</span><p class="text-[8px] font-bold text-primary">Hôm nay</p></div>
+<div class="calendar-day"><span class="text-sm font-bold">10</span></div>
+<div class="calendar-day"><span class="text-sm font-bold">11</span></div>
+<div class="calendar-day"><span class="text-sm font-bold">12</span></div>
+<div class="calendar-day"><span class="text-sm font-bold">13</span></div>
+<div class="calendar-day"><span class="text-sm font-bold">14</span></div>
+<div class="calendar-day"><span class="text-sm font-bold text-red-500">15</span></div>
+<div class="calendar-day"><span class="text-sm font-bold">16</span></div>
+<div class="calendar-day"><span class="text-sm font-bold">17</span></div>
+<div class="calendar-day"><span class="text-sm font-bold">18</span></div>
+<div class="calendar-day"><span class="text-sm font-bold">19</span></div>
+<div class="calendar-day"><span class="text-sm font-bold">20</span></div>
+<div class="calendar-day"><span class="text-sm font-bold">21</span></div>
+<div class="calendar-day"><span class="text-sm font-bold text-red-500">22</span></div>
+<div class="calendar-day"><span class="text-sm font-bold">23</span></div>
+<div class="calendar-day"><span class="text-sm font-bold">24</span></div>
+<div class="calendar-day"><span class="text-sm font-bold text-red-500">25</span><p class="text-[8px] font-bold text-red-500 uppercase">Lễ</p></div>
+<div class="calendar-day"><span class="text-sm font-bold">26</span></div>
+<div class="calendar-day"><span class="text-sm font-bold">27</span></div>
+<div class="calendar-day"><span class="text-sm font-bold">28</span></div>
+<div class="calendar-day"><span class="text-sm font-bold text-red-500">29</span></div>
+<div class="calendar-day"><span class="text-sm font-bold">30</span></div>
+<div class="calendar-day"><span class="text-sm font-bold">31</span></div>
+</div>
+</div>
+<div class="mt-4 flex gap-4 text-[10px] font-bold uppercase text-slate-500">
+<div class="flex items-center gap-1"><div class="size-2 rounded-full bg-primary"></div> Có bệnh nhân</div>
+<div class="flex items-center gap-1"><div class="size-2 rounded-full bg-red-500"></div> Từ chối khám</div>
+<div class="flex items-center gap-1"><div class="size-2 rounded-full bg-slate-200"></div> Trống</div>
+</div>
+</section>
+<section class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-card-border dark:border-slate-800 card-shadow">
+<div class="flex items-center justify-between mb-6">
+<div>
+<h3 class="font-bold text-slate-900 dark:text-white">Danh sách yêu cầu chờ duyệt</h3>
+<p class="text-xs text-slate-500 mt-0.5">Phân tích mức độ phù hợp bởi AI</p>
+</div>
+<button class="text-xs font-bold text-primary hover:underline">Xem tất cả</button>
+</div>
+<div class="space-y-3">
+<div class="group flex items-center justify-between p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary/30 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
+<div class="flex items-center gap-4">
+<div class="size-10 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+<img alt="Patient" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvJMZ10p0ZevUpI2uBSva-FtRumhsDY5SV-cFU4roaKaD2Qj2XxUQTLReCuQyTwXNHIjRxMzFLDbAyDEoviSekKIodUrMZ-Fdws5O3Bs-ZdGwRYdsh_LdiQFlCz4nzEi9HBOD663B-14YgOHPjLku-2ehQZk9-8dxmfdPxjBB5eFNYMxtDSsXZzCAHylwD6vokHvjs5-1qC2uAyEH6mfpTavm1C_mHicWLZeZoAOX7d0_LBy2RkmYcB4B-5k2hjdpY2Co-SwARRrqO"/>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900 dark:text-white">Nguyễn Văn An</p>
+<p class="text-[10px] text-slate-500 font-medium">Triệu chứng: Đau thắt ngực, khó thở</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="text-right">
+<div class="flex items-center gap-1 justify-end">
+<span class="text-xs font-extrabold text-ai-purple">98% Match</span>
+<span class="material-symbols-outlined text-ai-purple text-sm fill-icon">bolt</span>
+</div>
+<p class="text-[10px] text-slate-400 font-bold uppercase tracking-tight">AI Matching Score</p>
+</div>
+<div class="flex gap-2">
+<button class="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-all" title="Từ chối">
+<span class="material-symbols-outlined text-lg">close</span>
+</button>
+<button class="p-2 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 transition-all" title="Chấp nhận">
+<span class="material-symbols-outlined text-lg">check</span>
+</button>
+</div>
+</div>
+</div>
+<div class="group flex items-center justify-between p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary/30 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
+<div class="flex items-center gap-4">
+<div class="size-10 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+<img alt="Patient" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCK3_c1y2FIdPXkjj-ifapmkxMwVTL8DdAZSUe53vYNqixbFRb2u68i4iZIFlzaCCELcpC-k0bPprlpthQV230hWLRSrv7Ch-0oGd2uj7_8Qhs_6vS_E8r92U-Dfa3EkRSh2F2ZQzeBcVqLuJ-PN9z-BQNJuvAQpHJAZwsxnCRlihq6zFHbj4joMFVWpdYXFb8gWwW5tGy1QSAbEqw0UtIYFDBNs65QghmXAxNCP6VoL3y-K_HEoDbHzWIPTTwk0ejkTJ5uADhv8pwu"/>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900 dark:text-white">Lê Thị Bích</p>
+<p class="text-[10px] text-slate-500 font-medium">Tái khám: Cao huyết áp định kỳ</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="text-right">
+<div class="flex items-center gap-1 justify-end">
+<span class="text-xs font-extrabold text-ai-purple">85% Match</span>
+<span class="material-symbols-outlined text-ai-purple text-sm fill-icon">bolt</span>
+</div>
+<p class="text-[10px] text-slate-400 font-bold uppercase tracking-tight">AI Matching Score</p>
+</div>
+<div class="flex gap-2">
+<button class="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-all" title="Từ chối">
+<span class="material-symbols-outlined text-lg">close</span>
+</button>
+<button class="p-2 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 transition-all" title="Chấp nhận">
+<span class="material-symbols-outlined text-lg">check</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

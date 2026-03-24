@@ -65,14 +65,13 @@
                 <div class="p-6 bg-slate-50/50 space-y-4">
                     <div class="flex items-center justify-between"><span class="text-sm font-bold text-slate-700">Tổng tiền thanh toán</span><span class="text-2xl font-black text-primary">@Model.Summary.Amount.ToString("N0")đ</span></div>
                     <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Chọn hình thức thanh toán</p>
-                    <label class="flex items-center p-3 rounded-xl border border-primary bg-white"><input type="radio" checked class="text-primary" /><span class="ml-3 text-sm font-semibold">Thẻ Quốc tế</span></label>
-                    <label class="flex items-center p-3 rounded-xl border border-slate-200 bg-white"><input type="radio" class="text-primary" /><span class="ml-3 text-sm font-semibold">Ví MoMo</span></label>
-                    <label class="flex items-center p-3 rounded-xl border border-slate-200 bg-white"><input type="radio" class="text-primary" /><span class="ml-3 text-sm font-semibold">VNPAY</span></label>
-                    <label class="flex items-center p-3 rounded-xl border border-slate-200 bg-white"><input type="radio" class="text-primary" /><span class="ml-3 text-sm font-semibold">Thanh toán tại chỗ</span></label>
+                    <label class="flex items-center p-3 rounded-xl border border-slate-200 bg-white"><input asp-for="PaymentMethod" type="radio" value="CARD" form="payment-form" class="text-primary" /><span class="ml-3 text-sm font-semibold">Thẻ Quốc tế</span></label>
+                    <label class="flex items-center p-3 rounded-xl border border-slate-200 bg-white"><input asp-for="PaymentMethod" type="radio" value="MOMO" form="payment-form" class="text-primary" /><span class="ml-3 text-sm font-semibold">Ví MoMo</span></label>
+                    <label class="flex items-center p-3 rounded-xl border border-slate-200 bg-white"><input asp-for="PaymentMethod" type="radio" value="VNPAY" form="payment-form" class="text-primary" /><span class="ml-3 text-sm font-semibold">VNPAY</span></label>
+                    <label class="flex items-center p-3 rounded-xl border border-slate-200 bg-white"><input asp-for="PaymentMethod" type="radio" value="ONSITE" form="payment-form" class="text-primary" /><span class="ml-3 text-sm font-semibold">Thanh toán tại chỗ</span></label>
 
-                    <form method="post" class="pt-2">
+                    <form method="post" class="pt-2" id="payment-form">
                         <input asp-for="AppointmentId" type="hidden" />
-                        <input asp-for="PaymentMethod" type="hidden" value="VNPAY" />
                         <button type="submit" class="w-full py-3.5 bg-primary text-white rounded-xl font-bold">Xác nhận & Thanh toán</button>
                     </form>
                     <a asp-page="/Patient/DoctorProfile" class="block text-center text-sm text-slate-500 no-underline">Quay lại</a>

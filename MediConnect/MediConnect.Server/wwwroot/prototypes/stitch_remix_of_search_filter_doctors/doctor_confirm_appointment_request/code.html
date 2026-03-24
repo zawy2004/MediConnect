@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary": "#ffffff",
+              "on-primary-fixed-variant": "#00468b",
+              "on-primary-container": "#cadcff",
+              "error": "#ba1a1a",
+              "tertiary-container": "#a04401",
+              "on-tertiary": "#ffffff",
+              "surface-variant": "#e1e3e4",
+              "on-error": "#ffffff",
+              "inverse-on-surface": "#f0f1f2",
+              "background": "#f8f9fa",
+              "outline-variant": "#c2c6d4",
+              "surface-bright": "#f8f9fa",
+              "surface-tint": "#005db5",
+              "tertiary": "#7b3200",
+              "surface-dim": "#d9dadb",
+              "on-secondary-container": "#596576",
+              "primary": "#00488d",
+              "on-tertiary-container": "#ffd1bc",
+              "error-container": "#ffdad6",
+              "secondary": "#535f70",
+              "on-background": "#191c1d",
+              "inverse-primary": "#a8c8ff",
+              "surface-container-low": "#f3f4f5",
+              "on-primary-fixed": "#001b3d",
+              "inverse-surface": "#2e3132",
+              "primary-container": "#005fb8",
+              "on-error-container": "#93000a",
+              "primary-fixed": "#d6e3ff",
+              "on-tertiary-fixed-variant": "#783100",
+              "surface-container": "#edeeef",
+              "surface": "#f8f9fa",
+              "secondary-fixed": "#d7e3f8",
+              "secondary-container": "#d7e3f8",
+              "on-secondary-fixed-variant": "#3c4858",
+              "tertiary-fixed-dim": "#ffb691",
+              "on-primary": "#ffffff",
+              "on-secondary-fixed": "#101c2b",
+              "surface-container-highest": "#e1e3e4",
+              "on-surface": "#191c1d",
+              "surface-container-lowest": "#ffffff",
+              "tertiary-fixed": "#ffdbcb",
+              "on-tertiary-fixed": "#341100",
+              "secondary-fixed-dim": "#bbc7db",
+              "on-surface-variant": "#424752",
+              "outline": "#727783",
+              "primary-fixed-dim": "#a8c8ff",
+              "surface-container-high": "#e7e8e9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .brand-font { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- SideNavBar Anchor -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-slate-100 dark:bg-slate-950 flex flex-col py-6 transition-all duration-300 ease-in-out">
+<div class="px-6 mb-10">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">medical_services</span>
+</div>
+<div>
+<h1 class="text-xl font-black text-blue-800 dark:text-blue-200">MediConnect</h1>
+<p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Clinical Atelier</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-6 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 transition-colors font-manrope font-medium text-sm" href="#">
+<span class="material-symbols-outlined mr-3">dashboard</span> Dashboard
+            </a>
+<a class="flex items-center px-6 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 transition-colors font-manrope font-medium text-sm" href="#">
+<span class="material-symbols-outlined mr-3">group</span> Patients
+            </a>
+<a class="flex items-center px-6 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 transition-colors font-manrope font-medium text-sm" href="#">
+<span class="material-symbols-outlined mr-3">calendar_today</span> Appointments
+            </a>
+<a class="flex items-center px-6 py-3 text-blue-700 dark:text-blue-300 font-bold border-r-4 border-blue-600 dark:border-blue-400 bg-blue-50/50 dark:bg-blue-900/10 font-manrope text-sm" href="#">
+<span class="material-symbols-outlined mr-3" style="font-variation-settings: 'FILL' 1;">pending_actions</span> Requests
+            </a>
+<a class="flex items-center px-6 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 transition-colors font-manrope font-medium text-sm" href="#">
+<span class="material-symbols-outlined mr-3">hourglass_empty</span> Waitlist
+            </a>
+<a class="flex items-center px-6 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 transition-colors font-manrope font-medium text-sm" href="#">
+<span class="material-symbols-outlined mr-3">account_circle</span> Profile
+            </a>
+</nav>
+<div class="mt-auto px-6 border-t border-slate-200 dark:border-slate-800 pt-6">
+<a class="flex items-center text-slate-600 dark:text-slate-400 hover:text-error transition-colors font-manrope font-medium text-sm" href="#">
+<span class="material-symbols-outlined mr-3">logout</span> Logout
+            </a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 min-h-screen">
+<!-- TopAppBar Anchor -->
+<header class="bg-slate-50 dark:bg-slate-900 flex justify-between items-center w-full px-8 py-4 sticky top-0 z-10">
+<div class="flex items-center gap-6">
+<div class="relative">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+<span class="material-symbols-outlined text-sm">search</span>
+</span>
+<input class="pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-full text-sm focus:ring-2 focus:ring-primary w-64" placeholder="Tìm kiếm yêu cầu..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors rounded-full relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors rounded-full">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="h-8 w-[1px] bg-slate-200 mx-2"></div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="text-xs font-bold text-on-background">Dr. Nguyen Minh</p>
+<p class="text-[10px] text-slate-500 uppercase">Cardiologist</p>
+</div>
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Doctor Profile Image Professional" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIZB74I5h0zjF9fJXYcP1s0YiVqIwZqY2H3PHN5WpLqFtCZjlq5rv2GoVr_YYybCwdEleWuxtaUNXyJFeCX5PNfx2OowXrkGgU1BE-LvffH-5R_F2eA-ywZ5xNsG3AdPHpaSVswwiZj9U7eey7pY0LzaPNw1dbF6xGcS6TO1GzIYZF-JXUk9ZOW7iysrMwJIfjVuD47ukCSCl38ndxUofa8iFh4ZoNik4URVMkKbR4MHhZWCCux3DWkXktB-Z3UziMy1PsDV8YAGKa"/>
+</div>
+</div>
+</header>
+<div class="px-12 py-10 max-w-7xl mx-auto">
+<!-- Header Section -->
+<header class="mb-12">
+<h2 class="text-4xl font-extrabold font-headline tracking-tight text-primary mb-2">Xác nhận Yêu cầu Hẹn khám</h2>
+<p class="text-on-surface-variant font-body">Bạn có <span class="font-bold text-primary">04</span> yêu cầu đang chờ phê duyệt từ AI triaged system.</p>
+</header>
+<!-- Grid Layout (Clinical Atelier Style) -->
+<div class="grid grid-cols-12 gap-8">
+<!-- Left Column: Pending List (Primary Focus) -->
+<section class="col-span-12 lg:col-span-8 space-y-6">
+<!-- Request Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 group">
+<div class="flex items-start gap-6">
+<img class="w-20 h-20 rounded-xl object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="Patient Portrait Female" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9af1g9A5uC090kfAgXpr-8fpOK_V8vEB7aSPYXD45Hu0jf9qkLFDR2KFhWGsRU_IiPCcSj_d5IIwvYoSTmcM30FBhalhNwlQvSOLBFiJ4XOWL20oVszk3fbwIHE5tciPiYvdKO8cFgZxHvkzPalvO_1Gwb3iDFpzyOaCJ_5g3_y0Zo0zUsvlQc1YFBKHhn6tHWUwar4-_jTo5RUCM6Axb9KAI10noupFLixiWwflg8hYvzhM8CUrFNkAz0pGRWyikPU7voir44mDC"/>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-xl font-bold font-headline text-on-surface">Lê Thị Mai Anh</h3>
+<p class="text-xs text-slate-500 font-medium">BN-2940 • 28 tuổi • Nữ</p>
+</div>
+<div class="bg-primary-fixed text-on-primary-fixed px-3 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 uppercase tracking-wider">
+<span class="material-symbols-outlined text-xs">schedule</span> 14:30, Hôm nay
+                                    </div>
+</div>
+<div class="bg-surface-container-low rounded-lg p-4 mb-6 border-l-4 border-primary">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-primary text-sm">psychology</span>
+<span class="text-[10px] font-black uppercase text-primary tracking-widest">AI Tóm tắt Triệu chứng</span>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed italic">
+                                        "Bệnh nhân báo cáo đau thắt ngực trái kéo dài 15 phút, lan ra cánh tay. Có tiền sử cao huyết áp. Cần kiểm tra điện tâm đồ ngay."
+                                    </p>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex-1 py-3 bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold rounded-lg text-sm hover:opacity-90 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg">check_circle</span> Xác nhận
+                                    </button>
+<button class="px-6 py-3 bg-surface-container-highest text-on-surface-variant font-bold rounded-lg text-sm hover:bg-error-container hover:text-error transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">cancel</span> Từ chối
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Request Card 2 (Active/Expanded State for Denial) -->
+<div class="bg-surface-container-lowest rounded-xl p-6 border-2 border-primary-fixed">
+<div class="flex items-start gap-6">
+<img class="w-20 h-20 rounded-xl object-cover" data-alt="Patient Portrait Male" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAygIi74VbRwmTI84IIYRhjOaPPuBMU0Mgm_P_wczkZDcdOhNMYs24XMUCCsS_zLAe3TLys-DX39u8LkBUQApSzKFgAKtTUDvAGQUV730EwVY02asEQTrGYwGzN_XJZWcP3joeSCf9XSTl91NbORNeRHvL6gX8s0RUGKooAE8ZmJKrZwgbydBpZ4OuULAeZZUB4H9pdU-ubs1vI7emJCp3nRsGVZL-wvSjKRaU9J94FVmAdP2RVv6gy3cUHbsRkSrf_5eFlRYk82iFu"/>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-xl font-bold font-headline text-on-surface">Trần Hoàng Nam</h3>
+<p class="text-xs text-slate-500 font-medium">BN-8812 • 45 tuổi • Nam</p>
+</div>
+<div class="bg-surface-container-highest text-on-surface-variant px-3 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 uppercase tracking-wider">
+<span class="material-symbols-outlined text-xs">schedule</span> 09:15, Ngày mai
+                                    </div>
+</div>
+<div class="bg-surface-container-low rounded-lg p-4 mb-6 border-l-4 border-primary/40">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-primary text-sm">psychology</span>
+<span class="text-[10px] font-black uppercase text-primary tracking-widest">AI Tóm tắt Triệu chứng</span>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed italic">
+                                        "Kiểm tra định kỳ sau phẫu thuật thay van tim 3 tháng. Không có dấu hiệu bất thường nghiêm trọng."
+                                    </p>
+</div>
+<!-- Denial Logic Section -->
+<div class="bg-surface-container rounded-xl p-6 mb-6">
+<h4 class="text-sm font-bold text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-error">info</span> Lý do từ chối &amp; Gợi ý lịch mới
+                                    </h4>
+<div class="space-y-4">
+<div>
+<label class="block text-[10px] font-black uppercase text-slate-500 mb-1 ml-1">Lý do cụ thể</label>
+<textarea class="w-full bg-surface-container-lowest border-none rounded-lg text-sm focus:ring-1 focus:ring-primary placeholder:text-slate-400" placeholder="VD: Trùng lịch phẫu thuật đột xuất..." rows="2"></textarea>
+</div>
+<div>
+<label class="block text-[10px] font-black uppercase text-slate-500 mb-2 ml-1">Khung giờ gợi ý thay thế</label>
+<div class="flex flex-wrap gap-2">
+<button class="px-4 py-2 bg-primary-fixed text-primary font-bold text-xs rounded-full border border-primary/20">10:30, Ngày mai</button>
+<button class="px-4 py-2 bg-surface-container-lowest text-on-surface-variant font-medium text-xs rounded-full hover:bg-primary-fixed/50 transition-colors">15:00, Ngày mai</button>
+<button class="px-4 py-2 bg-surface-container-lowest text-on-surface-variant font-medium text-xs rounded-full hover:bg-primary-fixed/50 transition-colors">08:00, Thứ Tư</button>
+<button class="px-4 py-2 bg-surface-container-lowest text-primary font-bold text-xs rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">add</span> Khác
+                                                </button>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-end gap-3">
+<button class="px-6 py-2 text-on-surface-variant font-bold text-sm hover:underline">Hủy bỏ</button>
+<button class="px-8 py-2 bg-error text-on-error font-bold rounded-lg text-sm shadow-lg shadow-error/20">Xác nhận từ chối</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Column: Context & Stats (Editorial Bento) -->
+<aside class="col-span-12 lg:col-span-4 space-y-6">
+<!-- Stats Card -->
+<div class="bg-primary text-on-primary rounded-xl p-6">
+<h4 class="text-[10px] font-black uppercase tracking-widest opacity-70 mb-4">Hiệu suất hôm nay</h4>
+<div class="flex items-end justify-between">
+<div>
+<p class="text-4xl font-black font-headline tracking-tighter">85%</p>
+<p class="text-xs opacity-80 mt-1">Tỷ lệ xác nhận yêu cầu</p>
+</div>
+<div class="text-right">
+<span class="material-symbols-outlined text-4xl opacity-30">trending_up</span>
+</div>
+</div>
+</div>
+<!-- Waitlist Summary -->
+<div class="bg-surface-container-low rounded-xl p-6">
+<div class="flex justify-between items-center mb-6">
+<h4 class="text-sm font-bold text-on-surface">Danh sách chờ AI</h4>
+<span class="material-symbols-outlined text-slate-400">more_horiz</span>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xs font-bold">PT</div>
+<div>
+<p class="text-xs font-bold">Phạm Tuấn</p>
+<p class="text-[10px] text-slate-400 italic">Đau dạ dày</p>
+</div>
+</div>
+<span class="text-[10px] font-bold text-tertiary">Ưu tiên cao</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 text-xs font-bold">HN</div>
+<div>
+<p class="text-xs font-bold">Hà Ngọc</p>
+<p class="text-[10px] text-slate-400 italic">Tư vấn sức khỏe</p>
+</div>
+</div>
+<span class="text-[10px] font-bold text-slate-400">Thường</span>
+</div>
+</div>
+<button class="w-full mt-6 py-2 text-xs font-bold text-primary hover:bg-primary-fixed transition-colors rounded-lg">Xem tất cả hàng chờ</button>
+</div>
+<!-- Clinical Tip (Glassmorphism inspired) -->
+<div class="relative overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 text-white">
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined text-[100px]" style="font-variation-settings: 'FILL' 1;">medical_information</span>
+</div>
+<h4 class="text-[10px] font-black uppercase tracking-widest text-blue-300 mb-2">Ghi chú lâm nghiệp</h4>
+<p class="text-xs leading-relaxed opacity-80">
+                            "Hệ thống AI khuyến nghị bạn ưu tiên các bệnh nhân có triệu chứng đau ngực và khó thở trong khung giờ sáng."
+                        </p>
+</div>
+</aside>
+</div>
+</div>
+</main>
+<!-- FAB for Quick Actions (Suppressed according to rules if not primary, but useful here for doctor flow) -->
+<div class="fixed bottom-8 right-8 flex flex-col items-end gap-3">
+<button class="bg-tertiary text-on-tertiary h-14 w-14 rounded-full shadow-2xl flex items-center justify-center transition-transform hover:scale-110 active:scale-95">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+</div>
+</body></html>
