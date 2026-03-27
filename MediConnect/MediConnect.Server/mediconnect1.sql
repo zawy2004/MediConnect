@@ -554,3 +554,687 @@ INSERT INTO dbo.departments (department_name, description, location) VALUES
     (N'Diagnostic Center',     N'Lab tests, imaging, and diagnostics',    N'1st Floor, Block C'),
     (N'Pharmacy',              N'Medication dispensing',                  N'Ground Floor, Block C');
 GO
+
+-- ============================================================
+-- ADDITIONAL SEED DATA: ~10 records/table (idempotent)
+-- ============================================================
+
+-- Roles: add test roles to reach richer sample data.
+INSERT INTO dbo.roles (role_name, description)
+SELECT v.role_name, v.description
+FROM (VALUES
+    ('NURSE',            N'Nursing staff role for operational testing'),
+    ('RECEPTIONIST',     N'Front desk scheduling support role'),
+    ('LAB_TECH',         N'Laboratory technician role'),
+    ('PHARMACIST',       N'Pharmacy operations role'),
+    ('INSURANCE_AGENT',  N'Insurance verification role'),
+    ('SUPPORT_STAFF',    N'General support staff role'),
+    ('AUDITOR',          N'Compliance and audit role'),
+    ('SUPER_ADMIN',      N'Extended administration role for testing'),
+    ('CARE_COORDINATOR', N'Patient care coordination role'),
+    ('TRIAGE_BOT',       N'AI triage integration role')
+) v(role_name, description)
+WHERE NOT EXISTS (
+    SELECT 1 FROM dbo.roles r WHERE r.role_name = v.role_name
+);
+GO
+
+-- Specialties: add more options beyond the initial catalog.
+INSERT INTO dbo.specialties (specialty_name, description)
+SELECT v.specialty_name, v.description
+FROM (VALUES
+    (N'Sports Medicine',         N'Prevention and treatment of sports-related injuries'),
+    (N'Nephrology',              N'Kidney care and renal disorders'),
+    (N'Hematology',              N'Blood disorders and blood-related diseases'),
+    (N'Pulmonology',             N'Lung and respiratory system conditions'),
+    (N'Rheumatology',            N'Autoimmune and joint disorders'),
+    (N'Geriatrics',              N'Comprehensive care for older adults'),
+    (N'Infectious Diseases',     N'Diagnosis and treatment of infections'),
+    (N'Physical Rehabilitation', N'Rehabilitation and functional recovery'),
+    (N'Pain Management',         N'Chronic and acute pain treatment'),
+    (N'Allergy & Immunology',    N'Allergic and immune system disorders')
+) v(specialty_name, description)
+WHERE NOT EXISTS (
+    SELECT 1 FROM dbo.specialties s WHERE s.specialty_name = v.specialty_name
+);
+GO
+
+-- Departments: add 10 more departments.
+INSERT INTO dbo.departments (department_name, description, location)
+SELECT v.department_name, v.description, v.location
+FROM (VALUES
+    (N'Cardiac Center',            N'Advanced heart care and monitoring',          N'4th Floor, Block A'),
+    (N'Neuro Center',              N'Neurology and neurosurgery consultations',    N'5th Floor, Block A'),
+    (N'Maternal Care Unit',        N'Pregnancy and prenatal services',             N'3rd Floor, Block D'),
+    (N'Pediatric Care Unit',       N'Child-focused clinical services',              N'2nd Floor, Block D'),
+    (N'Dermatology Clinic',        N'Skin treatment and cosmetic dermatology',      N'2nd Floor, Block E'),
+    (N'Rehabilitation Unit',       N'Physical therapy and post-op rehabilitation',  N'1st Floor, Block E'),
+    (N'Endoscopy Unit',            N'GI diagnostics and endoscopic procedures',     N'1st Floor, Block F'),
+    (N'Oncology Day Care',         N'Cancer consultation and day treatment',        N'6th Floor, Block B'),
+    (N'Mental Health Clinic',      N'Psychiatry and behavioral health support',     N'4th Floor, Block C'),
+    (N'Vaccination Center',        N'Immunization and preventive care programs',    N'Ground Floor, Block D')
+) v(department_name, description, location)
+WHERE NOT EXISTS (
+    SELECT 1 FROM dbo.departments d WHERE d.department_name = v.department_name
+);
+GO
+
+-- Users: 1 admin + 10 doctors + 10 patients.
+;WITH seed_users AS (
+    SELECT * FROM (VALUES
+        ('ADMIN',  N'System Admin',     'admin.seed@mediconnect.local',       '0900000000', 'OTHER', CAST('1988-01-01' AS DATE), N'HQ Office',      1),
+        ('DOCTOR', N'Dr. An Pham',      'doctor01.seed@mediconnect.local',    '0910000001', 'MALE',  CAST('1984-02-10' AS DATE), N'District 1',     1),
+        ('DOCTOR', N'Dr. Binh Tran',    'doctor02.seed@mediconnect.local',    '0910000002', 'MALE',  CAST('1983-03-12' AS DATE), N'Binh Thanh',     1),
+        ('DOCTOR', N'Dr. Chau Nguyen',  'doctor03.seed@mediconnect.local',    '0910000003', 'FEMALE',CAST('1986-04-14' AS DATE), N'Thu Duc',        1),
+        ('DOCTOR', N'Dr. Dung Le',      'doctor04.seed@mediconnect.local',    '0910000004', 'FEMALE',CAST('1982-05-16' AS DATE), N'Go Vap',         1),
+        ('DOCTOR', N'Dr. Giang Vo',     'doctor05.seed@mediconnect.local',    '0910000005', 'FEMALE',CAST('1985-06-18' AS DATE), N'Phu Nhuan',      1),
+        ('DOCTOR', N'Dr. Huy Do',       'doctor06.seed@mediconnect.local',    '0910000006', 'MALE',  CAST('1981-07-20' AS DATE), N'Tan Binh',       1),
+        ('DOCTOR', N'Dr. Khanh Hoang',  'doctor07.seed@mediconnect.local',    '0910000007', 'MALE',  CAST('1987-08-22' AS DATE), N'Tan Phu',        1),
+        ('DOCTOR', N'Dr. Linh Bui',     'doctor08.seed@mediconnect.local',    '0910000008', 'FEMALE',CAST('1989-09-24' AS DATE), N'District 7',     1),
+        ('DOCTOR', N'Dr. Minh Dang',    'doctor09.seed@mediconnect.local',    '0910000009', 'MALE',  CAST('1980-10-26' AS DATE), N'District 3',     1),
+        ('DOCTOR', N'Dr. Nga Phan',     'doctor10.seed@mediconnect.local',    '0910000010', 'FEMALE',CAST('1988-11-28' AS DATE), N'District 5',     1),
+        ('PATIENT',N'Alice Nguyen',     'patient01.seed@mediconnect.local',   '0920000001', 'FEMALE',CAST('1995-01-05' AS DATE), N'District 10',    1),
+        ('PATIENT',N'Bao Tran',         'patient02.seed@mediconnect.local',   '0920000002', 'MALE',  CAST('1992-02-06' AS DATE), N'District 11',    1),
+        ('PATIENT',N'Chi Le',           'patient03.seed@mediconnect.local',   '0920000003', 'FEMALE',CAST('1998-03-07' AS DATE), N'District 12',    1),
+        ('PATIENT',N'Duc Pham',         'patient04.seed@mediconnect.local',   '0920000004', 'MALE',  CAST('1991-04-08' AS DATE), N'Thu Duc',        1),
+        ('PATIENT',N'Emi Ho',           'patient05.seed@mediconnect.local',   '0920000005', 'FEMALE',CAST('1997-05-09' AS DATE), N'Binh Tan',       1),
+        ('PATIENT',N'Gia Vu',           'patient06.seed@mediconnect.local',   '0920000006', 'OTHER', CAST('1994-06-10' AS DATE), N'Phu Nhuan',      1),
+        ('PATIENT',N'Hai Bui',          'patient07.seed@mediconnect.local',   '0920000007', 'MALE',  CAST('1990-07-11' AS DATE), N'Go Vap',         1),
+        ('PATIENT',N'Iris Do',          'patient08.seed@mediconnect.local',   '0920000008', 'FEMALE',CAST('1996-08-12' AS DATE), N'District 8',     1),
+        ('PATIENT',N'Khoa Dang',        'patient09.seed@mediconnect.local',   '0920000009', 'MALE',  CAST('1993-09-13' AS DATE), N'District 4',     1),
+        ('PATIENT',N'Linh Truong',      'patient10.seed@mediconnect.local',   '0920000010', 'FEMALE',CAST('1999-10-14' AS DATE), N'District 6',     1)
+    ) v(role_name, full_name, email, phone_number, gender, date_of_birth, address, is_verified)
+)
+INSERT INTO dbo.users (
+    role_id, full_name, email, password_hash, phone_number, avatar_url, gender,
+    date_of_birth, address, is_active, is_verified, last_login_at
+)
+SELECT
+    r.role_id,
+    s.full_name,
+    s.email,
+    N'SEED_HASH_DO_NOT_USE_IN_PRODUCTION',
+    s.phone_number,
+    NULL,
+    s.gender,
+    s.date_of_birth,
+    s.address,
+    1,
+    s.is_verified,
+    DATEADD(MINUTE, -10, CURRENT_TIMESTAMP)
+FROM seed_users s
+JOIN dbo.roles r ON r.role_name = s.role_name
+WHERE NOT EXISTS (
+    SELECT 1 FROM dbo.users u WHERE u.email = s.email
+);
+GO
+
+-- Password reset tokens: 10 records.
+INSERT INTO dbo.password_reset_tokens (user_id, token, expires_at, is_used)
+SELECT u.user_id, v.token, DATEADD(DAY, 2, CURRENT_TIMESTAMP), v.is_used
+FROM (VALUES
+    ('patient01.seed@mediconnect.local', N'seed-reset-token-01', 0),
+    ('patient02.seed@mediconnect.local', N'seed-reset-token-02', 0),
+    ('patient03.seed@mediconnect.local', N'seed-reset-token-03', 1),
+    ('patient04.seed@mediconnect.local', N'seed-reset-token-04', 0),
+    ('patient05.seed@mediconnect.local', N'seed-reset-token-05', 0),
+    ('patient06.seed@mediconnect.local', N'seed-reset-token-06', 1),
+    ('patient07.seed@mediconnect.local', N'seed-reset-token-07', 0),
+    ('patient08.seed@mediconnect.local', N'seed-reset-token-08', 0),
+    ('patient09.seed@mediconnect.local', N'seed-reset-token-09', 0),
+    ('patient10.seed@mediconnect.local', N'seed-reset-token-10', 1)
+) v(email, token, is_used)
+JOIN dbo.users u ON u.email = v.email
+WHERE NOT EXISTS (
+    SELECT 1 FROM dbo.password_reset_tokens prt WHERE prt.token = v.token
+);
+GO
+
+-- Doctor profiles: 10 approved profiles.
+INSERT INTO dbo.doctor_profiles (
+    user_id, department_id, license_number, years_of_experience, education, bio,
+    consultation_fee, insurance_accepted, location, approval_status, approved_by,
+    approved_at, average_rating, total_reviews
+)
+SELECT
+    du.user_id,
+    d.department_id,
+    v.license_number,
+    v.years_of_experience,
+    v.education,
+    v.bio,
+    v.consultation_fee,
+    v.insurance_accepted,
+    v.location,
+    'APPROVED',
+    au.user_id,
+    CURRENT_TIMESTAMP,
+    v.average_rating,
+    v.total_reviews
+FROM (VALUES
+    ('doctor01.seed@mediconnect.local', N'LIC-MC-0001', 12, N'MD Internal Medicine', N'Focus on chronic disease management', 300000.00, N'Bao Viet, PTI', N'Room A101', 4.80, 120, N'Outpatient Department'),
+    ('doctor02.seed@mediconnect.local', N'LIC-MC-0002', 14, N'MD Cardiology', N'Preventive cardiology specialist', 450000.00, N'Bao Minh, PVI', N'Room A201', 4.70, 98, N'Cardiac Center'),
+    ('doctor03.seed@mediconnect.local', N'LIC-MC-0003', 10, N'MD Dermatology', N'Acne and eczema treatment', 350000.00, N'Bao Viet, VBI', N'Room E203', 4.60, 84, N'Dermatology Clinic'),
+    ('doctor04.seed@mediconnect.local', N'LIC-MC-0004', 16, N'MD Neurology', N'Headache and stroke follow-up', 500000.00, N'PVI, PTI', N'Room A501', 4.90, 160, N'Neuro Center'),
+    ('doctor05.seed@mediconnect.local', N'LIC-MC-0005', 11, N'MD Pediatrics', N'General pediatric care', 320000.00, N'Bao Viet, MIC', N'Room D205', 4.75, 110, N'Pediatric Care Unit'),
+    ('doctor06.seed@mediconnect.local', N'LIC-MC-0006', 13, N'MD Orthopedics', N'Sports injury and bone health', 420000.00, N'PVI, VBI', N'Room B304', 4.65, 90, N'Rehabilitation Unit'),
+    ('doctor07.seed@mediconnect.local', N'LIC-MC-0007', 9, N'MD ENT', N'Sinus and allergy consultations', 300000.00, N'Bao Minh, PTI', N'Room C112', 4.50, 70, N'Outpatient Department'),
+    ('doctor08.seed@mediconnect.local', N'LIC-MC-0008', 15, N'MD Obstetrics', N'Prenatal and postnatal care', 480000.00, N'Bao Viet, PVI', N'Room D310', 4.85, 130, N'Maternal Care Unit'),
+    ('doctor09.seed@mediconnect.local', N'LIC-MC-0009', 8, N'MD Psychiatry', N'Anxiety and sleep disorders', 380000.00, N'VBI, MIC', N'Room C405', 4.55, 60, N'Mental Health Clinic'),
+    ('doctor10.seed@mediconnect.local', N'LIC-MC-0010', 17, N'MD Gastroenterology', N'Digestive disease diagnostics', 460000.00, N'Bao Viet, PTI', N'Room F109', 4.78, 140, N'Endoscopy Unit')
+) v(email, license_number, years_of_experience, education, bio, consultation_fee, insurance_accepted, location, average_rating, total_reviews, department_name)
+JOIN dbo.users du ON du.email = v.email
+JOIN dbo.users au ON au.email = 'admin.seed@mediconnect.local'
+JOIN dbo.departments d ON d.department_name = v.department_name
+WHERE NOT EXISTS (
+    SELECT 1 FROM dbo.doctor_profiles dp WHERE dp.user_id = du.user_id
+);
+GO
+
+-- Doctor specialties: 10 mappings.
+INSERT INTO dbo.doctor_specialties (user_id, specialty_id, is_primary)
+SELECT u.user_id, s.specialty_id, 1
+FROM (VALUES
+    ('doctor01.seed@mediconnect.local', N'General Medicine'),
+    ('doctor02.seed@mediconnect.local', N'Cardiology'),
+    ('doctor03.seed@mediconnect.local', N'Dermatology'),
+    ('doctor04.seed@mediconnect.local', N'Neurology'),
+    ('doctor05.seed@mediconnect.local', N'Pediatrics'),
+    ('doctor06.seed@mediconnect.local', N'Orthopedics'),
+    ('doctor07.seed@mediconnect.local', N'ENT'),
+    ('doctor08.seed@mediconnect.local', N'Gynecology & Obstetrics'),
+    ('doctor09.seed@mediconnect.local', N'Psychiatry'),
+    ('doctor10.seed@mediconnect.local', N'Gastroenterology')
+) v(email, specialty_name)
+JOIN dbo.users u ON u.email = v.email
+JOIN dbo.specialties s ON s.specialty_name = v.specialty_name
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM dbo.doctor_specialties ds
+    WHERE ds.user_id = u.user_id AND ds.specialty_id = s.specialty_id
+);
+GO
+
+-- Doctor schedules: 10 weekly schedules.
+INSERT INTO dbo.doctor_schedules (
+    user_id, day_of_week, start_time, end_time, slot_duration_mins,
+    max_patients_per_slot, is_active, effective_from, effective_to
+)
+SELECT
+    u.user_id,
+    v.day_of_week,
+    v.start_time,
+    v.end_time,
+    30,
+    2,
+    1,
+    CAST('2026-01-01' AS DATE),
+    NULL
+FROM (VALUES
+    ('doctor01.seed@mediconnect.local', 1, CAST('08:00:00' AS TIME), CAST('11:00:00' AS TIME)),
+    ('doctor02.seed@mediconnect.local', 2, CAST('08:30:00' AS TIME), CAST('11:30:00' AS TIME)),
+    ('doctor03.seed@mediconnect.local', 3, CAST('09:00:00' AS TIME), CAST('12:00:00' AS TIME)),
+    ('doctor04.seed@mediconnect.local', 4, CAST('13:00:00' AS TIME), CAST('16:00:00' AS TIME)),
+    ('doctor05.seed@mediconnect.local', 5, CAST('08:00:00' AS TIME), CAST('11:00:00' AS TIME)),
+    ('doctor06.seed@mediconnect.local', 1, CAST('13:30:00' AS TIME), CAST('16:30:00' AS TIME)),
+    ('doctor07.seed@mediconnect.local', 2, CAST('14:00:00' AS TIME), CAST('17:00:00' AS TIME)),
+    ('doctor08.seed@mediconnect.local', 3, CAST('08:00:00' AS TIME), CAST('11:00:00' AS TIME)),
+    ('doctor09.seed@mediconnect.local', 4, CAST('09:30:00' AS TIME), CAST('12:30:00' AS TIME)),
+    ('doctor10.seed@mediconnect.local', 5, CAST('13:00:00' AS TIME), CAST('16:00:00' AS TIME))
+) v(email, day_of_week, start_time, end_time)
+JOIN dbo.users u ON u.email = v.email
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM dbo.doctor_schedules ds
+    WHERE ds.user_id = u.user_id
+      AND ds.day_of_week = v.day_of_week
+      AND ds.start_time = v.start_time
+      AND ds.end_time = v.end_time
+);
+GO
+
+-- Time slots: 10 concrete slots.
+INSERT INTO dbo.time_slots (
+    schedule_id, user_id, slot_date, start_time, end_time,
+    max_capacity, booked_count, is_available
+)
+SELECT
+    ds.schedule_id,
+    du.user_id,
+    v.slot_date,
+    v.start_time,
+    v.end_time,
+    2,
+    0,
+    1
+FROM (VALUES
+    ('doctor01.seed@mediconnect.local', CAST('2026-04-06' AS DATE), CAST('08:00:00' AS TIME), CAST('08:30:00' AS TIME)),
+    ('doctor02.seed@mediconnect.local', CAST('2026-04-07' AS DATE), CAST('08:30:00' AS TIME), CAST('09:00:00' AS TIME)),
+    ('doctor03.seed@mediconnect.local', CAST('2026-04-08' AS DATE), CAST('09:00:00' AS TIME), CAST('09:30:00' AS TIME)),
+    ('doctor04.seed@mediconnect.local', CAST('2026-04-09' AS DATE), CAST('13:00:00' AS TIME), CAST('13:30:00' AS TIME)),
+    ('doctor05.seed@mediconnect.local', CAST('2026-04-10' AS DATE), CAST('08:00:00' AS TIME), CAST('08:30:00' AS TIME)),
+    ('doctor06.seed@mediconnect.local', CAST('2026-04-13' AS DATE), CAST('13:30:00' AS TIME), CAST('14:00:00' AS TIME)),
+    ('doctor07.seed@mediconnect.local', CAST('2026-04-14' AS DATE), CAST('14:00:00' AS TIME), CAST('14:30:00' AS TIME)),
+    ('doctor08.seed@mediconnect.local', CAST('2026-04-15' AS DATE), CAST('08:00:00' AS TIME), CAST('08:30:00' AS TIME)),
+    ('doctor09.seed@mediconnect.local', CAST('2026-04-16' AS DATE), CAST('09:30:00' AS TIME), CAST('10:00:00' AS TIME)),
+    ('doctor10.seed@mediconnect.local', CAST('2026-04-17' AS DATE), CAST('13:00:00' AS TIME), CAST('13:30:00' AS TIME))
+) v(email, slot_date, start_time, end_time)
+JOIN dbo.users du ON du.email = v.email
+JOIN dbo.doctor_schedules ds ON ds.user_id = du.user_id
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM dbo.time_slots ts
+    WHERE ts.user_id = du.user_id
+      AND ts.slot_date = v.slot_date
+      AND ts.start_time = v.start_time
+      AND ts.end_time = v.end_time
+);
+GO
+
+-- Appointments: 10 records.
+INSERT INTO dbo.appointments (
+    patient_id, doctor_id, slot_id, specialty_id, appointment_date,
+    start_time, end_time, reason, status, confirmed_at, notes
+)
+SELECT
+    pu.user_id,
+    du.user_id,
+    ts.slot_id,
+    ds.specialty_id,
+    v.slot_date,
+    v.start_time,
+    v.end_time,
+    v.reason,
+    v.status,
+    CASE WHEN v.status IN ('CONFIRMED','COMPLETED') THEN CURRENT_TIMESTAMP ELSE NULL END,
+    N'Seed appointment record'
+FROM (VALUES
+    ('patient01.seed@mediconnect.local','doctor01.seed@mediconnect.local', CAST('2026-04-06' AS DATE), CAST('08:00:00' AS TIME), CAST('08:30:00' AS TIME), N'Routine checkup',           'COMPLETED'),
+    ('patient02.seed@mediconnect.local','doctor02.seed@mediconnect.local', CAST('2026-04-07' AS DATE), CAST('08:30:00' AS TIME), CAST('09:00:00' AS TIME), N'Chest discomfort',          'COMPLETED'),
+    ('patient03.seed@mediconnect.local','doctor03.seed@mediconnect.local', CAST('2026-04-08' AS DATE), CAST('09:00:00' AS TIME), CAST('09:30:00' AS TIME), N'Skin irritation',           'COMPLETED'),
+    ('patient04.seed@mediconnect.local','doctor04.seed@mediconnect.local', CAST('2026-04-09' AS DATE), CAST('13:00:00' AS TIME), CAST('13:30:00' AS TIME), N'Persistent headaches',       'COMPLETED'),
+    ('patient05.seed@mediconnect.local','doctor05.seed@mediconnect.local', CAST('2026-04-10' AS DATE), CAST('08:00:00' AS TIME), CAST('08:30:00' AS TIME), N'Child fever follow-up',      'COMPLETED'),
+    ('patient06.seed@mediconnect.local','doctor06.seed@mediconnect.local', CAST('2026-04-13' AS DATE), CAST('13:30:00' AS TIME), CAST('14:00:00' AS TIME), N'Knee pain after exercise',   'COMPLETED'),
+    ('patient07.seed@mediconnect.local','doctor07.seed@mediconnect.local', CAST('2026-04-14' AS DATE), CAST('14:00:00' AS TIME), CAST('14:30:00' AS TIME), N'Chronic sinus symptoms',     'CONFIRMED'),
+    ('patient08.seed@mediconnect.local','doctor08.seed@mediconnect.local', CAST('2026-04-15' AS DATE), CAST('08:00:00' AS TIME), CAST('08:30:00' AS TIME), N'Prenatal consultation',      'CONFIRMED'),
+    ('patient09.seed@mediconnect.local','doctor09.seed@mediconnect.local', CAST('2026-04-16' AS DATE), CAST('09:30:00' AS TIME), CAST('10:00:00' AS TIME), N'Sleep quality issues',       'PENDING'),
+    ('patient10.seed@mediconnect.local','doctor10.seed@mediconnect.local', CAST('2026-04-17' AS DATE), CAST('13:00:00' AS TIME), CAST('13:30:00' AS TIME), N'Upper abdominal discomfort', 'PENDING')
+) v(patient_email, doctor_email, slot_date, start_time, end_time, reason, status)
+JOIN dbo.users pu ON pu.email = v.patient_email
+JOIN dbo.users du ON du.email = v.doctor_email
+JOIN dbo.time_slots ts
+    ON ts.user_id = du.user_id
+   AND ts.slot_date = v.slot_date
+   AND ts.start_time = v.start_time
+   AND ts.end_time = v.end_time
+LEFT JOIN dbo.doctor_specialties ds ON ds.user_id = du.user_id AND ds.is_primary = 1
+WHERE NOT EXISTS (
+    SELECT 1 FROM dbo.appointments a WHERE a.slot_id = ts.slot_id
+);
+GO
+
+-- Appointment waitlists: 10 records.
+INSERT INTO dbo.appointment_waitlists (
+    patient_id, doctor_id, specialty_id, preferred_date, preferred_time,
+    status, notified_at, expires_at
+)
+SELECT
+    pu.user_id,
+    du.user_id,
+    ds.specialty_id,
+    v.preferred_date,
+    v.preferred_time,
+    v.status,
+    CASE WHEN v.status = 'NOTIFIED' THEN CURRENT_TIMESTAMP ELSE NULL END,
+    DATEADD(DAY, 2, CURRENT_TIMESTAMP)
+FROM (VALUES
+    ('patient01.seed@mediconnect.local','doctor02.seed@mediconnect.local', CAST('2026-04-20' AS DATE), CAST('09:00:00' AS TIME), 'WAITING'),
+    ('patient02.seed@mediconnect.local','doctor03.seed@mediconnect.local', CAST('2026-04-21' AS DATE), CAST('10:00:00' AS TIME), 'WAITING'),
+    ('patient03.seed@mediconnect.local','doctor04.seed@mediconnect.local', CAST('2026-04-22' AS DATE), CAST('14:00:00' AS TIME), 'NOTIFIED'),
+    ('patient04.seed@mediconnect.local','doctor05.seed@mediconnect.local', CAST('2026-04-23' AS DATE), CAST('08:30:00' AS TIME), 'WAITING'),
+    ('patient05.seed@mediconnect.local','doctor06.seed@mediconnect.local', CAST('2026-04-24' AS DATE), CAST('15:00:00' AS TIME), 'WAITING'),
+    ('patient06.seed@mediconnect.local','doctor07.seed@mediconnect.local', CAST('2026-04-25' AS DATE), CAST('16:00:00' AS TIME), 'WAITING'),
+    ('patient07.seed@mediconnect.local','doctor08.seed@mediconnect.local', CAST('2026-04-26' AS DATE), CAST('09:30:00' AS TIME), 'NOTIFIED'),
+    ('patient08.seed@mediconnect.local','doctor09.seed@mediconnect.local', CAST('2026-04-27' AS DATE), CAST('10:30:00' AS TIME), 'WAITING'),
+    ('patient09.seed@mediconnect.local','doctor10.seed@mediconnect.local', CAST('2026-04-28' AS DATE), CAST('13:30:00' AS TIME), 'WAITING'),
+    ('patient10.seed@mediconnect.local','doctor01.seed@mediconnect.local', CAST('2026-04-29' AS DATE), CAST('08:30:00' AS TIME), 'WAITING')
+) v(patient_email, doctor_email, preferred_date, preferred_time, status)
+JOIN dbo.users pu ON pu.email = v.patient_email
+JOIN dbo.users du ON du.email = v.doctor_email
+LEFT JOIN dbo.doctor_specialties ds ON ds.user_id = du.user_id AND ds.is_primary = 1
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM dbo.appointment_waitlists wl
+    WHERE wl.patient_id = pu.user_id
+      AND wl.doctor_id = du.user_id
+      AND wl.preferred_date = v.preferred_date
+);
+GO
+
+-- Payments: 10 records.
+INSERT INTO dbo.payments (
+    appointment_id, patient_id, amount, currency, payment_method, payment_status,
+    transaction_id, paid_at, refunded_at, refund_amount
+)
+SELECT
+    a.appointment_id,
+    a.patient_id,
+    v.amount,
+    'VND',
+    v.payment_method,
+    v.payment_status,
+    v.transaction_id,
+    CASE WHEN v.payment_status IN ('COMPLETED','REFUNDED') THEN CURRENT_TIMESTAMP ELSE NULL END,
+    CASE WHEN v.payment_status = 'REFUNDED' THEN DATEADD(HOUR, 1, CURRENT_TIMESTAMP) ELSE NULL END,
+    CASE WHEN v.payment_status = 'REFUNDED' THEN v.amount ELSE NULL END
+FROM (VALUES
+    ('patient01.seed@mediconnect.local','doctor01.seed@mediconnect.local', CAST('2026-04-06' AS DATE), 300000.00, 'MOMO',         'COMPLETED', N'TXN-SEED-0001'),
+    ('patient02.seed@mediconnect.local','doctor02.seed@mediconnect.local', CAST('2026-04-07' AS DATE), 450000.00, 'VNPAY',        'COMPLETED', N'TXN-SEED-0002'),
+    ('patient03.seed@mediconnect.local','doctor03.seed@mediconnect.local', CAST('2026-04-08' AS DATE), 350000.00, 'BANK_TRANSFER','COMPLETED', N'TXN-SEED-0003'),
+    ('patient04.seed@mediconnect.local','doctor04.seed@mediconnect.local', CAST('2026-04-09' AS DATE), 500000.00, 'CREDIT_CARD',  'COMPLETED', N'TXN-SEED-0004'),
+    ('patient05.seed@mediconnect.local','doctor05.seed@mediconnect.local', CAST('2026-04-10' AS DATE), 320000.00, 'ZALOPAY',      'COMPLETED', N'TXN-SEED-0005'),
+    ('patient06.seed@mediconnect.local','doctor06.seed@mediconnect.local', CAST('2026-04-13' AS DATE), 420000.00, 'MOMO',         'REFUNDED',  N'TXN-SEED-0006'),
+    ('patient07.seed@mediconnect.local','doctor07.seed@mediconnect.local', CAST('2026-04-14' AS DATE), 300000.00, 'CASH',         'PENDING',   N'TXN-SEED-0007'),
+    ('patient08.seed@mediconnect.local','doctor08.seed@mediconnect.local', CAST('2026-04-15' AS DATE), 480000.00, 'VNPAY',        'PENDING',   N'TXN-SEED-0008'),
+    ('patient09.seed@mediconnect.local','doctor09.seed@mediconnect.local', CAST('2026-04-16' AS DATE), 380000.00, 'BANK_TRANSFER','FAILED',    N'TXN-SEED-0009'),
+    ('patient10.seed@mediconnect.local','doctor10.seed@mediconnect.local', CAST('2026-04-17' AS DATE), 460000.00, 'MOMO',         'PENDING',   N'TXN-SEED-0010')
+) v(patient_email, doctor_email, appointment_date, amount, payment_method, payment_status, transaction_id)
+JOIN dbo.users pu ON pu.email = v.patient_email
+JOIN dbo.users du ON du.email = v.doctor_email
+JOIN dbo.appointments a
+    ON a.patient_id = pu.user_id
+   AND a.doctor_id = du.user_id
+   AND a.appointment_date = v.appointment_date
+WHERE NOT EXISTS (
+    SELECT 1 FROM dbo.payments p WHERE p.appointment_id = a.appointment_id
+);
+GO
+
+-- Reviews: 10 records (1 per appointment).
+INSERT INTO dbo.reviews (
+    appointment_id, patient_id, doctor_id, rating, comment,
+    sentiment_score, sentiment_label, is_visible
+)
+SELECT
+    a.appointment_id,
+    a.patient_id,
+    a.doctor_id,
+    v.rating,
+    v.comment,
+    v.sentiment_score,
+    v.sentiment_label,
+    1
+FROM (VALUES
+    ('patient01.seed@mediconnect.local','doctor01.seed@mediconnect.local', CAST('2026-04-06' AS DATE), 5, N'Great experience',             0.9300, 'POSITIVE'),
+    ('patient02.seed@mediconnect.local','doctor02.seed@mediconnect.local', CAST('2026-04-07' AS DATE), 5, N'Clear and helpful advice',     0.9100, 'POSITIVE'),
+    ('patient03.seed@mediconnect.local','doctor03.seed@mediconnect.local', CAST('2026-04-08' AS DATE), 4, N'Treatment worked well',        0.7600, 'POSITIVE'),
+    ('patient04.seed@mediconnect.local','doctor04.seed@mediconnect.local', CAST('2026-04-09' AS DATE), 5, N'Very professional doctor',      0.9400, 'POSITIVE'),
+    ('patient05.seed@mediconnect.local','doctor05.seed@mediconnect.local', CAST('2026-04-10' AS DATE), 4, N'Friendly and patient-focused',  0.8100, 'POSITIVE'),
+    ('patient06.seed@mediconnect.local','doctor06.seed@mediconnect.local', CAST('2026-04-13' AS DATE), 3, N'Average waiting time',          0.0500, 'NEUTRAL'),
+    ('patient07.seed@mediconnect.local','doctor07.seed@mediconnect.local', CAST('2026-04-14' AS DATE), 4, N'Good explanation provided',     0.6700, 'POSITIVE'),
+    ('patient08.seed@mediconnect.local','doctor08.seed@mediconnect.local', CAST('2026-04-15' AS DATE), 5, N'Excellent prenatal support',    0.9600, 'POSITIVE'),
+    ('patient09.seed@mediconnect.local','doctor09.seed@mediconnect.local', CAST('2026-04-16' AS DATE), 3, N'Needs shorter queue time',      -0.1200, 'NEUTRAL'),
+    ('patient10.seed@mediconnect.local','doctor10.seed@mediconnect.local', CAST('2026-04-17' AS DATE), 4, N'Accurate diagnosis and plan',   0.7200, 'POSITIVE')
+) v(patient_email, doctor_email, appointment_date, rating, comment, sentiment_score, sentiment_label)
+JOIN dbo.users pu ON pu.email = v.patient_email
+JOIN dbo.users du ON du.email = v.doctor_email
+JOIN dbo.appointments a
+    ON a.patient_id = pu.user_id
+   AND a.doctor_id = du.user_id
+   AND a.appointment_date = v.appointment_date
+WHERE NOT EXISTS (
+    SELECT 1 FROM dbo.reviews r WHERE r.appointment_id = a.appointment_id
+);
+GO
+
+-- Medical records: 10 records.
+INSERT INTO dbo.medical_records (
+    patient_id, doctor_id, appointment_id, diagnosis, symptoms,
+    treatment_plan, prescription, notes, record_date
+)
+SELECT
+    a.patient_id,
+    a.doctor_id,
+    a.appointment_id,
+    v.diagnosis,
+    v.symptoms,
+    v.treatment_plan,
+    v.prescription,
+    N'Seeded medical record',
+    a.appointment_date
+FROM (VALUES
+    ('patient01.seed@mediconnect.local','doctor01.seed@mediconnect.local', CAST('2026-04-06' AS DATE), N'Mild gastritis',       N'Abdominal discomfort',      N'Diet adjustment + follow-up', N'Antacid x 7 days'),
+    ('patient02.seed@mediconnect.local','doctor02.seed@mediconnect.local', CAST('2026-04-07' AS DATE), N'Hypertension stage 1', N'Intermittent chest tightness',N'Lifestyle changes + monitor', N'ARB daily'),
+    ('patient03.seed@mediconnect.local','doctor03.seed@mediconnect.local', CAST('2026-04-08' AS DATE), N'Contact dermatitis',   N'Rash and itching',          N'Avoid trigger and topical',   N'Topical steroid cream'),
+    ('patient04.seed@mediconnect.local','doctor04.seed@mediconnect.local', CAST('2026-04-09' AS DATE), N'Migraine',             N'Recurrent headache',        N'Headache diary + treatment',  N'Triptan as needed'),
+    ('patient05.seed@mediconnect.local','doctor05.seed@mediconnect.local', CAST('2026-04-10' AS DATE), N'Viral fever',          N'Fever and fatigue',         N'Symptomatic care',            N'Paracetamol'),
+    ('patient06.seed@mediconnect.local','doctor06.seed@mediconnect.local', CAST('2026-04-13' AS DATE), N'Knee tendon strain',   N'Pain with movement',        N'Rest + physiotherapy',        N'NSAID short course'),
+    ('patient07.seed@mediconnect.local','doctor07.seed@mediconnect.local', CAST('2026-04-14' AS DATE), N'Allergic rhinitis',    N'Nasal congestion',          N'Allergy management plan',     N'Antihistamine'),
+    ('patient08.seed@mediconnect.local','doctor08.seed@mediconnect.local', CAST('2026-04-15' AS DATE), N'Normal pregnancy',     N'Routine prenatal check',    N'Continue prenatal vitamins',  N'Folic acid'),
+    ('patient09.seed@mediconnect.local','doctor09.seed@mediconnect.local', CAST('2026-04-16' AS DATE), N'Insomnia',             N'Difficulty sleeping',       N'Sleep hygiene counseling',    N'Melatonin low dose'),
+    ('patient10.seed@mediconnect.local','doctor10.seed@mediconnect.local', CAST('2026-04-17' AS DATE), N'Functional dyspepsia', N'Upper abdominal fullness',  N'Diet + medication trial',     N'Prokinetic + antacid')
+) v(patient_email, doctor_email, appointment_date, diagnosis, symptoms, treatment_plan, prescription)
+JOIN dbo.users pu ON pu.email = v.patient_email
+JOIN dbo.users du ON du.email = v.doctor_email
+JOIN dbo.appointments a
+    ON a.patient_id = pu.user_id
+   AND a.doctor_id = du.user_id
+   AND a.appointment_date = v.appointment_date
+WHERE NOT EXISTS (
+    SELECT 1 FROM dbo.medical_records mr WHERE mr.appointment_id = a.appointment_id
+);
+GO
+
+-- Notifications: 10 records.
+INSERT INTO dbo.notifications (
+    user_id, appointment_id, notification_type, channel,
+    title, body, is_read, sent_at, read_at, status
+)
+SELECT
+    u.user_id,
+    a.appointment_id,
+    v.notification_type,
+    v.channel,
+    v.title,
+    v.body,
+    v.is_read,
+    CASE WHEN v.status = 'SENT' THEN CURRENT_TIMESTAMP ELSE NULL END,
+    CASE WHEN v.is_read = 1 THEN CURRENT_TIMESTAMP ELSE NULL END,
+    v.status
+FROM (VALUES
+    ('patient01.seed@mediconnect.local','doctor01.seed@mediconnect.local', CAST('2026-04-06' AS DATE), 'BOOKING_CONFIRMATION',  'IN_APP', N'Appointment confirmed', N'Your appointment has been confirmed.', 1, 'SENT'),
+    ('patient02.seed@mediconnect.local','doctor02.seed@mediconnect.local', CAST('2026-04-07' AS DATE), 'APPOINTMENT_REMINDER',   'EMAIL',  N'Reminder',              N'Please arrive 15 minutes early.',      0, 'SENT'),
+    ('patient03.seed@mediconnect.local','doctor03.seed@mediconnect.local', CAST('2026-04-08' AS DATE), 'APPOINTMENT_REMINDER',   'SMS',    N'Reminder',              N'Appointment starts in 1 hour.',         0, 'SENT'),
+    ('patient04.seed@mediconnect.local','doctor04.seed@mediconnect.local', CAST('2026-04-09' AS DATE), 'APPOINTMENT_RESCHEDULE', 'IN_APP', N'Schedule update',       N'Your slot has been adjusted.',          0, 'PENDING'),
+    ('patient05.seed@mediconnect.local','doctor05.seed@mediconnect.local', CAST('2026-04-10' AS DATE), 'DOCTOR_CONFIRMATION',    'EMAIL',  N'Doctor confirmed',      N'Doctor has accepted your request.',     0, 'SENT'),
+    ('patient06.seed@mediconnect.local','doctor06.seed@mediconnect.local', CAST('2026-04-13' AS DATE), 'AI_SMART_REMINDER',      'PUSH',   N'Smart reminder',        N'Based on your history, follow-up soon.',0, 'SENT'),
+    ('patient07.seed@mediconnect.local','doctor07.seed@mediconnect.local', CAST('2026-04-14' AS DATE), 'NO_SHOW_ALERT',          'IN_APP', N'No-show alert',         N'Please confirm attendance.',            0, 'FAILED'),
+    ('patient08.seed@mediconnect.local','doctor08.seed@mediconnect.local', CAST('2026-04-15' AS DATE), 'PROMOTIONAL',            'ZALO',   N'Health campaign',       N'Join the annual checkup campaign.',     0, 'SENT'),
+    ('patient09.seed@mediconnect.local','doctor09.seed@mediconnect.local', CAST('2026-04-16' AS DATE), 'SYSTEM',                 'IN_APP', N'System message',        N'Platform maintenance tonight.',         1, 'SENT'),
+    ('patient10.seed@mediconnect.local','doctor10.seed@mediconnect.local', CAST('2026-04-17' AS DATE), 'APPOINTMENT_CANCELLATION','EMAIL', N'Appointment cancelled',  N'Please choose another slot.',           0, 'PENDING')
+) v(patient_email, doctor_email, appointment_date, notification_type, channel, title, body, is_read, status)
+JOIN dbo.users u ON u.email = v.patient_email
+JOIN dbo.users d ON d.email = v.doctor_email
+JOIN dbo.appointments a
+    ON a.patient_id = u.user_id
+   AND a.doctor_id = d.user_id
+   AND a.appointment_date = v.appointment_date
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM dbo.notifications n
+    WHERE n.user_id = u.user_id
+      AND n.title = v.title
+      AND n.appointment_id = a.appointment_id
+);
+GO
+
+-- Complaints: 10 records.
+INSERT INTO dbo.complaints (
+    patient_id, doctor_id, appointment_id, subject, description,
+    status, resolved_by, resolution_note, resolved_at
+)
+SELECT
+    pu.user_id,
+    du.user_id,
+    a.appointment_id,
+    v.subject,
+    v.description,
+    v.status,
+    CASE WHEN v.status IN ('RESOLVED','CLOSED') THEN au.user_id ELSE NULL END,
+    CASE WHEN v.status IN ('RESOLVED','CLOSED') THEN N'Handled by admin team' ELSE NULL END,
+    CASE WHEN v.status IN ('RESOLVED','CLOSED') THEN CURRENT_TIMESTAMP ELSE NULL END
+FROM (VALUES
+    ('patient01.seed@mediconnect.local','doctor01.seed@mediconnect.local', CAST('2026-04-06' AS DATE), N'Long waiting time',        N'Waited longer than expected.',             'OPEN'),
+    ('patient02.seed@mediconnect.local','doctor02.seed@mediconnect.local', CAST('2026-04-07' AS DATE), N'Billing clarification',    N'Need explanation on payment details.',     'IN_REVIEW'),
+    ('patient03.seed@mediconnect.local','doctor03.seed@mediconnect.local', CAST('2026-04-08' AS DATE), N'Follow-up delay',          N'Follow-up message arrived late.',          'OPEN'),
+    ('patient04.seed@mediconnect.local','doctor04.seed@mediconnect.local', CAST('2026-04-09' AS DATE), N'Appointment delay',        N'Appointment started 25 minutes late.',     'RESOLVED'),
+    ('patient05.seed@mediconnect.local','doctor05.seed@mediconnect.local', CAST('2026-04-10' AS DATE), N'Refund request',           N'Requesting refund due to cancellation.',   'IN_REVIEW'),
+    ('patient06.seed@mediconnect.local','doctor06.seed@mediconnect.local', CAST('2026-04-13' AS DATE), N'Prescription confusion',   N'Need clearer medication instructions.',    'OPEN'),
+    ('patient07.seed@mediconnect.local','doctor07.seed@mediconnect.local', CAST('2026-04-14' AS DATE), N'Notification issue',       N'Did not receive SMS reminder.',            'CLOSED'),
+    ('patient08.seed@mediconnect.local','doctor08.seed@mediconnect.local', CAST('2026-04-15' AS DATE), N'Profile information',      N'Doctor profile shown outdated info.',      'IN_REVIEW'),
+    ('patient09.seed@mediconnect.local','doctor09.seed@mediconnect.local', CAST('2026-04-16' AS DATE), N'Queue management',         N'Queue handling could be improved.',        'OPEN'),
+    ('patient10.seed@mediconnect.local','doctor10.seed@mediconnect.local', CAST('2026-04-17' AS DATE), N'Support response speed',   N'Support response was slower than expected.','RESOLVED')
+) v(patient_email, doctor_email, appointment_date, subject, description, status)
+JOIN dbo.users pu ON pu.email = v.patient_email
+JOIN dbo.users du ON du.email = v.doctor_email
+JOIN dbo.users au ON au.email = 'admin.seed@mediconnect.local'
+LEFT JOIN dbo.appointments a
+    ON a.patient_id = pu.user_id
+   AND a.doctor_id = du.user_id
+   AND a.appointment_date = v.appointment_date
+WHERE NOT EXISTS (
+    SELECT 1 FROM dbo.complaints c WHERE c.patient_id = pu.user_id AND c.subject = v.subject
+);
+GO
+
+-- AI recommendations: 10 records.
+INSERT INTO dbo.ai_recommendations (
+    patient_id, input_symptoms, recommended_doctors, recommended_slots,
+    specialty_suggested, model_version
+)
+SELECT
+    pu.user_id,
+    v.input_symptoms,
+    v.recommended_doctors,
+    v.recommended_slots,
+    s.specialty_id,
+    N'triage-v1.0'
+FROM (VALUES
+    ('patient01.seed@mediconnect.local', N'stomach pain after meals', N'doctor01.seed@mediconnect.local', N'2026-04-20 08:00', N'General Medicine'),
+    ('patient02.seed@mediconnect.local', N'intermittent chest pain',   N'doctor02.seed@mediconnect.local', N'2026-04-21 08:30', N'Cardiology'),
+    ('patient03.seed@mediconnect.local', N'itchy skin rash',           N'doctor03.seed@mediconnect.local', N'2026-04-22 09:00', N'Dermatology'),
+    ('patient04.seed@mediconnect.local', N'recurrent headaches',       N'doctor04.seed@mediconnect.local', N'2026-04-23 13:00', N'Neurology'),
+    ('patient05.seed@mediconnect.local', N'child fever for 2 days',    N'doctor05.seed@mediconnect.local', N'2026-04-24 08:00', N'Pediatrics'),
+    ('patient06.seed@mediconnect.local', N'knee pain and swelling',    N'doctor06.seed@mediconnect.local', N'2026-04-25 13:30', N'Orthopedics'),
+    ('patient07.seed@mediconnect.local', N'nasal congestion',          N'doctor07.seed@mediconnect.local', N'2026-04-26 14:00', N'ENT'),
+    ('patient08.seed@mediconnect.local', N'prenatal checkup needed',   N'doctor08.seed@mediconnect.local', N'2026-04-27 08:00', N'Gynecology & Obstetrics'),
+    ('patient09.seed@mediconnect.local', N'sleep disturbances',        N'doctor09.seed@mediconnect.local', N'2026-04-28 09:30', N'Psychiatry'),
+    ('patient10.seed@mediconnect.local', N'upper abdominal bloating',  N'doctor10.seed@mediconnect.local', N'2026-04-29 13:00', N'Gastroenterology')
+) v(patient_email, input_symptoms, recommended_doctors, recommended_slots, specialty_name)
+JOIN dbo.users pu ON pu.email = v.patient_email
+LEFT JOIN dbo.specialties s ON s.specialty_name = v.specialty_name
+WHERE NOT EXISTS (
+    SELECT 1 FROM dbo.ai_recommendations ar
+    WHERE ar.patient_id = pu.user_id
+      AND ar.input_symptoms = v.input_symptoms
+);
+GO
+
+-- System logs: 10 records.
+INSERT INTO dbo.system_logs (
+    user_id, action, entity_type, entity_id, description,
+    ip_address, user_agent, severity
+)
+SELECT
+    u.user_id,
+    v.action,
+    v.entity_type,
+    v.entity_id,
+    v.description,
+    v.ip_address,
+    v.user_agent,
+    v.severity
+FROM (VALUES
+    ('admin.seed@mediconnect.local',   N'CREATE_USER',          N'users',                 0, N'Bulk seeded user accounts',          N'127.0.0.1', N'SeedScript/1.0', 'INFO'),
+    ('doctor01.seed@mediconnect.local',N'UPDATE_PROFILE',       N'doctor_profiles',       0, N'Doctor profile updated',              N'127.0.0.1', N'SeedScript/1.0', 'INFO'),
+    ('doctor02.seed@mediconnect.local',N'CREATE_SCHEDULE',      N'doctor_schedules',      0, N'Doctor schedule created',             N'127.0.0.1', N'SeedScript/1.0', 'INFO'),
+    ('patient01.seed@mediconnect.local',N'BOOK_APPOINTMENT',    N'appointments',          0, N'Patient booked appointment',          N'127.0.0.1', N'SeedScript/1.0', 'INFO'),
+    ('patient02.seed@mediconnect.local',N'PAY_APPOINTMENT',     N'payments',              0, N'Payment captured',                    N'127.0.0.1', N'SeedScript/1.0', 'INFO'),
+    ('patient03.seed@mediconnect.local',N'SUBMIT_REVIEW',       N'reviews',               0, N'Review submitted',                    N'127.0.0.1', N'SeedScript/1.0', 'INFO'),
+    ('patient04.seed@mediconnect.local',N'CREATE_COMPLAINT',    N'complaints',            0, N'Complaint opened',                    N'127.0.0.1', N'SeedScript/1.0', 'WARNING'),
+    ('admin.seed@mediconnect.local',   N'RESOLVE_COMPLAINT',    N'complaints',            0, N'Complaint resolved by admin',         N'127.0.0.1', N'SeedScript/1.0', 'INFO'),
+    ('patient05.seed@mediconnect.local',N'AI_TRIAGE_REQUEST',   N'ai_recommendations',    0, N'AI triage requested by patient',      N'127.0.0.1', N'SeedScript/1.0', 'INFO'),
+    ('admin.seed@mediconnect.local',   N'SYSTEM_MAINTENANCE',   N'system',                0, N'Routine maintenance notification',    N'127.0.0.1', N'SeedScript/1.0', 'CRITICAL')
+) v(email, action, entity_type, entity_id, description, ip_address, user_agent, severity)
+JOIN dbo.users u ON u.email = v.email
+WHERE NOT EXISTS (
+    SELECT 1 FROM dbo.system_logs sl WHERE sl.action = v.action AND sl.description = v.description
+);
+GO
+
+-- External calendar integrations: 10 records.
+INSERT INTO dbo.external_calendar_integrations (
+    user_id, provider, access_token, refresh_token, token_expires_at,
+    calendar_id, is_active, last_synced_at
+)
+SELECT
+    u.user_id,
+    v.provider,
+    v.access_token,
+    v.refresh_token,
+    DATEADD(DAY, 30, CURRENT_TIMESTAMP),
+    v.calendar_id,
+    1,
+    DATEADD(HOUR, -2, CURRENT_TIMESTAMP)
+FROM (VALUES
+    ('doctor01.seed@mediconnect.local', N'GOOGLE_CALENDAR',  N'seed_acc_01', N'seed_ref_01', N'cal_doc_01'),
+    ('doctor02.seed@mediconnect.local', N'GOOGLE_CALENDAR',  N'seed_acc_02', N'seed_ref_02', N'cal_doc_02'),
+    ('doctor03.seed@mediconnect.local', N'GOOGLE_CALENDAR',  N'seed_acc_03', N'seed_ref_03', N'cal_doc_03'),
+    ('doctor04.seed@mediconnect.local', N'GOOGLE_CALENDAR',  N'seed_acc_04', N'seed_ref_04', N'cal_doc_04'),
+    ('doctor05.seed@mediconnect.local', N'GOOGLE_CALENDAR',  N'seed_acc_05', N'seed_ref_05', N'cal_doc_05'),
+    ('doctor06.seed@mediconnect.local', N'OUTLOOK_CALENDAR', N'seed_acc_06', N'seed_ref_06', N'cal_doc_06'),
+    ('doctor07.seed@mediconnect.local', N'OUTLOOK_CALENDAR', N'seed_acc_07', N'seed_ref_07', N'cal_doc_07'),
+    ('doctor08.seed@mediconnect.local', N'OUTLOOK_CALENDAR', N'seed_acc_08', N'seed_ref_08', N'cal_doc_08'),
+    ('doctor09.seed@mediconnect.local', N'OUTLOOK_CALENDAR', N'seed_acc_09', N'seed_ref_09', N'cal_doc_09'),
+    ('doctor10.seed@mediconnect.local', N'OUTLOOK_CALENDAR', N'seed_acc_10', N'seed_ref_10', N'cal_doc_10')
+) v(email, provider, access_token, refresh_token, calendar_id)
+JOIN dbo.users u ON u.email = v.email
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM dbo.external_calendar_integrations eci
+    WHERE eci.user_id = u.user_id
+      AND eci.provider = v.provider
+);
+GO
+
+-- Promotional campaigns: 10 records.
+INSERT INTO dbo.promotional_campaigns (
+    title, message, target_role, start_date, end_date,
+    created_by, is_sent, sent_at
+)
+SELECT
+    v.title,
+    v.message,
+    v.target_role,
+    v.start_date,
+    v.end_date,
+    u.user_id,
+    v.is_sent,
+    CASE WHEN v.is_sent = 1 THEN CURRENT_TIMESTAMP ELSE NULL END
+FROM (VALUES
+    (N'Heart Health Week',          N'Book a cardiovascular screening package.',       'PATIENT', CAST('2026-04-01' AS DATE), CAST('2026-04-15' AS DATE), 1),
+    (N'Skin Care Awareness',        N'Dermatology consultation discount this week.',   'PATIENT', CAST('2026-04-05' AS DATE), CAST('2026-04-20' AS DATE), 1),
+    (N'Pediatric Immunization',     N'Vaccination campaign for children.',             'PATIENT', CAST('2026-04-10' AS DATE), CAST('2026-04-30' AS DATE), 1),
+    (N'Doctor Productivity Tips',   N'Updated scheduling best practices for doctors.', 'DOCTOR',  CAST('2026-04-01' AS DATE), CAST('2026-04-30' AS DATE), 1),
+    (N'New Telehealth Feature',     N'Explore improved video consultation workflow.',  'ALL',     CAST('2026-04-08' AS DATE), CAST('2026-05-08' AS DATE), 0),
+    (N'Mental Wellness Month',      N'Mental health check package now available.',     'PATIENT', CAST('2026-05-01' AS DATE), CAST('2026-05-31' AS DATE), 0),
+    (N'Staff Onboarding Update',    N'New internal process for support teams.',        'DOCTOR',  CAST('2026-04-12' AS DATE), CAST('2026-05-12' AS DATE), 0),
+    (N'Annual Checkup Program',     N'Comprehensive annual checkup with benefits.',    'ALL',     CAST('2026-04-20' AS DATE), CAST('2026-06-20' AS DATE), 1),
+    (N'Sleep Health Initiative',    N'Consult psychiatry for sleep-related issues.',   'PATIENT', CAST('2026-04-15' AS DATE), CAST('2026-05-15' AS DATE), 0),
+    (N'Digital Records Adoption',   N'Encourage complete digital chart updates.',      'DOCTOR',  CAST('2026-04-18' AS DATE), CAST('2026-05-18' AS DATE), 1)
+) v(title, message, target_role, start_date, end_date, is_sent)
+JOIN dbo.users u ON u.email = 'admin.seed@mediconnect.local'
+WHERE NOT EXISTS (
+    SELECT 1 FROM dbo.promotional_campaigns pc WHERE pc.title = v.title
+);
+GO

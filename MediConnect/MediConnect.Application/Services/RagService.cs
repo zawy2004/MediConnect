@@ -1,5 +1,7 @@
+using MediConnect.Application.Configurations;
 using MediConnect.Application.Interfaces;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace MediConnect.Application.Services;
 
@@ -8,6 +10,9 @@ public class RagService : IRagService
     private readonly IEmbeddingService _embeddingService;
     private readonly IVectorStoreService _vectorStoreService;
     private readonly ILlmService _llmService;
+    private readonly IDatabaseVectorizationService? _databaseVectorizationService;
+    private readonly RagSettings _ragSettings;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<RagService> _logger;
 
     private const string SystemPrompt = @"Bạn là trợ lý y tế AI của MediConnect. Nhiệm vụ của bạn là phân tích triệu chứng bệnh nhân và đưa ra khuyến nghị chuyên khoa phù hợp.
@@ -27,11 +32,17 @@ REPLY: [lời khuyên cho bệnh nhân]";
         IEmbeddingService embeddingService,
         IVectorStoreService vectorStoreService,
         ILlmService llmService,
+        IDatabaseVectorizationService? databaseVectorizationService,
+        IOptions<RagSettings> ragSettings,
+        IHttpClientFactory httpClientFactory,
         ILogger<RagService> logger)
     {
         _embeddingService = embeddingService;
         _vectorStoreService = vectorStoreService;
         _llmService = llmService;
+        _databaseVectorizationService = databaseVectorizationService;
+        _ragSettings = ragSettings.Value;
+        _httpClientFactory = httpClientFactory;
         _logger = logger;
     }
 
@@ -88,6 +99,116 @@ REPLY: [lời khuyên cho bệnh nhân]";
         });
 
         _logger.LogInformation("Indexed medical knowledge: {Id}, Specialty: {Specialty}", id, specialty);
+    }
+
+    public async Task<DatabaseVectorizationResult> IndexDatabaseKnowledgeAsync(CancellationToken cancellationToken = default)
+    {
+        if (_databaseVectorizationService == null)
+        {
+            return new DatabaseVectorizationResult
+            {
+                Errors = new List<string> { "Database vectorization service is not configured." }
+            };
+        }
+
+        return await _databaseVectorizationService.NormalizeAndIndexAsync(cancellationToken);
+    }
+
+    public async Task<List<NormalizedVectorPreviewItem>> PreviewNormalizedDatabaseDocumentsAsync(int limit = 20, CancellationToken cancellationToken = default)
+    {
+        if (_databaseVectorizationService == null)
+        {
+            return new List<NormalizedVectorPreviewItem>();
+        }
+
+        return await _databaseVectorizationService.PreviewNormalizedDocumentsAsync(limit, cancellationToken);
+    }
+
+    public async Task<List<VectorSearchResult>> SemanticSearchAsync(string query, int topK = 5, float minScore = 0.5f)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return new List<VectorSearchResult>();
+        }
+
+        var embedding = await _embeddingService.GenerateEmbeddingAsync(query);
+        var results = await _vectorStoreService.SearchAsync(embedding, topK);
+
+        return results
+            .Where(r => r.Score >= minScore)
+            .OrderByDescending(r => r.Score)
+            .ToList();
+    }
+
+    public async Task<RagSystemStatus> GetSystemStatusAsync(CancellationToken cancellationToken = default)
+    {
+        var qdrantEndpoint = ResolveQdrantEndpoint();
+        var ollamaEndpoint = _ragSettings.Ollama.Endpoint;
+        var client = _httpClientFactory.CreateClient();
+        client.Timeout = TimeSpan.FromSeconds(3);
+
+        async Task<bool> IsHealthyAsync(string url)
+        {
+            try
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Get, url);
+                using var response = await client.SendAsync(request, cancellationToken);
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        var qdrantHealthy = await IsQdrantHealthyAsync();
+        var ollamaHealthy = await IsHealthyAsync($"{ollamaEndpoint}/api/tags");
+
+        return new RagSystemStatus
+        {
+            QdrantAvailable = qdrantHealthy,
+            OllamaAvailable = ollamaHealthy,
+            UseLlm = _ragSettings.UseLLM,
+            EmbeddingUseOllama = _ragSettings.Embedding.UseOllama,
+            QdrantEndpoint = qdrantEndpoint,
+            OllamaEndpoint = ollamaEndpoint
+        };
+
+        async Task<bool> IsQdrantHealthyAsync()
+        {
+            try
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Get, $"{qdrantEndpoint}/collections");
+                if (!string.IsNullOrWhiteSpace(_ragSettings.Qdrant.ApiKey))
+                {
+                    request.Headers.Add("api-key", _ragSettings.Qdrant.ApiKey);
+                }
+
+                using var response = await client.SendAsync(request, cancellationToken);
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+    }
+
+    private string ResolveQdrantEndpoint()
+    {
+        if (!string.IsNullOrWhiteSpace(_ragSettings.Qdrant.Url))
+        {
+            var endpoint = _ragSettings.Qdrant.Url.Trim().TrimEnd('/');
+            if (!endpoint.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
+                !endpoint.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                endpoint = $"https://{endpoint}";
+            }
+
+            return endpoint;
+        }
+
+        return $"http://{_ragSettings.Qdrant.Host}:{_ragSettings.Qdrant.Port}";
     }
 
     private RagSymptomAnalysisResult ParseLlmResponse(string symptoms, string response, List<string> relevantKnowledge)

@@ -38,6 +38,7 @@ public static class DependencyInjection
         // RAG Infrastructure Services
         services.AddScoped<IEmbeddingService, EmbeddingService>();
         services.AddScoped<IVectorStoreService, QdrantVectorStoreService>();
+        services.AddScoped<IDatabaseVectorizationService, DatabaseVectorizationService>();
 
         return services;
     }

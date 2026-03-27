@@ -12,6 +12,8 @@ public class EmbeddingService : IEmbeddingService
     private readonly RagSettings _settings;
     private readonly HttpClient _httpClient;
     private readonly ILogger<EmbeddingService> _logger;
+    private DateTime _ollamaRetryAfterUtc = DateTime.MinValue;
+    private bool _unavailableLogged;
 
     public EmbeddingService(
         IOptions<RagSettings> settings,
@@ -25,6 +27,16 @@ public class EmbeddingService : IEmbeddingService
 
     public async Task<float[]> GenerateEmbeddingAsync(string text)
     {
+        if (!_settings.Embedding.UseOllama)
+        {
+            return GenerateFallbackEmbedding(text);
+        }
+
+        if (DateTime.UtcNow < _ollamaRetryAfterUtc)
+        {
+            return GenerateFallbackEmbedding(text);
+        }
+
         try
         {
             // Use Ollama for embeddings
@@ -32,7 +44,7 @@ public class EmbeddingService : IEmbeddingService
 
             var request = new
             {
-                model = "nomic-embed-text",
+                model = _settings.Embedding.OllamaModel,
                 prompt = text
             };
 
@@ -47,13 +59,36 @@ public class EmbeddingService : IEmbeddingService
                 return GenerateFallbackEmbedding(text);
             }
 
+            _unavailableLogged = false;
+            _ollamaRetryAfterUtc = DateTime.MinValue;
+
             return result.Embedding;
+        }
+        catch (HttpRequestException ex)
+        {
+            SetOllamaCooldown();
+            if (!_unavailableLogged)
+            {
+                _logger.LogWarning(ex,
+                    "Ollama endpoint is unavailable ({Endpoint}). Falling back to local embedding for {RetrySeconds}s.",
+                    _settings.Ollama.Endpoint,
+                    _settings.Embedding.OllamaRetrySeconds);
+                _unavailableLogged = true;
+            }
+
+            return GenerateFallbackEmbedding(text);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to generate embedding via Ollama, using fallback");
             return GenerateFallbackEmbedding(text);
         }
+    }
+
+    private void SetOllamaCooldown()
+    {
+        var retrySeconds = Math.Max(10, _settings.Embedding.OllamaRetrySeconds);
+        _ollamaRetryAfterUtc = DateTime.UtcNow.AddSeconds(retrySeconds);
     }
 
     private float[] GenerateFallbackEmbedding(string text)

@@ -1,4 +1,6 @@
 using System.Net.Http.Json;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using MediConnect.Application.Configurations;
@@ -23,7 +25,13 @@ public class QdrantVectorStoreService : IVectorStoreService
         _settings = settings.Value.Qdrant;
         _httpClient = httpClient;
         _logger = logger;
-        _baseUrl = $"http://{_settings.Host}:{_settings.Port}";
+        _baseUrl = BuildQdrantBaseUrl(_settings);
+
+        if (!string.IsNullOrWhiteSpace(_settings.ApiKey))
+        {
+            _httpClient.DefaultRequestHeaders.Remove("api-key");
+            _httpClient.DefaultRequestHeaders.Add("api-key", _settings.ApiKey);
+        }
     }
 
     public async Task<bool> EnsureCollectionExistsAsync()
@@ -110,7 +118,11 @@ public class QdrantVectorStoreService : IVectorStoreService
     {
         try
         {
-            await EnsureCollectionExistsAsync();
+            var collectionReady = await EnsureCollectionExistsAsync();
+            if (!collectionReady)
+            {
+                throw new InvalidOperationException("Qdrant collection is not available.");
+            }
 
             var payload = new Dictionary<string, object>
             {
@@ -131,7 +143,7 @@ public class QdrantVectorStoreService : IVectorStoreService
                 {
                     new
                     {
-                        id = id.GetHashCode() & 0x7FFFFFFF,
+                        id = GenerateStablePointId(id),
                         vector,
                         payload
                     }
@@ -145,13 +157,38 @@ public class QdrantVectorStoreService : IVectorStoreService
             if (!response.IsSuccessStatusCode)
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
-                _logger.LogWarning("Qdrant upsert failed: {Error}", errorContent);
+                throw new HttpRequestException($"Qdrant upsert failed ({response.StatusCode}): {errorContent}");
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Qdrant upsert failed");
+            throw;
         }
+    }
+
+    private static ulong GenerateStablePointId(string sourceId)
+    {
+        // Use deterministic hash so the same source document always maps to the same Qdrant point ID.
+        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(sourceId));
+        return BitConverter.ToUInt64(bytes, 0);
+    }
+
+    private static string BuildQdrantBaseUrl(QdrantSettings settings)
+    {
+        if (!string.IsNullOrWhiteSpace(settings.Url))
+        {
+            var trimmed = settings.Url.Trim().TrimEnd('/');
+            if (!trimmed.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
+                !trimmed.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                trimmed = $"https://{trimmed}";
+            }
+
+            return trimmed;
+        }
+
+        return $"http://{settings.Host}:{settings.Port}";
     }
 
     private class QdrantSearchResponse

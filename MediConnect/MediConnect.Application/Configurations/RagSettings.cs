@@ -11,6 +11,8 @@ public class RagSettings
 
 public class QdrantSettings
 {
+    public string Url { get; set; } = string.Empty;
+    public string ApiKey { get; set; } = string.Empty;
     public string Host { get; set; } = "localhost";
     public int Port { get; set; } = 6333;
     public string CollectionName { get; set; } = "mediconnect_knowledge";
@@ -34,4 +36,7 @@ public class EmbeddingSettings
 {
     public string ModelPath { get; set; } = "./Models/all-MiniLM-L6-v2";
     public int Dimension { get; set; } = 384;
+    public bool UseOllama { get; set; } = false;
+    public string OllamaModel { get; set; } = "nomic-embed-text";
+    public int OllamaRetrySeconds { get; set; } = 120;
 }
