@@ -9,17 +9,23 @@ public class PaymentGatewayService : IPaymentGatewayService
     private readonly IVnPayService _vnPayService;
     private readonly IMomoService _momoService;
     private readonly IPaymentRepository _paymentRepository;
+    private readonly IAppointmentRepository _appointmentRepository;
+    private readonly INotificationRepository _notificationRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public PaymentGatewayService(
         IVnPayService vnPayService,
         IMomoService momoService,
         IPaymentRepository paymentRepository,
+        IAppointmentRepository appointmentRepository,
+        INotificationRepository notificationRepository,
         IUnitOfWork unitOfWork)
     {
         _vnPayService = vnPayService;
         _momoService = momoService;
         _paymentRepository = paymentRepository;
+        _appointmentRepository = appointmentRepository;
+        _notificationRepository = notificationRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -98,10 +104,36 @@ public class PaymentGatewayService : IPaymentGatewayService
                 var payment = await _paymentRepository.GetLatestByAppointmentAsync(appointmentId);
                 if (payment != null)
                 {
+                    var wasPaid = string.Equals(payment.PaymentStatus, "PAID", StringComparison.OrdinalIgnoreCase);
+
                     payment.PaymentStatus = status;
                     payment.TransactionId = transactionId;
                     payment.PaidAt = DateTime.Now;
                     payment.UpdatedAt = DateTime.Now;
+
+                    // Create notification when the payment transitions to PAID.
+                    if (!wasPaid && string.Equals(status, "PAID", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var appointment = await _appointmentRepository.GetByIdAsync(appointmentId);
+                        if (appointment != null)
+                        {
+                            await _notificationRepository.CreateAsync(new Notification
+                            {
+                                UserId = appointment.PatientId,
+                                AppointmentId = appointment.AppointmentId,
+                                NotificationType = "BOOKING_CONFIRMATION",
+                                Channel = "IN_APP",
+                                Title = "Đặt lịch thành công",
+                                Body =
+                                    $"Bạn đã thanh toán thành công cho lịch hẹn ngày {appointment.AppointmentDate:dd/MM/yyyy} lúc {appointment.StartTime:HH:mm} với bác sĩ {appointment.Doctor?.FullName}.",
+                                IsRead = false,
+                                SentAt = DateTime.Now,
+                                Status = "SENT",
+                                CreatedAt = DateTime.Now
+                            });
+                        }
+                    }
+
                     await _unitOfWork.SaveChangesAsync();
                 }
             }

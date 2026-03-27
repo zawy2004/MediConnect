@@ -14,4 +14,7 @@ public interface IPatientPortalService
     Task<PatientBookingSuccessDto?> GetBookingSuccessAsync(int appointmentId);
     Task<PatientProfilePortalDto?> GetProfileAsync(int patientId);
     Task<bool> UpdateProfileAsync(int patientId, string fullName, string? phoneNumber, string? gender, DateOnly? dateOfBirth, string? address);
+
+    Task<List<PatientNotificationItemDto>> GetRecentInAppNotificationsAsync(int patientId, int take = 20);
+    Task<List<PatientPaymentHistoryItemDto>> GetPaidAppointmentPaymentHistoryAsync(int patientId, int take = 20);
 }

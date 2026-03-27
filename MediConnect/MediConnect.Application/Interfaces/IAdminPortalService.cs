@@ -15,5 +15,6 @@ public interface IAdminPortalService
     Task<AdminMonitoringDto> GetMonitoringAsync();
     Task<AdminComplaintDto> GetComplaintsAsync(int? selectedComplaintId);
     Task<bool> ResolveComplaintAsync(int complaintId, int adminUserId, string resolutionNote, string nextStatus);
-    Task<AdminZaloNotificationDto> GetZaloNotificationAsync();
+    Task<AdminMailNotificationDto> GetMailNotificationAsync();
+    Task<int> SendMailNotificationAsync(string targetRole, int? targetUserId, string title, string body, string notificationType);
 }

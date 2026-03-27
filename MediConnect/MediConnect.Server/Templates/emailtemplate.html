@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediConnect Notification</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #eef4f8;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #12314a;
+    }
+
+    table {
+      border-spacing: 0;
+      border-collapse: collapse;
+    }
+
+    img {
+      border: 0;
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .wrapper {
+      width: 100%;
+      table-layout: fixed;
+      background: radial-gradient(circle at top, #f9fcff 0%, #eef4f8 65%, #e6eef4 100%);
+      padding: 28px 12px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+      background-color: #ffffff;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #d6e4ef;
+      box-shadow: 0 10px 30px rgba(18, 49, 74, 0.12);
+    }
+
+    .header {
+      background: linear-gradient(135deg, #0f7bbf 0%, #35b7d8 70%);
+      text-align: center;
+      padding: 30px 24px 20px 24px;
+      color: #ffffff;
+    }
+
+    .brand-logo {
+      width: 180px;
+      margin: 0 auto 12px auto;
+      background: rgba(255, 255, 255, 0.94);
+      border-radius: 12px;
+      padding: 8px;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 28px;
+      line-height: 36px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .brand-subtitle {
+      margin: 8px 0 0 0;
+      font-size: 15px;
+      line-height: 22px;
+      color: #e7f8ff;
+    }
+
+    .hero {
+      padding: 24px;
+      background-color: #f4fbff;
+      border-bottom: 1px solid #d8ebf7;
+    }
+
+    .hero-image {
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid #d1e7f5;
+    }
+
+    .content {
+      padding: 30px 28px 12px 28px;
+    }
+
+    .greeting {
+      margin: 0 0 12px 0;
+      font-size: 20px;
+      line-height: 28px;
+      color: #0d3554;
+      font-weight: 700;
+    }
+
+    .message {
+      margin: 0 0 18px 0;
+      font-size: 15px;
+      line-height: 24px;
+      color: #274b66;
+    }
+
+    .card {
+      background-color: #f7fcff;
+      border: 1px solid #d8ebf7;
+      border-left: 5px solid #7bbf43;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 22px;
+    }
+
+    .label {
+      margin: 0 0 6px 0;
+      color: #0e5e8f;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 700;
+    }
+
+    .value {
+      margin: 0;
+      color: #12314a;
+      font-size: 16px;
+      line-height: 24px;
+      font-weight: 600;
+    }
+
+    .cta-wrap {
+      text-align: center;
+      padding: 6px 0 22px 0;
+    }
+
+    .cta {
+      display: inline-block;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
+      background: linear-gradient(135deg, #0f7bbf 0%, #1797cc 100%);
+    }
+
+    .info-grid {
+      padding: 0 28px 24px 28px;
+    }
+
+    .info-cell {
+      width: 50%;
+      padding: 8px;
+      vertical-align: top;
+    }
+
+    .info-box {
+      background: #f8fbfe;
+      border: 1px solid #dceaf3;
+      border-radius: 10px;
+      padding: 14px;
+      min-height: 74px;
+    }
+
+    .info-title {
+      margin: 0 0 5px 0;
+      color: #0e5e8f;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      font-weight: 700;
+    }
+
+    .info-value {
+      margin: 0;
+      color: #173c59;
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+    .footer {
+      background-color: #0e3552;
+      color: #d7e9f7;
+      text-align: center;
+      padding: 22px 20px 24px 20px;
+      font-size: 12px;
+      line-height: 19px;
+    }
+
+    .footer strong {
+      color: #ffffff;
+    }
+
+    @media screen and (max-width: 640px) {
+      .content {
+        padding: 22px 18px 6px 18px;
+      }
+
+      .hero,
+      .info-grid {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .brand-title {
+        font-size: 24px;
+        line-height: 32px;
+      }
+
+      .info-cell {
+        display: block;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <center class="wrapper">
+    <table role="presentation" width="100%">
+      <tr>
+        <td align="center">
+          <table role="presentation" class="container">
+            <tr>
+              <td class="header">
+                <img src="https://res.cloudinary.com/dzcjgbzpb/image/upload/v1774606204/Gemini_Generated_Image_h0okdbh0okdbh0ok_mcojok.png" alt="MediConnect Logo" class="brand-logo" />
+                <h1 class="brand-title">MediConnect</h1>
+                <p class="brand-subtitle">Nen tang ket noi benh nhan va bac si thong minh, an toan, tin cay.</p>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="hero">
+                <div class="hero-image">
+                  <img src="https://res.cloudinary.com/dzcjgbzpb/image/upload/v1774606263/Gemini_Generated_Image_o3qs9xo3qs9xo3qs_yvhkco.png" alt="MediConnect Hero" />
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="content">
+                <p class="greeting">Xin chao {{patient_name}},</p>
+                <p class="message">
+                  MediConnect gui den ban thong bao moi ve lich kham. Vui long xem thong tin ben duoi de khong bo lo buoi hen quan trong.
+                </p>
+
+                <div class="card">
+                  <p class="label">Noi dung thong bao</p>
+                  <p class="value">{{notification_body}}</p>
+                </div>
+
+                <div class="cta-wrap">
+                  <a href="{{action_url}}" class="cta">Xem chi tiet lich hen</a>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="info-grid">
+                <table role="presentation" width="100%">
+                  <tr>
+                    <td class="info-cell">
+                      <div class="info-box">
+                        <p class="info-title">Thoi gian</p>
+                        <p class="info-value">{{appointment_time}}</p>
+                      </div>
+                    </td>
+                    <td class="info-cell">
+                      <div class="info-box">
+                        <p class="info-title">Bac si</p>
+                        <p class="info-value">{{doctor_name}}</p>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="info-cell">
+                      <div class="info-box">
+                        <p class="info-title">Chuyen khoa</p>
+                        <p class="info-value">{{specialty_name}}</p>
+                      </div>
+                    </td>
+                    <td class="info-cell">
+                      <div class="info-box">
+                        <p class="info-title">Dia diem</p>
+                        <p class="info-value">{{clinic_location}}</p>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="footer">
+                <strong>MediConnect</strong><br />
+                Hotline: 1900 6868 | Email: support@mediconnect.vn<br />
+                Ban nhan email nay vi dang su dung he thong MediConnect.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </center>
+</body>
+</html>

@@ -1,0 +1,80 @@
+@page
+@model MediConnect.Server.Pages.Patient.PaymentHistoryModel
+
+@{
+    ViewData["Title"] = "Lịch sử thanh toán";
+}
+
+<div class="max-w-[1040px] mx-auto px-6 py-10 space-y-6">
+    <div class="flex items-end justify-between gap-4 pb-2 border-b border-slate-200">
+        <div>
+            <h1 class="text-4xl font-black tracking-tight">Lịch sử thanh toán</h1>
+            <p class="text-slate-500 mt-2">Chỉ hiển thị các thanh toán thành công cho lịch hẹn.</p>
+        </div>
+    </div>
+
+    @if (Model.Items.Count == 0)
+    {
+        <div class="bg-white border border-slate-200 rounded-xl p-6 text-slate-500">
+            Bạn chưa có thanh toán thành công nào.
+        </div>
+    }
+    else
+    {
+        <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+            <div class="p-5 border-b border-slate-200 flex items-center justify-between gap-3">
+                <div>
+                    <p class="text-sm font-bold text-slate-800">Tổng cộng</p>
+                    <p class="text-2xl font-black text-primary">@Model.Items.Count</p>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-slate-50 text-slate-600">
+                        <tr>
+                            <th class="text-left px-4 py-3">Booking</th>
+                            <th class="text-left px-4 py-3">Bác sĩ</th>
+                            <th class="text-left px-4 py-3">Thời gian</th>
+                            <th class="text-left px-4 py-3">Số tiền</th>
+                            <th class="text-left px-4 py-3">Phương thức</th>
+                            <th class="text-left px-4 py-3">Mã giao dịch</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr class="border-t border-slate-100 align-top">
+                                <td class="px-4 py-3">
+                                    <div class="font-bold text-primary">@item.BookingCode</div>
+                                    <div class="text-xs text-slate-500 mt-1">ID: #@item.AppointmentId</div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="font-bold text-slate-800">@item.DoctorName</div>
+                                    <div class="text-xs text-slate-500">@item.SpecialtyName</div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="font-bold text-slate-800">@item.AppointmentDate.ToString("dd/MM/yyyy")</div>
+                                    <div class="text-xs text-slate-500 mt-1">@item.StartTime.ToString("HH:mm")</div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="font-bold text-slate-800">@item.Amount.ToString("N0") @item.Currency</div>
+                                    <div class="text-xs text-slate-500 mt-1">
+                                        @(item.PaidAt.HasValue ? item.PaidAt.Value.ToString("dd/MM/yyyy HH:mm") : "-")
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="font-bold text-slate-800">@item.PaymentMethod</div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="text-slate-700 break-all">@item.TransactionId</div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+

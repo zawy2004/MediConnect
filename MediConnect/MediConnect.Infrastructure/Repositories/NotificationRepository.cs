@@ -25,6 +25,17 @@ public class NotificationRepository : INotificationRepository
             .ToListAsync();
     }
 
+    public async Task<List<Notification>> GetRecentByUserIdAndChannelAsync(int userId, string channel, int take)
+    {
+        return await _context.Notifications
+            .AsNoTracking()
+            .Include(n => n.User)
+            .Where(n => n.UserId == userId && n.Channel == channel)
+            .OrderByDescending(n => n.CreatedAt)
+            .Take(take)
+            .ToListAsync();
+    }
+
     public async Task<int> CountByChannelAsync(string channel)
     {
         return await _context.Notifications.CountAsync(n => n.Channel == channel);
