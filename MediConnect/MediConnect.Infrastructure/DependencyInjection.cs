@@ -39,6 +39,9 @@ public static class DependencyInjection
         services.AddScoped<IEmbeddingService, EmbeddingService>();
         services.AddScoped<IVectorStoreService, QdrantVectorStoreService>();
 
+        // External integrations
+        services.AddScoped<IEmailMessagingService, EmailMessagingService>();
+
         return services;
     }
 }

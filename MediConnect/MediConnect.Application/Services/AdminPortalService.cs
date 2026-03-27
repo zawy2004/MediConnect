@@ -2,6 +2,7 @@ using MediConnect.Application.DTOs;
 using MediConnect.Application.Interfaces;
 using MediConnect.Domain.Constants;
 using MediConnect.Domain.Entities;
+using System.Net;
 
 namespace MediConnect.Application.Services;
 
@@ -18,6 +19,7 @@ public class AdminPortalService : IAdminPortalService
     private readonly ISystemLogRepository _systemLogRepository;
     private readonly IComplaintRepository _complaintRepository;
     private readonly INotificationRepository _notificationRepository;
+    private readonly IEmailMessagingService _emailMessagingService;
     private readonly IUnitOfWork _unitOfWork;
 
     public AdminPortalService(
@@ -32,6 +34,7 @@ public class AdminPortalService : IAdminPortalService
         ISystemLogRepository systemLogRepository,
         IComplaintRepository complaintRepository,
         INotificationRepository notificationRepository,
+        IEmailMessagingService emailMessagingService,
         IUnitOfWork unitOfWork)
     {
         _userRepository = userRepository;
@@ -45,6 +48,7 @@ public class AdminPortalService : IAdminPortalService
         _systemLogRepository = systemLogRepository;
         _complaintRepository = complaintRepository;
         _notificationRepository = notificationRepository;
+        _emailMessagingService = emailMessagingService;
         _unitOfWork = unitOfWork;
     }
 
@@ -337,9 +341,9 @@ public class AdminPortalService : IAdminPortalService
         return true;
     }
 
-    public async Task<AdminZaloNotificationDto> GetZaloNotificationAsync()
+    public async Task<AdminMailNotificationDto> GetMailNotificationAsync()
     {
-        var messages = await _notificationRepository.GetRecentByChannelAsync("ZALO", 50);
+        var messages = await _notificationRepository.GetRecentByChannelAsync("EMAIL", 50);
 
         var total = messages.Count;
         var delivered = messages.Count(m => m.Status is "SENT" or "DELIVERED");
@@ -362,22 +366,177 @@ public class AdminPortalService : IAdminPortalService
             ? 0m
             : Math.Round((prevNoShow - currentNoShow) * 100m / prevNoShow, 2);
 
-        return new AdminZaloNotificationDto
+        return new AdminMailNotificationDto
         {
             TotalMessages = total,
             SuccessRatePercent = total == 0 ? 0 : Math.Round(delivered * 100m / total, 2),
             OpenRatePercent = total == 0 ? 0 : Math.Round(read * 100m / total, 2),
             NoShowReductionPercent = reduction,
-            Messages = messages.Select(m => new ZaloMessageItemDto
+            Messages = messages.Select(m => new MailMessageItemDto
             {
                 NotificationId = m.NotificationId,
                 UserName = m.User.FullName,
                 Title = m.Title,
+                Body = m.Body,
+                Channel = m.Channel,
                 Status = m.Status,
                 IsRead = m.IsRead,
                 CreatedAt = m.CreatedAt
             }).ToList()
         };
+    }
+
+    public async Task<int> SendMailNotificationAsync(string targetRole, int? targetUserId, string title, string body, string notificationType)
+    {
+        if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(body))
+        {
+            return 0;
+        }
+
+        var normalizedRole = (targetRole ?? string.Empty).Trim().ToUpperInvariant();
+        if (normalizedRole is not (RoleNames.Patient or RoleNames.Doctor or "ALL"))
+        {
+            normalizedRole = RoleNames.Patient;
+        }
+
+        var normalizedType = string.IsNullOrWhiteSpace(notificationType)
+            ? "SYSTEM"
+            : notificationType.Trim().ToUpperInvariant();
+
+        var recipients = new List<User>();
+
+        if (targetUserId.HasValue)
+        {
+            var user = await _userRepository.GetByIdAsync(targetUserId.Value);
+            if (user != null && user.IsActive)
+            {
+                var isAllowedRole = normalizedRole == "ALL"
+                    || string.Equals(user.Role.RoleName, normalizedRole, StringComparison.OrdinalIgnoreCase);
+
+                if (isAllowedRole)
+                {
+                    recipients.Add(user);
+                }
+            }
+        }
+        else if (normalizedRole == "ALL")
+        {
+            var patients = await _userRepository.SearchUsersAsync(null, RoleNames.Patient, 1000);
+            var doctors = await _userRepository.SearchUsersAsync(null, RoleNames.Doctor, 1000);
+
+            recipients = patients
+                .Concat(doctors)
+                .Where(u => u.IsActive)
+                .GroupBy(u => u.UserId)
+                .Select(g => g.First())
+                .ToList();
+        }
+        else
+        {
+            recipients = (await _userRepository.SearchUsersAsync(null, normalizedRole, 1000))
+                .Where(u => u.IsActive)
+                .ToList();
+        }
+
+        if (recipients.Count == 0)
+        {
+            return 0;
+        }
+
+        var now = DateTime.Now;
+        var sentSuccessCount = 0;
+        var templateContent = LoadMailTemplate();
+
+        foreach (var user in recipients)
+        {
+            var recipientEmail = user.Email?.Trim();
+            EmailSendResult sendResult;
+            var normalizedTitle = title.Trim();
+            var normalizedBody = body.Trim();
+
+            if (string.IsNullOrWhiteSpace(recipientEmail))
+            {
+                sendResult = new EmailSendResult
+                {
+                    Success = false,
+                    ErrorMessage = "Missing recipient email."
+                };
+            }
+            else
+            {
+                var renderedBody = RenderMailTemplate(templateContent, user, normalizedBody);
+                sendResult = await _emailMessagingService.SendAsync(
+                    recipientEmail,
+                    normalizedTitle,
+                    renderedBody,
+                    isBodyHtml: true);
+            }
+
+            if (sendResult.Success)
+            {
+                sentSuccessCount++;
+            }
+
+            var storedBody = normalizedBody;
+            if (!sendResult.Success && !string.IsNullOrWhiteSpace(sendResult.ErrorMessage))
+            {
+                storedBody = $"{storedBody}\n[DeliveryError] {sendResult.ErrorMessage}";
+            }
+
+            await _notificationRepository.CreateAsync(new Notification
+            {
+                UserId = user.UserId,
+                AppointmentId = null,
+                NotificationType = normalizedType,
+                Channel = "EMAIL",
+                Title = normalizedTitle,
+                Body = storedBody,
+                IsRead = false,
+                SentAt = sendResult.Success ? now : null,
+                ReadAt = null,
+                Status = sendResult.Success ? "SENT" : "FAILED",
+                CreatedAt = now
+            });
+        }
+
+        await _unitOfWork.SaveChangesAsync();
+        return sentSuccessCount;
+    }
+
+    private static string RenderMailTemplate(string template, User user, string notificationBody)
+    {
+        var safePatientName = WebUtility.HtmlEncode(string.IsNullOrWhiteSpace(user.FullName) ? "ban" : user.FullName.Trim());
+        var safeNotificationBody = WebUtility.HtmlEncode(notificationBody).Replace("\n", "<br />");
+
+        return template
+            .Replace("{{patient_name}}", safePatientName, StringComparison.Ordinal)
+            .Replace("{{notification_body}}", safeNotificationBody, StringComparison.Ordinal)
+            .Replace("{{action_url}}", "#", StringComparison.Ordinal)
+            .Replace("{{appointment_time}}", "Dang cap nhat", StringComparison.Ordinal)
+            .Replace("{{doctor_name}}", "MediConnect", StringComparison.Ordinal)
+            .Replace("{{specialty_name}}", "Dang cap nhat", StringComparison.Ordinal)
+            .Replace("{{clinic_location}}", "Dang cap nhat", StringComparison.Ordinal);
+    }
+
+    private static string LoadMailTemplate()
+    {
+        var templatePath = Path.Combine(AppContext.BaseDirectory, "Templates", "emailtemplate.html");
+        return File.Exists(templatePath)
+            ? File.ReadAllText(templatePath)
+            : GetFallbackTemplate();
+    }
+
+    private static string GetFallbackTemplate()
+    {
+        return """
+               <html>
+               <body style="font-family: Arial, Helvetica, sans-serif; color: #12314a;">
+                 <h2>MediConnect</h2>
+                 <p>Xin chao {{patient_name}},</p>
+                 <p>{{notification_body}}</p>
+               </body>
+               </html>
+               """;
     }
 
     private static ComplaintItemDto MapComplaint(Complaint complaint)

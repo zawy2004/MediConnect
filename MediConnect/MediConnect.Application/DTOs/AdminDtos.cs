@@ -119,20 +119,22 @@ public class ComplaintItemDto
     public string? ResolutionNote { get; set; }
 }
 
-public class AdminZaloNotificationDto
+public class AdminMailNotificationDto
 {
     public int TotalMessages { get; set; }
     public decimal SuccessRatePercent { get; set; }
     public decimal OpenRatePercent { get; set; }
     public decimal NoShowReductionPercent { get; set; }
-    public List<ZaloMessageItemDto> Messages { get; set; } = new();
+    public List<MailMessageItemDto> Messages { get; set; } = new();
 }
 
-public class ZaloMessageItemDto
+public class MailMessageItemDto
 {
     public int NotificationId { get; set; }
     public string UserName { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
+    public string Body { get; set; } = string.Empty;
+    public string Channel { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty;
     public bool IsRead { get; set; }
     public DateTime CreatedAt { get; set; }

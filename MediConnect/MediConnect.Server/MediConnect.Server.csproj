@@ -17,11 +17,18 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.3" />
+    <PackageReference Include="QuestPDF" Version="2025.7.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MediConnect.Application\MediConnect.Application.csproj" />
     <ProjectReference Include="..\MediConnect.Infrastructure\MediConnect.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Templates\emailtemplate.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

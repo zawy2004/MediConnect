@@ -1,0 +1,142 @@
+@page
+@model MediConnect.Server.Pages.Admin.MailNotificationModel
+@{
+    ViewData["Title"] = "Thông báo Email";
+    ViewData["HideLayout"] = true;
+}
+
+<div class="min-h-screen bg-[#f8fafc] flex">
+    @await Html.PartialAsync("_AdminSidebar", "mail")
+    <main class="flex-1 overflow-y-auto">
+        <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between gap-3 flex-wrap">
+            <h1 class="text-3xl font-black">Quản lý Thông báo Email & AI MediAdmin</h1>
+            <form method="get" class="flex items-center gap-2 flex-wrap">
+                <input asp-for="SearchTerm" class="rounded-xl border-slate-200" placeholder="Tìm kiếm log gửi email..." />
+                <select asp-for="StatusFilter" class="rounded-xl border-slate-200">
+                    <option value="ALL">Tất cả trạng thái</option>
+                    <option value="SENT">SENT</option>
+                    <option value="DELIVERED">DELIVERED</option>
+                    <option value="FAILED">FAILED</option>
+                    <option value="PENDING">PENDING</option>
+                </select>
+                <button type="submit" class="px-3 py-2 border rounded-lg text-sm">Lọc</button>
+            </form>
+        </header>
+
+        <div class="p-8 space-y-6">
+            @if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+            {
+                <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-lg px-4 py-3 text-sm">@Model.StatusMessage</div>
+            }
+
+            <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white border rounded-2xl p-4"><p class="text-xs text-slate-500">Tỷ lệ gửi thành công</p><p class="text-2xl font-black mt-2">@Model.Data.SuccessRatePercent%</p></div>
+                <div class="bg-white border rounded-2xl p-4"><p class="text-xs text-slate-500">Tỷ lệ mở</p><p class="text-2xl font-black mt-2">@Model.Data.OpenRatePercent%</p></div>
+                <div class="bg-white border rounded-2xl p-4"><p class="text-xs text-slate-500">Giảm no-show</p><p class="text-2xl font-black mt-2">@Model.Data.NoShowReductionPercent%</p></div>
+                <div class="bg-primary text-white rounded-2xl p-4"><p class="text-xs">Tổng tin nhắn tháng này</p><p class="text-2xl font-black mt-2">@Model.Data.TotalMessages</p></div>
+            </section>
+
+            <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white border rounded-2xl p-5 space-y-4">
+                    <h2 class="text-lg font-bold">Gửi thông báo Email</h2>
+                    <div class="p-4 rounded-xl bg-violet-50 border border-violet-100 text-sm text-slate-700">
+                        Gửi nhanh email cho bệnh nhân, bác sĩ hoặc toàn bộ người dùng theo vai trò.
+                    </div>
+
+                    <form method="post" asp-page-handler="Send" class="space-y-3">
+                        <input type="hidden" asp-for="SearchTerm" />
+                        <input type="hidden" asp-for="StatusFilter" />
+
+                        <div>
+                            <label class="text-xs text-slate-500">Vai trò nhận</label>
+                            <select asp-for="TargetRole" class="w-full rounded-lg border-slate-200 mt-1">
+                                <option value="PATIENT">PATIENT</option>
+                                <option value="DOCTOR">DOCTOR</option>
+                                <option value="ALL">ALL</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-xs text-slate-500">Người nhận cụ thể (tuỳ chọn)</label>
+                            <select asp-for="TargetUserId" class="w-full rounded-lg border-slate-200 mt-1">
+                                <option value="">Gửi theo vai trò đã chọn</option>
+                                @foreach (var user in Model.RecipientCandidates)
+                                {
+                                    <option value="@user.UserId">@user.FullName (@user.RoleName)</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-xs text-slate-500">Loại thông báo</label>
+                            <select asp-for="NotificationType" class="w-full rounded-lg border-slate-200 mt-1">
+                                <option value="SYSTEM">SYSTEM</option>
+                                <option value="APPOINTMENT_REMINDER">APPOINTMENT_REMINDER</option>
+                                <option value="PROMOTIONAL">PROMOTIONAL</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-xs text-slate-500">Tiêu đề</label>
+                            <input asp-for="NotificationTitle" class="w-full rounded-lg border-slate-200 mt-1" placeholder="Ví dụ: Nhắc lịch khám ngày mai" />
+                        </div>
+
+                        <div>
+                            <label class="text-xs text-slate-500">Nội dung</label>
+                            <textarea asp-for="NotificationBody" rows="4" class="w-full rounded-lg border-slate-200 mt-1" placeholder="Nhập nội dung gửi qua Email..."></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full rounded-lg bg-violet-100 text-violet-700 px-4 py-2 font-semibold">Gửi Email</button>
+                    </form>
+                </div>
+
+                <div class="lg:col-span-2 bg-white border rounded-2xl overflow-hidden">
+                    <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+                        <h2 class="text-lg font-bold">Lịch sử gửi Email (Real-time)</h2>
+                        <a asp-page="/Admin/MailNotification" asp-route-searchTerm="@Model.SearchTerm" asp-route-statusFilter="@Model.StatusFilter" class="px-3 py-1.5 border rounded-lg text-sm text-slate-700 no-underline">Làm mới</a>
+                    </div>
+                    <table class="w-full text-sm">
+                        <thead class="bg-slate-50 text-slate-500">
+                            <tr>
+                                <th class="text-left px-4 py-3">Người nhận</th>
+                                <th class="text-left px-4 py-3">Tiêu đề</th>
+                                <th class="text-left px-4 py-3">Thời gian</th>
+                                <th class="text-left px-4 py-3">Trạng thái</th>
+                                <th class="text-left px-4 py-3">Chi tiết</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Data.Messages.Count == 0)
+                            {
+                                <tr class="border-t border-slate-100">
+                                    <td colspan="5" class="px-4 py-6 text-center text-slate-500">Không có bản ghi phù hợp với bộ lọc hiện tại.</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var message in Model.Data.Messages)
+                                {
+                                    <tr class="border-t border-slate-100">
+                                        <td class="px-4 py-3">@message.UserName</td>
+                                        <td class="px-4 py-3">@message.Title</td>
+                                        <td class="px-4 py-3">@message.CreatedAt.ToString("HH:mm:ss dd/MM")</td>
+                                        <td class="px-4 py-3">@message.Status</td>
+                                        <td class="px-4 py-3">
+                                            <details>
+                                                <summary class="cursor-pointer text-primary">Xem Log</summary>
+                                                <div class="mt-2 text-xs text-slate-600 space-y-1">
+                                                    <p><span class="font-semibold">Channel:</span> @message.Channel</p>
+                                                    <p><span class="font-semibold">Body:</span> @message.Body</p>
+                                                </div>
+                                            </details>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>

@@ -94,7 +94,7 @@ public class ViewModel : PageModel
             ["admin-statistics"] = new("admin_statistics", "Thống kê quản trị"),
             ["admin-system-monitoring"] = new("admin_system_monitoring_maintenance", "Giám sát hệ thống"),
             ["admin-complaint-management"] = new("admin_complaint_support_management", "Khiếu nại & hỗ trợ"),
-            ["admin-zalo-notification"] = new("admin_zalo_notification_management", "Thông báo Zalo"),
+            ["admin-mail-notification"] = new("admin_mail_notification_management", "Thông báo Email"),
         };
 
     public sealed record PrototypeScreen(string FolderName, string Title);
