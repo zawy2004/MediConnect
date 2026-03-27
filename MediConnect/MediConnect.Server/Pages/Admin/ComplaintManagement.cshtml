@@ -8,9 +8,27 @@
 <div class="min-h-screen bg-[#f8fafc] flex">
     @await Html.PartialAsync("_AdminSidebar", "complaints")
     <main class="flex-1 overflow-y-auto">
-        <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between">
+        <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between gap-4 flex-wrap">
             <h1 class="text-3xl font-black">Quản lý Khiếu nại & Hỗ trợ</h1>
-            <input class="rounded-xl border-slate-200" placeholder="Tìm theo bệnh nhân hoặc bác sĩ..." />
+
+            <form method="get" class="flex items-center gap-2 flex-wrap">
+                <input asp-for="SearchTerm" class="rounded-xl border-slate-200" placeholder="Tìm theo tiêu đề, bệnh nhân, bác sĩ..." />
+                <select asp-for="StatusFilter" class="rounded-xl border-slate-200">
+                    <option value="ALL">Tất cả trạng thái</option>
+                    <option value="OPEN">OPEN</option>
+                    <option value="PROCESSING">PROCESSING</option>
+                    <option value="RESOLVED">RESOLVED</option>
+                    <option value="REJECTED">REJECTED</option>
+                </select>
+                <button type="submit" class="px-3 py-2 border rounded-lg text-sm font-semibold">Lọc</button>
+                <a asp-page-handler="ExportCsv"
+                   asp-route-searchTerm="@Model.SearchTerm"
+                   asp-route-statusFilter="@Model.StatusFilter"
+                   asp-route-selectedComplaintId="@Model.SelectedComplaintId"
+                   class="px-3 py-2 border rounded-lg text-sm font-semibold text-[#0d141b] no-underline bg-white">
+                    Xuất CSV
+                </a>
+            </form>
         </header>
 
         <div class="p-8 space-y-6">
@@ -29,7 +47,7 @@
                 <div class="bg-white border rounded-2xl overflow-hidden">
                     <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
                         <h2 class="text-lg font-bold">Danh sách Khiếu nại</h2>
-                        <div class="flex gap-2"><button class="px-3 py-1.5 border rounded-lg text-sm">Lọc</button><button class="px-3 py-1.5 border rounded-lg text-sm">Xuất CSV</button></div>
+                        <p class="text-xs text-slate-500">@Model.Data.Complaints.Count kết quả</p>
                     </div>
                     <table class="w-full text-sm">
                         <thead class="bg-slate-50 text-slate-500">
@@ -40,13 +58,30 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in Model.Data.Complaints)
+                            @if (Model.Data.Complaints.Count == 0)
                             {
-                                <tr class="border-t border-slate-100 hover:bg-slate-50">
-                                    <td class="px-4 py-3"><a asp-page="/Admin/ComplaintManagement" asp-route-selectedComplaintId="@item.ComplaintId" class="font-semibold text-[#0d141b] no-underline">@item.Subject</a></td>
-                                    <td class="px-4 py-3">@item.PatientName</td>
-                                    <td class="px-4 py-3">@item.Status</td>
+                                <tr>
+                                    <td colspan="3" class="px-4 py-8 text-center text-slate-500">Không có khiếu nại phù hợp với bộ lọc hiện tại.</td>
                                 </tr>
+                            }
+                            else
+                            {
+                                @foreach (var item in Model.Data.Complaints)
+                                {
+                                    <tr class="border-t border-slate-100 hover:bg-slate-50">
+                                        <td class="px-4 py-3">
+                                            <a asp-page="/Admin/ComplaintManagement"
+                                               asp-route-selectedComplaintId="@item.ComplaintId"
+                                               asp-route-searchTerm="@Model.SearchTerm"
+                                               asp-route-statusFilter="@Model.StatusFilter"
+                                               class="font-semibold text-[#0d141b] no-underline">
+                                                @item.Subject
+                                            </a>
+                                        </td>
+                                        <td class="px-4 py-3">@item.PatientName</td>
+                                        <td class="px-4 py-3">@item.Status</td>
+                                    </tr>
+                                }
                             }
                         </tbody>
                     </table>
@@ -66,6 +101,8 @@
 
                         <form method="post" asp-page-handler="Resolve" class="mt-5 space-y-3">
                             <input type="hidden" name="ComplaintId" value="@Model.Data.SelectedComplaint.ComplaintId" />
+                            <input type="hidden" asp-for="SearchTerm" />
+                            <input type="hidden" asp-for="StatusFilter" />
                             <select asp-for="NextStatus" class="w-full rounded-lg border-slate-200">
                                 <option value="PROCESSING">PROCESSING</option>
                                 <option value="RESOLVED">RESOLVED</option>

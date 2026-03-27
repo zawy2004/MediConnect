@@ -16,7 +16,7 @@ public class AdminModel : PageModel
         new("admin-statistics", "Thống kê", "Báo cáo KPI và tăng trưởng theo thời gian."),
         new("admin-system-monitoring", "Giám sát hệ thống", "Theo dõi logs, tài nguyên và trạng thái dịch vụ."),
         new("admin-complaint-management", "Khiếu nại & hỗ trợ", "Quản lý ticket và phản hồi hỗ trợ."),
-        new("admin-zalo-notification", "Thông báo Zalo", "Cấu hình và theo dõi thông báo Zalo."),
+        new("admin-mail-notification", "Thông báo Email", "Cấu hình và theo dõi thông báo Email."),
     ];
 
     public sealed record FlowScreen(string Key, string Title, string Description);

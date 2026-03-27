@@ -25,6 +25,10 @@ builder.Services.Configure<MomoSettings>(
 builder.Services.Configure<RagSettings>(
     builder.Configuration.GetSection("RAG"));
 
+// Configuration - Email
+builder.Services.Configure<EmailSettings>(
+    builder.Configuration.GetSection("Email"));
+
 // Register LLM Service based on configuration
 var useLlm = builder.Configuration["RAG:UseLLM"] ?? "Groq";
 if (useLlm.Equals("Ollama", StringComparison.OrdinalIgnoreCase))

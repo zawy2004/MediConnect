@@ -40,6 +40,9 @@ public static class DependencyInjection
         services.AddScoped<IVectorStoreService, QdrantVectorStoreService>();
         services.AddScoped<IDatabaseVectorizationService, DatabaseVectorizationService>();
 
+        // External integrations
+        services.AddScoped<IEmailMessagingService, EmailMessagingService>();
+
         return services;
     }
 }
