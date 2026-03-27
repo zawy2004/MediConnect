@@ -1,0 +1,54 @@
+@page
+@model MediConnect.Server.Pages.Patient.PaymentReturnModel
+@{
+    ViewData["Title"] = Model.IsSuccess ? "Thanh toán thành công" : "Thanh toán thất bại";
+}
+
+<div class="min-h-screen flex items-center justify-center px-4">
+    <div class="max-w-md w-full text-center">
+        @if (Model.IsSuccess)
+        {
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="material-symbols-outlined text-green-600 text-4xl">check_circle</span>
+            </div>
+            <h1 class="text-2xl font-black text-slate-800 mb-2">Thanh toán thành công!</h1>
+            <p class="text-slate-500 mb-6">Giao dịch của bạn đã được xử lý thành công.</p>
+
+            <div class="bg-slate-50 rounded-xl p-4 mb-6 text-left space-y-2">
+                <p class="text-sm"><span class="text-slate-500">Mã giao dịch:</span> <span class="font-semibold">@Model.TransactionId</span></p>
+                <p class="text-sm"><span class="text-slate-500">Mã đơn hàng:</span> <span class="font-semibold">@Model.OrderId</span></p>
+            </div>
+
+            <a asp-page="/Patient/BookingSuccess" asp-route-appointmentId="@Model.AppointmentId" class="inline-block w-full py-3 bg-primary text-white rounded-xl font-bold no-underline">
+                Xem chi tiết lịch hẹn
+            </a>
+        }
+        else
+        {
+            <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="material-symbols-outlined text-red-600 text-4xl">cancel</span>
+            </div>
+            <h1 class="text-2xl font-black text-slate-800 mb-2">Thanh toán thất bại</h1>
+            <p class="text-slate-500 mb-6">@(Model.ErrorMessage ?? "Đã xảy ra lỗi trong quá trình thanh toán.")</p>
+
+            @if (!string.IsNullOrEmpty(Model.OrderId))
+            {
+                <div class="bg-slate-50 rounded-xl p-4 mb-6 text-left">
+                    <p class="text-sm"><span class="text-slate-500">Mã đơn hàng:</span> <span class="font-semibold">@Model.OrderId</span></p>
+                </div>
+            }
+
+            <div class="space-y-3">
+                @if (Model.AppointmentId > 0)
+                {
+                    <a asp-page="/Patient/PaymentConfirm" asp-route-appointmentId="@Model.AppointmentId" class="inline-block w-full py-3 bg-primary text-white rounded-xl font-bold no-underline">
+                        Thử thanh toán lại
+                    </a>
+                }
+                <a asp-page="/Patient/Dashboard" class="inline-block w-full py-3 bg-slate-100 text-slate-700 rounded-xl font-bold no-underline">
+                    Về trang chủ
+                </a>
+            </div>
+        }
+    </div>
+</div>

@@ -13,10 +13,14 @@ namespace MediConnect.Server.Pages.Patient;
 public class PaymentConfirmModel : PageModel
 {
     private readonly IPatientPortalService _patientPortalService;
+    private readonly IPaymentGatewayService _paymentGatewayService;
 
-    public PaymentConfirmModel(IPatientPortalService patientPortalService)
+    public PaymentConfirmModel(
+        IPatientPortalService patientPortalService,
+        IPaymentGatewayService paymentGatewayService)
     {
         _patientPortalService = patientPortalService;
+        _paymentGatewayService = paymentGatewayService;
     }
 
     [BindProperty(SupportsGet = true)]
@@ -57,6 +61,34 @@ public class PaymentConfirmModel : PageModel
             return Page();
         }
 
+        // Handle online payment methods (VNPay, MoMo)
+        if (PaymentMethod.Equals("VNPAY", StringComparison.OrdinalIgnoreCase) ||
+            PaymentMethod.Equals("MOMO", StringComparison.OrdinalIgnoreCase))
+        {
+            var paymentRequest = new CreatePaymentRequestDto
+            {
+                AppointmentId = AppointmentId,
+                PatientId = GetUserId(),
+                Amount = Summary.Amount,
+                Currency = "VND",
+                PaymentMethod = PaymentMethod.ToUpperInvariant(),
+                OrderInfo = $"Thanh toan lich kham #{AppointmentId} - BS {Summary.DoctorName}",
+                ClientIpAddress = GetClientIpAddress()
+            };
+
+            var paymentResult = await _paymentGatewayService.CreatePaymentUrlAsync(paymentRequest);
+
+            if (!paymentResult.Success || string.IsNullOrEmpty(paymentResult.PaymentUrl))
+            {
+                ErrorMessage = paymentResult.ErrorMessage ?? "Không thể tạo link thanh toán. Vui lòng thử lại.";
+                return Page();
+            }
+
+            // Redirect to payment gateway
+            return Redirect(paymentResult.PaymentUrl);
+        }
+
+        // Handle on-site payment (ONSITE, CARD at clinic)
         var payment = await _patientPortalService.CompletePaymentAsync(GetUserId(), AppointmentId, PaymentMethod);
         if (!payment.Success)
         {
@@ -68,4 +100,16 @@ public class PaymentConfirmModel : PageModel
     }
 
     private int GetUserId() => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+    private string GetClientIpAddress()
+    {
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+        if (Request.Headers.TryGetValue("X-Forwarded-For", out var forwardedFor))
+        {
+            ip = forwardedFor.FirstOrDefault()?.Split(',').FirstOrDefault()?.Trim();
+        }
+
+        return ip ?? "127.0.0.1";
+    }
 }

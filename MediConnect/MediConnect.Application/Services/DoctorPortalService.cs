@@ -124,7 +124,7 @@ public class DoctorPortalService : IDoctorPortalService
         {
             UserId = appointment.PatientId,
             AppointmentId = appointment.AppointmentId,
-            NotificationType = "APPOINTMENT",
+            NotificationType = "DOCTOR_CONFIRMATION",
             Channel = "IN_APP",
             Title = "Lịch hẹn đã được bác sĩ xác nhận",
             Body = $"Lịch hẹn ngày {appointment.AppointmentDate:dd/MM/yyyy} lúc {appointment.StartTime:HH:mm} đã được xác nhận.",
@@ -157,7 +157,7 @@ public class DoctorPortalService : IDoctorPortalService
         {
             UserId = appointment.PatientId,
             AppointmentId = appointment.AppointmentId,
-            NotificationType = "APPOINTMENT",
+            NotificationType = "APPOINTMENT_CANCELLATION",
             Channel = "IN_APP",
             Title = "Lịch hẹn bị từ chối",
             Body = string.IsNullOrWhiteSpace(reason)
@@ -220,7 +220,7 @@ public class DoctorPortalService : IDoctorPortalService
         await _notificationRepository.CreateAsync(new Notification
         {
             UserId = next.PatientId,
-            NotificationType = "WAITLIST",
+            NotificationType = "APPOINTMENT_REMINDER",
             Channel = "IN_APP",
             Title = "Có slot khám trống mới",
             Body = "Bạn đang ở đầu danh sách chờ. Vui lòng xác nhận lịch sớm nhất.",
@@ -505,7 +505,7 @@ public class DoctorPortalService : IDoctorPortalService
         await _notificationRepository.CreateAsync(new Notification
         {
             UserId = doctorUserId,
-            NotificationType = "MEMBERSHIP",
+            NotificationType = "SYSTEM",
             Channel = "IN_APP",
             Title = "Thanh toán gói thành viên thành công",
             Body = $"Bạn đã kích hoạt {summary.PlanName} qua {paymentMethod}.",

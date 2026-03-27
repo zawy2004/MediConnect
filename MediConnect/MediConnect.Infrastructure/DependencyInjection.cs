@@ -1,6 +1,7 @@
 using MediConnect.Application.Interfaces;
 using MediConnect.Infrastructure.Data;
 using MediConnect.Infrastructure.Repositories;
+using MediConnect.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -33,6 +34,10 @@ public static class DependencyInjection
         services.AddScoped<IDoctorSpecialtyRepository, DoctorSpecialtyRepository>();
         services.AddScoped<IAppointmentWaitlistRepository, AppointmentWaitlistRepository>();
         services.AddScoped<IMedicalRecordRepository, MedicalRecordRepository>();
+
+        // RAG Infrastructure Services
+        services.AddScoped<IEmbeddingService, EmbeddingService>();
+        services.AddScoped<IVectorStoreService, QdrantVectorStoreService>();
 
         return services;
     }
