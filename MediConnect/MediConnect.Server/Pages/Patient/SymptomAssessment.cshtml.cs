@@ -23,14 +23,15 @@ public class SymptomAssessmentModel : PageModel
 
     public PatientTriageResultDto Result { get; set; } = new()
     {
-        AssistantReply = "Mô tả triệu chứng để MediConnect AI gợi ý bác sĩ phù hợp.",
+        AssistantReply = "Chào bạn, mình là trợ lý sức khỏe MediConnect. Bạn cứ mô tả tự nhiên triệu chứng đang gặp phải, thời gian kéo dài và mức độ khó chịu nhé.",
         SuggestedSpecialty = "Tổng quát",
         RiskScore = 20
     };
 
-    public async Task OnGetAsync()
+    public Task OnGetAsync()
     {
-        Result = await _patientPortalService.AnalyzeSymptomsAsync(GetUserId(), "mệt nhẹ");
+        // Keep first load lightweight to avoid UI freezing and let the user start the chat naturally.
+        return Task.CompletedTask;
     }
 
     public async Task<IActionResult> OnPostAsync()
@@ -41,8 +42,59 @@ public class SymptomAssessmentModel : PageModel
             return Page();
         }
 
-        Result = await _patientPortalService.AnalyzeSymptomsAsync(GetUserId(), SymptomText);
+        Result = await AnalyzeAndEnhanceAsync(SymptomText);
         return Page();
+    }
+
+    public async Task<IActionResult> OnPostChatAsync()
+    {
+        if (string.IsNullOrWhiteSpace(SymptomText))
+        {
+            return new JsonResult(new
+            {
+                success = false,
+                error = "Vui lòng nhập triệu chứng."
+            });
+        }
+
+        var result = await AnalyzeAndEnhanceAsync(SymptomText);
+        return new JsonResult(new
+        {
+            success = true,
+            symptomText = result.SymptomText,
+            assistantReply = result.AssistantReply,
+            suggestedSpecialty = result.SuggestedSpecialty,
+            riskScore = result.RiskScore,
+            suggestedDoctors = result.SuggestedDoctors.Select(d => new
+            {
+                doctorProfileId = d.DoctorProfileId,
+                fullName = d.FullName,
+                departmentName = d.DepartmentName
+            })
+        });
+    }
+
+    private async Task<PatientTriageResultDto> AnalyzeAndEnhanceAsync(string symptomText)
+    {
+        var result = await _patientPortalService.AnalyzeSymptomsAsync(GetUserId(), symptomText);
+        result.AssistantReply = MakeReplyMoreNatural(result.AssistantReply, result.SuggestedSpecialty);
+        return result;
+    }
+
+    private static string MakeReplyMoreNatural(string reply, string specialty)
+    {
+        if (string.IsNullOrWhiteSpace(reply))
+        {
+            return $"Mình đã ghi nhận triệu chứng của bạn. Trước mắt bạn có thể ưu tiên khám {specialty} để được bác sĩ đánh giá trực tiếp.";
+        }
+
+        var normalized = reply.Trim();
+        if (!normalized.EndsWith(".") && !normalized.EndsWith("!") && !normalized.EndsWith("?"))
+        {
+            normalized += ".";
+        }
+
+        return $"{normalized} Nếu có thêm dấu hiệu mới, bạn cứ nhắn tiếp để mình hỗ trợ sát hơn.";
     }
 
     private int GetUserId() => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

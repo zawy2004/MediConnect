@@ -13,6 +13,7 @@ public class PatientPortalService : IPatientPortalService
     private readonly IDoctorService _doctorService;
     private readonly ITimeSlotRepository _timeSlotRepository;
     private readonly IPaymentRepository _paymentRepository;
+    private readonly INotificationRepository _notificationRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IRagService? _ragService;
 
@@ -23,6 +24,7 @@ public class PatientPortalService : IPatientPortalService
         IDoctorService doctorService,
         ITimeSlotRepository timeSlotRepository,
         IPaymentRepository paymentRepository,
+        INotificationRepository notificationRepository,
         IUnitOfWork unitOfWork,
         IRagService? ragService = null)
     {
@@ -32,6 +34,7 @@ public class PatientPortalService : IPatientPortalService
         _doctorService = doctorService;
         _timeSlotRepository = timeSlotRepository;
         _paymentRepository = paymentRepository;
+        _notificationRepository = notificationRepository;
         _unitOfWork = unitOfWork;
         _ragService = ragService;
     }
@@ -259,6 +262,23 @@ public class PatientPortalService : IPatientPortalService
         await _paymentRepository.CreateAsync(payment);
         await _unitOfWork.SaveChangesAsync();
 
+        // Create in-app notification on successful (onsite/CASH) payment.
+        await _notificationRepository.CreateAsync(new Notification
+        {
+            UserId = patientId,
+            AppointmentId = appointment.AppointmentId,
+            NotificationType = "BOOKING_CONFIRMATION",
+            Channel = "IN_APP",
+            Title = "Đặt lịch thành công",
+            Body =
+                $"Bạn đã thanh toán thành công cho lịch hẹn ngày {appointment.AppointmentDate:dd/MM/yyyy} lúc {appointment.StartTime:HH:mm} với bác sĩ {appointment.Doctor?.FullName}.",
+            IsRead = false,
+            SentAt = DateTime.Now,
+            Status = "SENT",
+            CreatedAt = DateTime.Now
+        });
+        await _unitOfWork.SaveChangesAsync();
+
         return new PatientPaymentResultDto
         {
             Success = true,
@@ -286,6 +306,68 @@ public class PatientPortalService : IPatientPortalService
             Status = appointment.Status,
             TransactionId = payment?.TransactionId
         };
+    }
+
+    public async Task<List<PatientNotificationItemDto>> GetRecentInAppNotificationsAsync(int patientId, int take = 20)
+    {
+        var safeTake = Math.Clamp(take, 1, 50);
+        var notifications = await _notificationRepository.GetRecentByUserIdAndChannelAsync(patientId, "IN_APP", safeTake);
+        return notifications.Select(n => new PatientNotificationItemDto
+        {
+            NotificationId = n.NotificationId,
+            AppointmentId = n.AppointmentId,
+            NotificationType = n.NotificationType,
+            Channel = n.Channel,
+            Title = n.Title,
+            Body = n.Body,
+            IsRead = n.IsRead,
+            Status = n.Status,
+            CreatedAt = n.CreatedAt,
+            SentAt = n.SentAt
+        }).ToList();
+    }
+
+    public async Task<List<PatientPaymentHistoryItemDto>> GetPaidAppointmentPaymentHistoryAsync(int patientId, int take = 20)
+    {
+        var safeTake = Math.Clamp(take, 1, 50);
+
+        // Load appointments once to avoid N+1 queries.
+        var appointments = await _appointmentRepository.GetByPatientIdAsync(patientId);
+        var appointmentMap = appointments.ToDictionary(a => a.AppointmentId);
+
+        var payments = await _paymentRepository.GetByPatientIdAsync(patientId);
+
+        var paidSuccessful = payments
+            .Where(p => string.Equals(p.PaymentStatus, "PAID", StringComparison.OrdinalIgnoreCase))
+            .Where(p => appointmentMap.TryGetValue(p.AppointmentId, out var appt)
+                        && appt.Status != AppointmentStatus.CancelledByPatient
+                        && appt.Status != AppointmentStatus.CancelledByDoctor)
+            .OrderByDescending(p => p.PaidAt ?? p.CreatedAt)
+            .Take(safeTake);
+
+        return paidSuccessful
+            .Select(p =>
+            {
+                appointmentMap.TryGetValue(p.AppointmentId, out var appt);
+                return new PatientPaymentHistoryItemDto
+                {
+                    PaymentId = p.PaymentId,
+                    AppointmentId = p.AppointmentId,
+                    BookingCode = appt != null
+                        ? $"MC-{appt.AppointmentId:0000}-{appt.AppointmentDate:ddMM}"
+                        : $"MC-{p.AppointmentId:0000}",
+                    DoctorName = appt?.Doctor?.FullName ?? "Bác sĩ",
+                    SpecialtyName = appt?.Specialty?.SpecialtyName,
+                    AppointmentDate = appt?.AppointmentDate ?? DateOnly.FromDateTime(p.CreatedAt),
+                    StartTime = appt?.StartTime ?? TimeOnly.FromDateTime(p.CreatedAt),
+                    Amount = p.Amount,
+                    Currency = p.Currency,
+                    PaymentMethod = p.PaymentMethod,
+                    TransactionId = p.TransactionId,
+                    PaidAt = p.PaidAt
+                };
+            })
+            .ToList();
     }
 
     public async Task<PatientProfilePortalDto?> GetProfileAsync(int patientId)

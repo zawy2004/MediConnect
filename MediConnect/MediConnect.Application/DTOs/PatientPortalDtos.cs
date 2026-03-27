@@ -111,6 +111,36 @@ public class PatientProfilePortalDto
     public List<string> Alerts { get; set; } = new();
 }
 
+public class PatientNotificationItemDto
+{
+    public int NotificationId { get; set; }
+    public int? AppointmentId { get; set; }
+    public string NotificationType { get; set; } = string.Empty;
+    public string Channel { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
+    public string Body { get; set; } = string.Empty;
+    public bool IsRead { get; set; }
+    public string Status { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
+    public DateTime? SentAt { get; set; }
+}
+
+public class PatientPaymentHistoryItemDto
+{
+    public int PaymentId { get; set; }
+    public int AppointmentId { get; set; }
+    public string BookingCode { get; set; } = string.Empty;
+    public string DoctorName { get; set; } = string.Empty;
+    public string? SpecialtyName { get; set; }
+    public DateOnly AppointmentDate { get; set; }
+    public TimeOnly StartTime { get; set; }
+    public decimal Amount { get; set; }
+    public string Currency { get; set; } = "VND";
+    public string PaymentMethod { get; set; } = string.Empty;
+    public string? TransactionId { get; set; }
+    public DateTime? PaidAt { get; set; }
+}
+
 public class PatientMetricPointDto
 {
     public string Label { get; set; } = string.Empty;
