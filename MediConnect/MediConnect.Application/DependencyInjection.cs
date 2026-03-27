@@ -19,6 +19,14 @@ public static class DependencyInjection
         services.AddScoped<IAdminPortalService, AdminPortalService>();
         services.AddScoped<IDoctorPortalService, DoctorPortalService>();
 
+        // Payment Services
+        services.AddScoped<IVnPayService, VnPayService>();
+        services.AddScoped<IMomoService, MomoService>();
+        services.AddScoped<IPaymentGatewayService, PaymentGatewayService>();
+
+        // RAG Services
+        services.AddScoped<IRagService, RagService>();
+
         return services;
     }
 }

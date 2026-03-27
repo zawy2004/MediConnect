@@ -1,5 +1,8 @@
 using MediConnect.Application;
+using MediConnect.Application.Configurations;
+using MediConnect.Application.Interfaces;
 using MediConnect.Infrastructure;
+using MediConnect.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 
@@ -7,6 +10,31 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddControllers();
+
+// HttpClient for external services
+builder.Services.AddHttpClient();
+
+// Configuration - Payment
+builder.Services.Configure<VnPaySettings>(
+    builder.Configuration.GetSection("VNPay"));
+builder.Services.Configure<MomoSettings>(
+    builder.Configuration.GetSection("MomoAPI"));
+
+// Configuration - RAG
+builder.Services.Configure<RagSettings>(
+    builder.Configuration.GetSection("RAG"));
+
+// Register LLM Service based on configuration
+var useLlm = builder.Configuration["RAG:UseLLM"] ?? "Groq";
+if (useLlm.Equals("Ollama", StringComparison.OrdinalIgnoreCase))
+{
+    builder.Services.AddScoped<ILlmService, OllamaLlmService>();
+}
+else
+{
+    builder.Services.AddScoped<ILlmService, GroqLlmService>();
+}
 
 // Authentication
 var authenticationBuilder = builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -57,5 +85,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
+app.MapControllers();
 
 app.Run();

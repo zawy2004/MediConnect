@@ -14,6 +14,7 @@ public class PatientPortalService : IPatientPortalService
     private readonly ITimeSlotRepository _timeSlotRepository;
     private readonly IPaymentRepository _paymentRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IRagService? _ragService;
 
     public PatientPortalService(
         IUserRepository userRepository,
@@ -22,7 +23,8 @@ public class PatientPortalService : IPatientPortalService
         IDoctorService doctorService,
         ITimeSlotRepository timeSlotRepository,
         IPaymentRepository paymentRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IRagService? ragService = null)
     {
         _userRepository = userRepository;
         _appointmentRepository = appointmentRepository;
@@ -31,6 +33,7 @@ public class PatientPortalService : IPatientPortalService
         _timeSlotRepository = timeSlotRepository;
         _paymentRepository = paymentRepository;
         _unitOfWork = unitOfWork;
+        _ragService = ragService;
     }
 
     public async Task<PatientPortalDashboardDto> GetDashboardAsync(int patientId)
@@ -131,6 +134,46 @@ public class PatientPortalService : IPatientPortalService
 
     public async Task<PatientTriageResultDto> AnalyzeSymptomsAsync(int patientId, string symptomText)
     {
+        string suggestedSpecialty;
+        int riskScore;
+        string reply;
+
+        // Try RAG-based analysis first
+        if (_ragService != null)
+        {
+            try
+            {
+                var ragResult = await _ragService.AnalyzeSymptomsAsync(symptomText);
+                suggestedSpecialty = ragResult.SuggestedSpecialty;
+                riskScore = ragResult.RiskScore;
+                reply = ragResult.AssistantReply;
+            }
+            catch
+            {
+                // Fallback to basic analysis
+                (suggestedSpecialty, riskScore, reply) = FallbackSymptomAnalysis(symptomText);
+            }
+        }
+        else
+        {
+            // No RAG service, use fallback
+            (suggestedSpecialty, riskScore, reply) = FallbackSymptomAnalysis(symptomText);
+        }
+
+        var doctors = await _doctorService.SearchDoctorsAsync(new DoctorSearchFilterDto { SearchTerm = suggestedSpecialty == "Nội tim mạch" ? "tim" : null });
+
+        return new PatientTriageResultDto
+        {
+            SymptomText = symptomText,
+            AssistantReply = reply,
+            SuggestedSpecialty = suggestedSpecialty,
+            RiskScore = riskScore,
+            SuggestedDoctors = doctors.Take(4).ToList()
+        };
+    }
+
+    private static (string specialty, int risk, string reply) FallbackSymptomAnalysis(string symptomText)
+    {
         var lowered = symptomText.ToLowerInvariant();
         var suggestedSpecialty = "Tổng quát";
         var riskScore = 30;
@@ -149,16 +192,7 @@ public class PatientPortalService : IPatientPortalService
             reply = "Mức độ trung bình. Bạn nên đặt lịch khám trong 24 giờ để được kiểm tra chuyên sâu.";
         }
 
-        var doctors = await _doctorService.SearchDoctorsAsync(new DoctorSearchFilterDto { SearchTerm = suggestedSpecialty == "Nội tim mạch" ? "tim" : null });
-
-        return new PatientTriageResultDto
-        {
-            SymptomText = symptomText,
-            AssistantReply = reply,
-            SuggestedSpecialty = suggestedSpecialty,
-            RiskScore = riskScore,
-            SuggestedDoctors = doctors.Take(4).ToList()
-        };
+        return (suggestedSpecialty, riskScore, reply);
     }
 
     public async Task<PatientPaymentConfirmDto?> GetPaymentConfirmAsync(int patientId, int appointmentId)
