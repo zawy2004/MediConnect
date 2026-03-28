@@ -75,6 +75,15 @@ public class UserRepository : IUserRepository
         return await _context.Users.CountAsync(u => u.IsActive);
     }
 
+    public async Task<List<User>> GetAllAsync()
+    {
+        return await _context.Users
+            .AsNoTracking()
+            .Include(u => u.Role)
+            .OrderByDescending(u => u.CreatedAt)
+            .ToListAsync();
+    }
+
     public Task<User> CreateAsync(User user)
     {
         _context.Users.Add(user);
