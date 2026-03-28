@@ -4,7 +4,7 @@ namespace MediConnect.Application.Interfaces;
 
 public interface IPatientPortalService
 {
-    Task<PatientPortalDashboardDto> GetDashboardAsync(int patientId);
+    Task<PatientPortalDashboardDto> GetDashboardAsync(int patientId, int schedulePage = 1, int schedulePageSize = 4);
     Task<PatientDoctorScheduleDto?> GetDoctorScheduleAsync(int doctorUserId, DateOnly fromDate, int days);
     Task<PatientDoctorProfileDto?> GetDoctorProfileAsync(int doctorProfileId);
     Task<PatientAppointmentManagerDto> GetAppointmentManagerAsync(int patientId);
@@ -16,5 +16,7 @@ public interface IPatientPortalService
     Task<bool> UpdateProfileAsync(int patientId, string fullName, string? phoneNumber, string? gender, DateOnly? dateOfBirth, string? address);
 
     Task<List<PatientNotificationItemDto>> GetRecentInAppNotificationsAsync(int patientId, int take = 20);
+    Task<int> GetUnreadInAppNotificationCountAsync(int patientId);
+    Task MarkAllInAppNotificationsReadAsync(int patientId);
     Task<List<PatientPaymentHistoryItemDto>> GetPaidAppointmentPaymentHistoryAsync(int patientId, int take = 20);
 }

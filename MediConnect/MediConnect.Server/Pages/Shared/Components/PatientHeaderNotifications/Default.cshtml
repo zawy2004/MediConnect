@@ -1,0 +1,8 @@
+@model int
+<a asp-page="/Patient/Notifications" class="relative inline-flex items-center justify-center w-10 h-10 rounded-full text-slate-600 hover:bg-slate-100 hover:text-primary transition-colors no-underline shrink-0" title="Thông báo trong ứng dụng" aria-label="Thông báo@(Model > 0 ? $", {Model} chưa đọc" : "")">
+    <span class="material-symbols-outlined text-[22px]">notifications</span>
+    @if (Model > 0)
+    {
+        <span class="absolute top-0.5 right-0.5 min-w-[1.125rem] h-[1.125rem] px-0.5 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-black leading-none border-2 border-white">@(Model > 99 ? "99+" : Model.ToString())</span>
+    }
+</a>

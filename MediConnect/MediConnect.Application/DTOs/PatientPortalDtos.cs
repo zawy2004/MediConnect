@@ -5,12 +5,16 @@ namespace MediConnect.Application.DTOs;
 public class PatientPortalDashboardDto
 {
     public string PatientName { get; set; } = "Bệnh nhân";
-    public string HealthAlertTitle { get; set; } = "AI Health Alert";
+    public string HealthAlertTitle { get; set; } = "Cảnh báo sức khỏe";
     public string HealthAlertMessage { get; set; } = "Bạn có thể kiểm tra triệu chứng để nhận tư vấn chuyên khoa phù hợp.";
     public int UpcomingAppointments { get; set; }
     public int CompletedAppointments { get; set; }
     public int CancelledAppointments { get; set; }
     public List<AppointmentListDto> Schedule { get; set; } = new();
+    /// <summary>Tổng số lịch (tất cả trạng thái) dùng cho phân trang khối lịch trên dashboard.</summary>
+    public int ScheduleTotalCount { get; set; }
+    public int SchedulePage { get; set; } = 1;
+    public int SchedulePageSize { get; set; } = 4;
     public List<string> Insights { get; set; } = new();
 }
 

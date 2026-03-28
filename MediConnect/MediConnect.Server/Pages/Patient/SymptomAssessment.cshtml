@@ -1,7 +1,7 @@
 @page
 @model MediConnect.Server.Pages.Patient.SymptomAssessmentModel
 @{
-    ViewData["Title"] = "Đánh giá triệu chứng bằng AI";
+    ViewData["Title"] = "Đánh giá triệu chứng";
 }
 
 <main class="max-w-7xl mx-auto w-full px-6 py-6">
@@ -24,7 +24,7 @@
                         <div class="flex items-start gap-4">
                             <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20"><span class="material-symbols-outlined">smart_toy</span></div>
                             <div class="max-w-[85%]">
-                                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Trợ lý AI MediConnect</span>
+                                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Trợ lý MediConnect</span>
                                 <div class="bg-slate-100 p-4 rounded-xl rounded-tl-none text-sm mt-1">Chào bạn! Mình là trợ lý sức khỏe MediConnect. Bạn hãy mô tả triệu chứng , mình sẽ phân tích và gợi ý hướng khám phù hợp.</div>
                             </div>
                         </div>
@@ -42,7 +42,7 @@
                             <div class="flex items-start gap-4">
                                 <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20"><span class="material-symbols-outlined">smart_toy</span></div>
                                 <div class="max-w-[85%]">
-                                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Trợ lý AI MediConnect</span>
+                                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Trợ lý MediConnect</span>
                                     <div class="bg-slate-100 p-4 rounded-xl rounded-tl-none text-sm mt-1">@Model.Result.AssistantReply</div>
                                 </div>
                             </div>
@@ -124,7 +124,7 @@
                 </div>
             </div>
             <div class="p-4 rounded-xl bg-slate-100 border border-slate-200 text-[11px] text-slate-500">
-                <strong>Thông báo miễn trừ trách nhiệm y tế:</strong> Công cụ AI chỉ mang tính tham khảo và không thay thế chẩn đoán chuyên môn.
+                <strong>Thông báo miễn trừ trách nhiệm y tế:</strong> Công cụ chỉ mang tính tham khảo và không thay thế chẩn đoán chuyên môn.
             </div>
         </aside>
     </div>
@@ -170,7 +170,7 @@
                 <div class="flex items-start gap-4">
                     <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20"><span class="material-symbols-outlined">smart_toy</span></div>
                     <div class="max-w-[85%]">
-                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Trợ lý AI MediConnect</span>
+                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Trợ lý MediConnect</span>
                         <div class="bg-slate-100 p-4 rounded-xl rounded-tl-none text-sm mt-1 whitespace-pre-line">${escapeHtml(text)}</div>
                     </div>
                 </div>

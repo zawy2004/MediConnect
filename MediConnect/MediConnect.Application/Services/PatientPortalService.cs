@@ -39,10 +39,25 @@ public class PatientPortalService : IPatientPortalService
         _ragService = ragService;
     }
 
-    public async Task<PatientPortalDashboardDto> GetDashboardAsync(int patientId)
+    public async Task<PatientPortalDashboardDto> GetDashboardAsync(int patientId, int schedulePage = 1, int schedulePageSize = 4)
     {
         var user = await _userRepository.GetByIdAsync(patientId);
         var appointments = await _appointmentRepository.GetByPatientIdAsync(patientId);
+
+        var ordered = appointments
+            .OrderBy(a => a.AppointmentDate)
+            .ThenBy(a => a.StartTime)
+            .ToList();
+
+        var safePageSize = Math.Clamp(schedulePageSize, 1, 10);
+        var total = ordered.Count;
+        var totalPages = Math.Max(1, (int)Math.Ceiling(total / (double)safePageSize));
+        var page = Math.Clamp(schedulePage, 1, totalPages);
+        var slice = ordered
+            .Skip((page - 1) * safePageSize)
+            .Take(safePageSize)
+            .Select(MapToAppointmentList)
+            .ToList();
 
         return new PatientPortalDashboardDto
         {
@@ -50,20 +65,24 @@ public class PatientPortalService : IPatientPortalService
             UpcomingAppointments = appointments.Count(a => a.AppointmentDate >= DateOnly.FromDateTime(DateTime.Today) && a.Status != AppointmentStatus.CancelledByPatient && a.Status != AppointmentStatus.CancelledByDoctor),
             CompletedAppointments = appointments.Count(a => a.Status == AppointmentStatus.Completed),
             CancelledAppointments = appointments.Count(a => a.Status == AppointmentStatus.CancelledByDoctor || a.Status == AppointmentStatus.CancelledByPatient),
-            Schedule = appointments
-                .OrderBy(a => a.AppointmentDate)
-                .ThenBy(a => a.StartTime)
-                .Take(12)
-                .Select(MapToAppointmentList)
-                .ToList(),
-            Insights = new List<string>
-            {
-                "Giữ nhịp tái khám đúng hẹn để bác sĩ theo dõi tiến triển điều trị.",
-                "Sử dụng AI Symptom Assessment trước khi đặt lịch để tăng độ chính xác chuyên khoa.",
-                "Ưu tiên khung giờ sáng nếu bạn cần giảm thời gian chờ tại phòng khám."
-            }
+            Schedule = slice,
+            ScheduleTotalCount = total,
+            SchedulePage = page,
+            SchedulePageSize = safePageSize,
+            Insights = PatientHealthInsightComposer.Compose(
+                    patientId,
+                    user?.FullName ?? "Bệnh nhân",
+                    DateTime.Now,
+                    appointments)
+                .ToList()
         };
     }
+
+    public Task<int> GetUnreadInAppNotificationCountAsync(int patientId) =>
+        _notificationRepository.CountUnreadInAppByUserIdAsync(patientId);
+
+    public Task MarkAllInAppNotificationsReadAsync(int patientId) =>
+        _notificationRepository.MarkAllInAppAsReadForUserAsync(patientId);
 
     public async Task<PatientDoctorScheduleDto?> GetDoctorScheduleAsync(int doctorUserId, DateOnly fromDate, int days)
     {

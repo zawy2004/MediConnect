@@ -2,84 +2,211 @@
 @model MediConnect.Server.Pages.Patient.DashboardModel
 @{
     ViewData["Title"] = "Dashboard bệnh nhân";
+    var scheduleTotalPages = Model.Data.ScheduleTotalCount > 0
+        ? (int)Math.Ceiling(Model.Data.ScheduleTotalCount / (double)Math.Max(1, Model.Data.SchedulePageSize))
+        : 1;
 }
 
-<div class="max-w-[1280px] mx-auto px-6 py-8 space-y-6">
-    <section class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center justify-between gap-4">
-        <div>
-            <p class="text-xs font-bold text-amber-800 uppercase tracking-wider">Cảnh báo mùa lạnh từ MediConnect AI</p>
-            <p class="text-sm text-amber-700 mt-1">@Model.Data.HealthAlertMessage</p>
+<div class="max-w-[1280px] mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
+    <section class="bg-amber-50 border border-amber-200 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="min-w-0">
+            <p class="text-xs font-bold text-amber-800 uppercase tracking-wider">Cảnh báo mùa lạnh từ MediConnect</p>
+            <p class="text-sm text-amber-800 mt-1">@Model.Data.HealthAlertMessage</p>
         </div>
-        <a asp-page="/Patient/Profile" class="px-4 py-2 rounded-lg bg-amber-600 text-white no-underline text-sm font-bold">Xem chi tiết</a>
+        <a asp-page="/Patient/Profile" class="shrink-0 self-start sm:self-center px-4 py-2.5 rounded-xl bg-amber-600 text-white no-underline text-sm font-bold text-center">Xem chi tiết</a>
     </section>
 
-    <section class="bg-gradient-to-r from-primary to-blue-500 rounded-2xl p-8 text-white relative overflow-hidden">
-        <div>
-            <p class="text-xs uppercase tracking-wider font-bold">Trí tuệ nhân tạo y tế</p>
-            <h1 class="text-4xl font-black mt-2">Hỗ trợ sức khỏe thông minh</h1>
-            <p class="text-blue-100 mt-3 max-w-2xl">Sử dụng MediConnect AI để phân tích hồ sơ bệnh án, nhắc nhở lịch khám và gợi ý chăm sóc sức khỏe cá nhân hóa.</p>
-            <a asp-page="/Patient/SymptomAssessment" class="inline-block mt-6 px-5 py-2.5 rounded-lg bg-white text-primary no-underline font-bold">Xem báo cáo sức khỏe AI</a>
+    <section class="bg-gradient-to-r from-primary to-blue-500 rounded-2xl p-6 sm:p-8 text-white relative overflow-hidden">
+        <div class="relative z-10 max-w-3xl">
+            <p class="text-xs uppercase tracking-wider font-bold text-white/80">Trợ lí y tế</p>
+            <h1 class="text-2xl sm:text-4xl font-black mt-2 leading-tight">Hỗ trợ sức khỏe thông minh</h1>
+            <p class="text-blue-100 mt-3 text-sm sm:text-base leading-relaxed">Trò chuyện cùng trợ lí để phân tích hồ sơ, nhắc lịch khám và gợi ý chăm sóc cá nhân hóa.</p>
+            <a asp-page="/Patient/SymptomAssessment" class="inline-flex items-center gap-2 mt-5 px-5 py-2.5 rounded-xl bg-white text-primary no-underline font-bold text-sm shadow-md">Khám phá ngay</a>
         </div>
-        <span class="material-symbols-outlined absolute right-4 bottom-[-28px] text-[220px] opacity-10">psychology</span>
+        <span class="material-symbols-outlined absolute right-2 sm:right-6 bottom-[-1.5rem] sm:bottom-[-2rem] text-[140px] sm:text-[220px] opacity-10 pointer-events-none select-none">psychology</span>
     </section>
 
-    <section class="flex flex-wrap gap-3">
-        <a asp-page="/Patient/SymptomAssessment" class="px-4 py-2 bg-white border border-slate-200 rounded-full text-sm no-underline text-slate-700">Kiểm tra triệu chứng</a>
-        <a asp-page="/Patient/SearchDoctors" class="px-4 py-2 bg-white border border-slate-200 rounded-full text-sm no-underline text-slate-700">Tìm bác sĩ nhanh</a>
-        <a asp-page="/Patient/Appointments" class="px-4 py-2 bg-white border border-slate-200 rounded-full text-sm no-underline text-slate-700">Hỏi về lịch hẹn</a>
-        <a asp-page="/Patient/Notifications" class="px-4 py-2 bg-white border border-slate-200 rounded-full text-sm no-underline text-slate-700">Thông báo</a>
-        <a asp-page="/Patient/PaymentHistory" class="px-4 py-2 bg-white border border-slate-200 rounded-full text-sm no-underline text-slate-700">Lịch sử thanh toán</a>
-        <a asp-page="/Patient/Profile" class="px-4 py-2 bg-primary text-white rounded-full text-sm no-underline">Dịch vụ mới</a>
+    <section>
+        <h2 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3">Truy cập nhanh</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+            <a asp-page="/Patient/SymptomAssessment" class="no-underline group bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 flex flex-col gap-3 card-hover-effect hover:border-primary/30">
+                <span class="material-symbols-outlined text-3xl text-primary">stethoscope</span>
+                <div>
+                    <p class="font-bold text-[#0d141b] text-sm sm:text-base">Triệu chứng</p>
+                    <p class="text-xs text-slate-500 mt-0.5 leading-snug">Đánh giá &amp; gợi ý ban đầu</p>
+                </div>
+            </a>
+            <a asp-page="/Patient/DoctorSearch" class="no-underline group bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 flex flex-col gap-3 card-hover-effect hover:border-primary/30">
+                <span class="material-symbols-outlined text-3xl text-primary">smart_toy</span>
+                <div>
+                    <p class="font-bold text-[#0d141b] text-sm sm:text-base">Gợi ý bác sĩ</p>
+                    <p class="text-xs text-slate-500 mt-0.5 leading-snug">Gợi ý theo triệu chứng</p>
+                </div>
+            </a>
+            <a asp-page="/Patient/SearchDoctors" class="no-underline group bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 flex flex-col gap-3 card-hover-effect hover:border-primary/30 col-span-2 md:col-span-1">
+                <span class="material-symbols-outlined text-3xl text-primary">search</span>
+                <div>
+                    <p class="font-bold text-[#0d141b] text-sm sm:text-base">Tìm bác sĩ</p>
+                    <p class="text-xs text-slate-500 mt-0.5 leading-snug">Lọc theo khoa &amp; lịch</p>
+                </div>
+            </a>
+            <a asp-page="/Patient/Appointments" class="no-underline group bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 flex flex-col gap-3 card-hover-effect hover:border-primary/30">
+                <span class="material-symbols-outlined text-3xl text-primary">event</span>
+                <div>
+                    <p class="font-bold text-[#0d141b] text-sm sm:text-base">Lịch hẹn</p>
+                    <p class="text-xs text-slate-500 mt-0.5 leading-snug">Theo dõi &amp; đổi lịch</p>
+                </div>
+            </a>
+            <a asp-page="/Patient/PaymentHistory" class="no-underline group bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 flex flex-col gap-3 card-hover-effect hover:border-primary/30">
+                <span class="material-symbols-outlined text-3xl text-primary">payments</span>
+                <div>
+                    <p class="font-bold text-[#0d141b] text-sm sm:text-base">Thanh toán</p>
+                    <p class="text-xs text-slate-500 mt-0.5 leading-snug">Lịch sử giao dịch</p>
+                </div>
+            </a>
+            <a asp-page="/Patient/Profile" class="no-underline group bg-primary text-white rounded-2xl p-4 sm:p-5 flex flex-col gap-3 card-hover-effect shadow-md shadow-primary/20 col-span-2 md:col-span-3">
+                <span class="material-symbols-outlined text-3xl">person</span>
+                <div>
+                    <p class="font-bold text-sm sm:text-base">Hồ sơ &amp; dịch vụ</p>
+                    <p class="text-xs text-white/85 mt-0.5 leading-snug">Cập nhật thông tin cá nhân</p>
+                </div>
+            </a>
+        </div>
     </section>
 
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-6">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-black">Lịch hẹn của tôi</h2>
-                <a asp-page="/Patient/Appointments" class="text-primary no-underline text-sm font-semibold">Xem tất cả</a>
+        <div class="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-5 sm:p-6">
+            <div class="flex items-center justify-between mb-4 gap-2">
+                <h2 class="text-lg sm:text-xl font-black">Lịch hẹn của tôi</h2>
+                <a asp-page="/Patient/Appointments" class="text-primary no-underline text-sm font-semibold shrink-0">Xem tất cả</a>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-                <div class="bg-blue-50 border border-blue-200 rounded-xl p-3"><p class="text-xs text-blue-700">Sắp tới</p><p class="text-2xl font-black text-blue-800">@Model.Data.UpcomingAppointments</p></div>
-                <div class="bg-green-50 border border-green-200 rounded-xl p-3"><p class="text-xs text-green-700">Hoàn thành</p><p class="text-2xl font-black text-green-800">@Model.Data.CompletedAppointments</p></div>
-                <div class="bg-red-50 border border-red-200 rounded-xl p-3"><p class="text-xs text-red-700">Đã hủy</p><p class="text-2xl font-black text-red-800">@Model.Data.CancelledAppointments</p></div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-3"><p class="text-xs text-blue-700">Sắp tới</p><p id="dash-stat-upcoming" class="text-2xl font-black text-blue-800">@Model.Data.UpcomingAppointments</p></div>
+                <div class="bg-green-50 border border-green-200 rounded-xl p-3"><p class="text-xs text-green-700">Hoàn thành</p><p id="dash-stat-completed" class="text-2xl font-black text-green-800">@Model.Data.CompletedAppointments</p></div>
+                <div class="bg-red-50 border border-red-200 rounded-xl p-3"><p class="text-xs text-red-700">Đã hủy</p><p id="dash-stat-cancelled" class="text-2xl font-black text-red-800">@Model.Data.CancelledAppointments</p></div>
             </div>
-            @if (Model.Data.Schedule.Count == 0)
+            <div id="dash-schedule-panel" data-schedule-page="@Model.Data.SchedulePage" data-schedule-page-size="@Model.Data.SchedulePageSize">
+            <div id="dash-schedule-body">
+            @if (Model.Data.ScheduleTotalCount == 0)
             {
-                <p class="text-slate-500">Bạn chưa có lịch hẹn nào.</p>
+                <p class="text-slate-500 text-sm dash-schedule-empty">Bạn chưa có lịch hẹn nào.</p>
             }
             else
             {
-                <div class="space-y-3">
-                    @foreach (var item in Model.Data.Schedule.Take(6))
+                <div class="space-y-3 dash-schedule-cards">
+                    @foreach (var item in Model.Data.Schedule)
                     {
-                        <div class="border border-slate-200 rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                        <div class="dash-appt-card border border-slate-200 rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 transition-opacity duration-200" data-appointment-id="@item.AppointmentId">
                             <div>
                                 <p class="font-semibold">@item.DoctorName</p>
                                 <p class="text-sm text-slate-500">@item.SpecialtyName • @item.AppointmentDate.ToString("dd/MM/yyyy") • @item.StartTime.ToString("HH:mm")</p>
                             </div>
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-2 flex-wrap">
                                 <span class="px-2 py-1 text-xs rounded-full @Model.GetBadgeClass(item.Status)">@item.Status</span>
-                                <form method="post" asp-page-handler="Cancel">
-                                    <input type="hidden" name="appointmentId" value="@item.AppointmentId" />
-                                    <button type="submit" class="px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-sm">Hủy</button>
-                                </form>
+                                @if (item.Status == AppointmentStatus.Pending || item.Status == AppointmentStatus.Confirmed)
+                                {
+                                    <button type="button" class="js-cancel-appt px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-sm font-semibold hover:bg-red-100 disabled:opacity-60 disabled:cursor-not-allowed">Hủy</button>
+                                }
                             </div>
                         </div>
                     }
                 </div>
+                @if (Model.Data.ScheduleTotalCount > Model.Data.SchedulePageSize)
+                {
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 mt-2 border-t border-slate-100">
+                        <p class="text-xs text-slate-500">@Model.Data.Schedule.Count trong @Model.Data.ScheduleTotalCount lịch · Trang <span class="font-semibold text-slate-700">@Model.Data.SchedulePage</span> / <span class="font-semibold text-slate-700">@scheduleTotalPages</span></p>
+                        <div class="flex items-center gap-2">
+                            <a asp-page="/Patient/Dashboard" asp-route-p="@(Model.Data.SchedulePage - 1)" class="inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-bold border border-slate-200 bg-white hover:bg-slate-50 no-underline text-slate-700 min-w-[5.5rem] @(Model.Data.SchedulePage <= 1 ? "pointer-events-none opacity-40" : "")">← Trước</a>
+                            <a asp-page="/Patient/Dashboard" asp-route-p="@(Model.Data.SchedulePage + 1)" class="inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-bold border border-slate-200 bg-white hover:bg-slate-50 no-underline text-slate-700 min-w-[5.5rem] @(Model.Data.SchedulePage >= scheduleTotalPages ? "pointer-events-none opacity-40" : "")">Sau →</a>
+                        </div>
+                    </div>
+                }
             }
+            </div>
+            </div>
         </div>
 
         <div class="space-y-4">
             <div class="bg-primary/10 border border-primary/20 rounded-2xl p-5">
-                <h3 class="font-black mb-3 text-slate-800">Nhắc nhở sức khỏe AI</h3>
+                <div class="flex items-start justify-between gap-2 mb-3">
+                    <h3 class="font-black text-slate-800">Nhắc nhở</h3>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-primary/80 whitespace-nowrap">Cập nhật theo thời gian</span>
+                </div>
                 <ul class="space-y-2 text-sm text-slate-600">
                     @foreach (var insight in Model.Data.Insights)
                     {
-                        <li class="bg-white border border-slate-200 rounded-xl p-2">@insight</li>
+                        <li class="bg-white border border-slate-200 rounded-xl p-2.5">@insight</li>
                     }
                 </ul>
             </div>
         </div>
     </section>
 </div>
+
+@Html.AntiForgeryToken()
+
+@section Scripts {
+<script>
+(function () {
+    var tokenEl = document.querySelector('input[name="__RequestVerificationToken"]');
+    var token = tokenEl ? tokenEl.value : '';
+    var panel = document.getElementById('dash-schedule-panel');
+    var schedulePage = panel ? parseInt(panel.getAttribute('data-schedule-page') || '1', 10) : 1;
+    document.querySelectorAll('.js-cancel-appt').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var card = btn.closest('.dash-appt-card');
+            if (!card || btn.disabled) return;
+            var id = card.getAttribute('data-appointment-id');
+            if (!id || !token) return;
+            btn.disabled = true;
+            var label = btn.textContent;
+            btn.textContent = 'Đang hủy…';
+            var body = new URLSearchParams();
+            body.set('__RequestVerificationToken', token);
+            body.set('appointmentId', id);
+            body.set('schedulePage', String(schedulePage));
+            fetch('?handler=CancelAjax', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: body
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (!data || !data.success) {
+                    btn.disabled = false;
+                    btn.textContent = label;
+                    alert((data && data.error) ? data.error : 'Không hủy được lịch.');
+                    return;
+                }
+                var up = document.getElementById('dash-stat-upcoming');
+                var cp = document.getElementById('dash-stat-completed');
+                var cl = document.getElementById('dash-stat-cancelled');
+                if (up) up.textContent = data.upcoming;
+                if (cp) cp.textContent = data.completed;
+                if (cl) cl.textContent = data.cancelled;
+                card.style.opacity = '0';
+                setTimeout(function () {
+                    card.remove();
+                    var wrap = document.querySelector('.dash-schedule-cards');
+                    var shell = document.getElementById('dash-schedule-body');
+                    var total = data.scheduleTotalCount || 0;
+                    if (total === 0 && shell) {
+                        shell.innerHTML = '<p class="text-slate-500 text-sm dash-schedule-empty">Bạn chưa có lịch hẹn nào.</p>';
+                        return;
+                    }
+                    if (wrap && wrap.children.length === 0 && total > 0) {
+                        var p = Math.min(schedulePage, data.scheduleTotalPages || 1);
+                        window.location.href = '?p=' + p;
+                    }
+                }, 180);
+            })
+            .catch(function () {
+                btn.disabled = false;
+                btn.textContent = label;
+                alert('Lỗi kết nối. Thử lại sau.');
+            });
+        });
+    });
+})();
+</script>
+}

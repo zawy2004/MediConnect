@@ -33,21 +33,21 @@
     @if (ViewData["HideLayout"] == null)
     {
         <!-- Navigation -->
-        <header class="sticky top-0 z-50 bg-white border-b border-slate-200 px-6 lg:px-10 py-3">
-            <div class="max-w-[1440px] mx-auto flex items-center justify-between gap-8">
-                <div class="flex items-center gap-8 flex-1">
-                    <a asp-page="/Index" class="flex items-center gap-2 text-primary no-underline">
-                        <span class="material-symbols-outlined text-3xl">health_and_safety</span>
-                        <h2 class="text-[#0d141b] text-xl font-extrabold tracking-tight">MediConnect</h2>
+        <header class="sticky top-0 z-50 bg-white border-b border-slate-200 px-4 sm:px-6 lg:px-10 py-3">
+            <div class="max-w-[1440px] mx-auto flex flex-col gap-3">
+                <div class="flex items-center justify-between gap-4">
+                    <a asp-page="/Index" class="flex items-center gap-2 text-primary no-underline shrink-0 min-w-0">
+                        <span class="material-symbols-outlined text-3xl shrink-0">health_and_safety</span>
+                        <h2 class="text-[#0d141b] text-lg sm:text-xl font-extrabold tracking-tight truncate">MediConnect</h2>
                     </a>
-                </div>
-                <nav class="hidden lg:flex items-center gap-8">
+                    <nav class="hidden lg:flex items-center gap-6 xl:gap-8 flex-1 justify-center min-w-0">
                     @if (User.Identity?.IsAuthenticated == true)
                     {
                         if (User.IsInRole("PATIENT"))
                         {
-                            <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Patient/Dashboard">Dashboard</a>
-                            <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Patient/DoctorSearch">Tìm bác sĩ AI</a>
+                            <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Patient/Dashboard">Trang chủ</a>
+                            <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Patient/SearchDoctors">Tìm bác sĩ</a>
+                            <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Patient/Appointments">Lịch hẹn</a>
                         }
                         else if (User.IsInRole("DOCTOR"))
                         {
@@ -71,38 +71,92 @@
                             <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Admin/MailNotification">Email</a>
                         }
                     }
-                    <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Doctors/Index">Tìm bác sĩ</a>
-                    <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Appointments/Index">Lịch hẹn</a>
-                    <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Specialties/Index">Chuyên khoa</a>
-                    <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Departments/Index">Khoa</a>
-                </nav>
-                <div class="flex items-center gap-4">
+                    @if (User.Identity?.IsAuthenticated != true || !User.IsInRole("PATIENT"))
+                    {
+                        <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Doctors/Index">Tìm bác sĩ</a>
+                        <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Appointments/Index">Lịch hẹn</a>
+                        <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Specialties/Index">Chuyên khoa</a>
+                        <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors no-underline" asp-page="/Departments/Index">Khoa</a>
+                    }
+                    </nav>
+                    <div class="flex items-center justify-end gap-1 sm:gap-2 shrink-0">
                     @if (User.Identity?.IsAuthenticated == true)
                     {
                         var userName = User.Identity.Name ?? "User";
                         var initials = string.Join("", userName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(w => w[0])).ToUpper();
-                        <div class="relative group">
-                            <button class="flex items-center gap-3 rounded-full hover:bg-slate-50 px-3 py-1.5 transition-all cursor-pointer">
+                        @if (User.IsInRole("PATIENT"))
+                        {
+                            @await Component.InvokeAsync("PatientHeaderNotifications")
+                        }
+                        <div class="relative group/menu">
+                            <button type="button" class="flex items-center gap-2 sm:gap-3 rounded-full hover:bg-slate-50 px-2 sm:px-3 py-1.5 transition-all cursor-pointer border-0 bg-transparent">
                                 <div class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold">
                                     @initials
                                 </div>
-                                <span class="text-sm font-semibold text-[#0d141b] hidden sm:inline">@userName</span>
-                                <span class="material-symbols-outlined text-slate-400 text-lg">expand_more</span>
+                                <span class="text-sm font-semibold text-[#0d141b] hidden sm:inline max-w-[140px] truncate">@userName</span>
+                                <span class="material-symbols-outlined text-slate-400 text-lg hidden sm:inline">expand_more</span>
                             </button>
-                            <div class="absolute right-0 top-full mt-1 w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                            <div class="absolute right-0 top-full pt-1 w-72 opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible group-focus-within/menu:opacity-100 group-focus-within/menu:visible transition-all z-50">
+                                <div class="bg-white rounded-xl shadow-lg border border-slate-200 py-2 max-h-[min(80vh,28rem)] overflow-y-auto">
                                 <div class="px-4 py-2 border-b border-slate-100">
-                                    <p class="text-sm font-semibold text-[#0d141b]">@userName</p>
-                                    <p class="text-xs text-slate-500">@User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value</p>
+                                    <p class="text-sm font-semibold text-[#0d141b] truncate">@userName</p>
+                                    <p class="text-xs text-slate-500 truncate">@User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value</p>
                                 </div>
-                                <a asp-page="/Appointments/Index" class="flex items-center gap-3 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 no-underline">
-                                    <span class="material-symbols-outlined text-lg">calendar_month</span>
-                                    Lịch hẹn của tôi
-                                </a>
+                                @if (User.IsInRole("PATIENT"))
+                                {
+                                    <p class="px-4 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Dịch vụ</p>
+                                    <a asp-page="/Patient/DoctorSearch" class="flex items-center gap-3 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 no-underline">
+                                        <span class="material-symbols-outlined text-lg text-primary">smart_toy</span>
+                                        Gợi ý bác sĩ
+                                    </a>
+                                    <a asp-page="/Patient/SymptomAssessment" class="flex items-center gap-3 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 no-underline">
+                                        <span class="material-symbols-outlined text-lg text-primary">stethoscope</span>
+                                        Kiểm tra triệu chứng
+                                    </a>
+                                    <a asp-page="/Patient/TriageAssistant" class="flex items-center gap-3 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 no-underline">
+                                        <span class="material-symbols-outlined text-lg text-primary">support_agent</span>
+                                        Sàng lọc triệu chứng
+                                    </a>
+                                    <p class="px-4 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Khám phá</p>
+                                    <a asp-page="/Doctors/Index" class="flex items-center gap-3 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 no-underline">
+                                        <span class="material-symbols-outlined text-lg">group_search</span>
+                                        Danh sách bác sĩ
+                                    </a>
+                                    <a asp-page="/Specialties/Index" class="flex items-center gap-3 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 no-underline">
+                                        <span class="material-symbols-outlined text-lg">medical_services</span>
+                                        Chuyên khoa
+                                    </a>
+                                    <a asp-page="/Departments/Index" class="flex items-center gap-3 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 no-underline">
+                                        <span class="material-symbols-outlined text-lg">domain</span>
+                                        Khoa bệnh viện
+                                    </a>
+                                    <a asp-page="/Appointments/Index" class="flex items-center gap-3 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 no-underline">
+                                        <span class="material-symbols-outlined text-lg">event_note</span>
+                                        Lịch hẹn (tổng hợp)
+                                    </a>
+                                    <p class="px-4 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Tài khoản</p>
+                                    <a asp-page="/Patient/Profile" class="flex items-center gap-3 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 no-underline">
+                                        <span class="material-symbols-outlined text-lg">person</span>
+                                        Hồ sơ cá nhân
+                                    </a>
+                                    <a asp-page="/Patient/PaymentHistory" class="flex items-center gap-3 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 no-underline">
+                                        <span class="material-symbols-outlined text-lg">payments</span>
+                                        Lịch sử thanh toán
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a asp-page="/Appointments/Index" class="flex items-center gap-3 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 no-underline">
+                                        <span class="material-symbols-outlined text-lg">calendar_month</span>
+                                        Lịch hẹn của tôi
+                                    </a>
+                                }
                                 <div class="border-t border-slate-100 mt-1 pt-1">
                                     <a asp-page="/Auth/Logout" class="flex items-center gap-3 px-4 py-2 text-sm text-red-500 hover:bg-red-50 no-underline">
                                         <span class="material-symbols-outlined text-lg">logout</span>
                                         Đăng xuất
                                     </a>
+                                </div>
                                 </div>
                             </div>
                         </div>
@@ -116,7 +170,17 @@
                             Đăng ký
                         </a>
                     }
+                    </div>
                 </div>
+                @if (User.Identity?.IsAuthenticated == true && User.IsInRole("PATIENT"))
+                {
+                    <nav class="flex lg:hidden items-center gap-2 overflow-x-auto no-scrollbar pb-0.5 -mx-1 px-1 border-t border-slate-100 pt-3 -mb-1">
+                        <a class="shrink-0 text-slate-700 text-xs font-bold hover:text-primary transition-colors no-underline px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200/80" asp-page="/Patient/Dashboard">Trang chủ</a>
+                        <a class="shrink-0 text-slate-700 text-xs font-bold hover:text-primary transition-colors no-underline px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200/80" asp-page="/Patient/SearchDoctors">Tìm bác sĩ</a>
+                        <a class="shrink-0 text-slate-700 text-xs font-bold hover:text-primary transition-colors no-underline px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200/80" asp-page="/Patient/Appointments">Lịch hẹn</a>
+                        <a class="shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200/80 text-slate-700 hover:text-primary no-underline" asp-page="/Patient/Notifications" title="Thông báo"><span class="material-symbols-outlined text-xl">notifications</span></a>
+                    </nav>
+                }
             </div>
         </header>
     }

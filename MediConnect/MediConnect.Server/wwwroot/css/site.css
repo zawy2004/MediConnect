@@ -6,6 +6,15 @@ body {
     font-family: 'Manrope', sans-serif;
 }
 
+/* Hide scrollbar for horizontal mini-nav (patient mobile) */
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
 .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     vertical-align: middle;
