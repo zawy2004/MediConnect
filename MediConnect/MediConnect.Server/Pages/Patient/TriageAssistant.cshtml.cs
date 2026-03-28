@@ -20,7 +20,7 @@ public class TriageAssistantModel : PageModel
     [BindProperty]
     public string SymptomText { get; set; } = string.Empty;
 
-    public string AssistantReply { get; set; } = "Mô tả triệu chứng để MediConnect AI gợi ý chuyên khoa và mức độ ưu tiên.";
+    public string AssistantReply { get; set; } = "Mô tả triệu chứng để MediConnect gợi ý chuyên khoa và mức độ ưu tiên.";
     public string SuggestedSpecialty { get; set; } = "Tổng quát";
     public int RiskScore { get; set; } = 20;
     public List<DoctorListDto> SuggestedDoctors { get; set; } = new();

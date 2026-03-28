@@ -36,6 +36,22 @@ public class NotificationRepository : INotificationRepository
             .ToListAsync();
     }
 
+    public Task<int> CountUnreadInAppByUserIdAsync(int userId)
+    {
+        return _context.Notifications.AsNoTracking()
+            .CountAsync(n => n.UserId == userId && n.Channel == "IN_APP" && !n.IsRead);
+    }
+
+    public Task MarkAllInAppAsReadForUserAsync(int userId)
+    {
+        var now = DateTime.Now;
+        return _context.Notifications
+            .Where(n => n.UserId == userId && n.Channel == "IN_APP" && !n.IsRead)
+            .ExecuteUpdateAsync(s => s
+                .SetProperty(n => n.IsRead, true)
+                .SetProperty(n => n.ReadAt, now));
+    }
+
     public async Task<int> CountByChannelAsync(string channel)
     {
         return await _context.Notifications.CountAsync(n => n.Channel == channel);

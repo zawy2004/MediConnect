@@ -3,13 +3,20 @@
 
 @{
     ViewData["Title"] = "Thông báo";
+    string TypeLabel(string t) => t switch
+    {
+        "BOOKING_CONFIRMATION" => "Đặt lịch",
+        "APPOINTMENT_REMINDER" => "Nhắc lịch",
+        "PAYMENT_RECEIVED" => "Thanh toán",
+        _ => "Chung"
+    };
 }
 
 <div class="max-w-[980px] mx-auto px-6 py-10 space-y-6">
     <div class="flex items-end justify-between gap-4 pb-2 border-b border-slate-200">
         <div>
             <h1 class="text-4xl font-black tracking-tight">Thông báo</h1>
-            <p class="text-slate-500 mt-2">Các thông báo quan trọng trong ứng dụng.</p>
+            <p class="text-slate-500 mt-2">Danh sách thông báo trong ứng dụng (đặt lịch, thanh toán, nhắc lịch). Khi bạn mở trang này, các thông báo được coi là đã xem — số trên chuông ở thanh menu sẽ về 0.</p>
         </div>
     </div>
 
@@ -27,11 +34,12 @@
                 <div class="bg-white border border-slate-200 rounded-xl p-5">
                     <div class="flex flex-wrap items-start justify-between gap-3">
                         <div class="min-w-[220px]">
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">@TypeLabel(item.NotificationType)</span>
                                 <span class="text-sm font-bold text-slate-800">@item.Title</span>
                                 @if (!item.IsRead)
                                 {
-                                    <span class="text-[10px] font-bold px-2 py-1 rounded-full bg-primary/10 text-primary">NEW</span>
+                                    <span class="text-[10px] font-bold px-2 py-1 rounded-full bg-amber-100 text-amber-800">Chưa đọc</span>
                                 }
                             </div>
                             <p class="text-sm text-slate-500 mt-1">@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>

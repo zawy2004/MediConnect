@@ -16,7 +16,7 @@
                 <form method="get" class="space-y-4">
                     <div class="p-3 bg-primary/5 border border-primary/20 rounded-lg">
                         <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-xl">auto_awesome</span><span class="text-sm font-bold">Gợi ý AI (AI-FE-01)</span></div>
+                            <div class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-xl">auto_awesome</span><span class="text-sm font-bold">Gợi ý thông minh</span></div>
                             <input type="checkbox" checked class="rounded text-primary" />
                         </div>
                         <p class="text-[10px] text-slate-500 mt-1">Tối ưu hóa gợi ý dựa trên triệu chứng của bạn</p>
@@ -68,13 +68,13 @@
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
                 <div>
                     <h1 class="text-4xl font-black tracking-tight">@Model.Doctors.Count Bác sĩ phù hợp với hồ sơ của bạn</h1>
-                    <p class="text-slate-500 mt-1">Xếp hạng AI cho kết quả tìm kiếm theo bộ lọc hiện tại</p>
+                    <p class="text-slate-500 mt-1">Xếp hạng gợi ý cho kết quả tìm kiếm theo bộ lọc hiện tại</p>
                 </div>
-                <button class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold">Điểm phù hợp AI</button>
+                <button class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold">Điểm phù hợp</button>
             </div>
 
             <div class="flex flex-wrap gap-2 mb-6">
-                <span class="px-3 py-1.5 bg-primary/10 text-primary rounded-full text-xs font-bold border border-primary/20">Gợi ý AI đang bật</span>
+                <span class="px-3 py-1.5 bg-primary/10 text-primary rounded-full text-xs font-bold border border-primary/20">Gợi ý đang bật</span>
                 @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
                 {
                     <span class="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-full text-xs font-bold border border-slate-200">@Model.SearchTerm</span>
@@ -86,7 +86,7 @@
             @foreach (var doctor in Model.Doctors)
             {
                 <div class="bg-white border border-slate-200 rounded-xl p-6 border-l-4 border-l-primary relative overflow-hidden">
-                    <div class="absolute top-0 right-0 bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase">@(Math.Clamp((int)(doctor.AverageRating * 20), 80, 99))% Phù hợp AI</div>
+                    <div class="absolute top-0 right-0 bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase">@(Math.Clamp((int)(doctor.AverageRating * 20), 80, 99))% Phù hợp</div>
                     <div class="flex flex-col xl:flex-row gap-6">
                         <div class="flex-1">
                             <div class="flex items-start justify-between gap-4">
