@@ -23,6 +23,13 @@
             </div>
         </div>
 
+        <div class="bg-white border border-slate-200 rounded-2xl p-4">
+            <nav class="flex flex-wrap gap-3">
+                <a asp-page="/Doctor/SpecialtyProfile" class="px-4 py-2 rounded-xl font-semibold text-sm @(ViewData["Title"]?.ToString() == "Hồ sơ chuyên môn" ? "bg-primary text-white" : "bg-slate-100 text-slate-700") no-underline">Hồ sơ chuyên môn</a>
+                <a asp-page="/Doctor/UpdateProfile" class="px-4 py-2 rounded-xl font-semibold text-sm @(ViewData["Title"]?.ToString() != "Hồ sơ chuyên môn" ? "bg-primary text-white" : "bg-slate-100 text-slate-700") no-underline">Cập nhật hồ sơ</a>
+            </nav>
+        </div>
+
         <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-2 bg-white border rounded-2xl p-6">
                 <h2 class="text-2xl font-bold">Thông tin chuyên môn</h2>
@@ -39,7 +46,7 @@
                     <h3 class="font-bold">Khuyến nghị AI</h3>
                     <p class="text-sm mt-2">@Model.Data.AiRecommendation</p>
                 </div>
-                <a asp-page="/Doctor/Profile" class="block text-center px-4 py-2 bg-primary text-white rounded-xl no-underline">Cập nhật hồ sơ</a>
+                <a asp-page="/Doctor/UpdateProfile" class="block text-center px-4 py-2 bg-primary text-white rounded-xl no-underline">Cập nhật hồ sơ</a>
             </div>
         </section>
         </main>
