@@ -102,9 +102,10 @@ public class AdminComplaintDto
 {
     public int TotalComplaints { get; set; }
     public int OpenComplaints { get; set; }
+    public int CriticalComplaints { get; set; }
     public int ProcessingComplaints { get; set; }
     public List<ComplaintItemDto> Complaints { get; set; } = new();
-    public ComplaintItemDto? SelectedComplaint { get; set; }
+    public ComplaintDetailDto? SelectedComplaint { get; set; }
 }
 
 public class ComplaintItemDto
@@ -113,10 +114,48 @@ public class ComplaintItemDto
     public string Subject { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty;
+    public string Priority { get; set; } = string.Empty;
+    public int EscalationLevel { get; set; }
     public string PatientName { get; set; } = string.Empty;
     public string? DoctorName { get; set; }
+    public string? AssignedToName { get; set; }
     public DateTime CreatedAt { get; set; }
+    public DateTime? FollowUpReminderDate { get; set; }
     public string? ResolutionNote { get; set; }
+}
+
+public class ComplaintDetailDto
+{
+    public int ComplaintId { get; set; }
+    public string Subject { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Status { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty;
+    public string Priority { get; set; } = string.Empty;
+    public int EscalationLevel { get; set; }
+    public int PatientId { get; set; }
+    public string PatientName { get; set; } = string.Empty;
+    public int? DoctorId { get; set; }
+    public string? DoctorName { get; set; }
+    public int? AssignedToAdminId { get; set; }
+    public string? AssignedToName { get; set; }
+    public DateTime? FollowUpReminderDate { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+    public DateTime? ResolvedAt { get; set; }
+    public string? ResolutionNote { get; set; }
+}
+
+public class UpdateComplaintDto
+{
+    public int ComplaintId { get; set; }
+    public string Category { get; set; } = string.Empty;
+    public string Priority { get; set; } = string.Empty;
+    public int? AssignedToAdminId { get; set; }
+    public string NextStatus { get; set; } = string.Empty;
+    public string ResolutionNote { get; set; } = string.Empty;
+    public bool IsEscalation { get; set; }
 }
 
 public class AdminMailNotificationDto
@@ -138,4 +177,50 @@ public class MailMessageItemDto
     public string Status { get; set; } = string.Empty;
     public bool IsRead { get; set; }
     public DateTime CreatedAt { get; set; }
+}
+
+// User Management DTOs
+public class UserDetailDto
+{
+    public int UserId { get; set; }
+    public string FullName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string PhoneNumber { get; set; } = string.Empty;
+    public string? Gender { get; set; }
+    public DateOnly? DateOfBirth { get; set; }
+    public string? Address { get; set; }
+    public string RoleName { get; set; } = string.Empty;
+    public bool IsActive { get; set; }
+    public bool IsVerified { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+    public DateTime? LastLoginAt { get; set; }
+    public List<UserActivityItemDto> RecentActivities { get; set; } = new();
+}
+
+public class EditUserDto
+{
+    public int UserId { get; set; }
+    public string FullName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string PhoneNumber { get; set; } = string.Empty;
+    public string? Gender { get; set; }
+    public DateOnly? DateOfBirth { get; set; }
+    public string? Address { get; set; }
+}
+
+public class UserActivityItemDto
+{
+    public long LogId { get; set; }
+    public string Action { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public string Severity { get; set; } = string.Empty; // INFO, WARNING, ERROR
+    public DateTime CreatedAt { get; set; }
+}
+
+public class BulkUserActionDto
+{
+    public List<int> UserIds { get; set; } = new();
+    public string Action { get; set; } = string.Empty; // ENABLE, DISABLE, EXPORT
+    public int AdminUserId { get; set; }
 }
