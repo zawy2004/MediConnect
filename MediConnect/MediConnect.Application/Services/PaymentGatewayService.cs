@@ -31,21 +31,25 @@ public class PaymentGatewayService : IPaymentGatewayService
 
     public async Task<PaymentUrlResultDto> CreatePaymentUrlAsync(CreatePaymentRequestDto request)
     {
-        // Create pending payment record
-        var payment = new Payment
+        // Only create a payment record for appointment payments.
+        // Membership payments are handled through the doctor portal flow instead.
+        if (request.AppointmentId > 0)
         {
-            AppointmentId = request.AppointmentId,
-            PatientId = request.PatientId,
-            Amount = request.Amount,
-            Currency = request.Currency,
-            PaymentMethod = request.PaymentMethod,
-            PaymentStatus = "PENDING",
-            CreatedAt = DateTime.Now,
-            UpdatedAt = DateTime.Now
-        };
+            var payment = new Payment
+            {
+                AppointmentId = request.AppointmentId,
+                PatientId = request.PatientId,
+                Amount = request.Amount,
+                Currency = request.Currency,
+                PaymentMethod = request.PaymentMethod,
+                PaymentStatus = "PENDING",
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
+            };
 
-        await _paymentRepository.CreateAsync(payment);
-        await _unitOfWork.SaveChangesAsync();
+            await _paymentRepository.CreateAsync(payment);
+            await _unitOfWork.SaveChangesAsync();
+        }
 
         // Generate payment URL based on method
         PaymentUrlResultDto result;

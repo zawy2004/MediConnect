@@ -22,11 +22,16 @@ public class MomoService : IMomoService
 
     public async Task<PaymentUrlResultDto> CreatePaymentUrlAsync(CreatePaymentRequestDto request)
     {
-        var orderId = $"MC{request.AppointmentId:D6}{DateTime.Now:HHmmss}";
+        var orderId = request.AppointmentId > 0
+            ? $"MC{request.AppointmentId:D6}{DateTime.Now:HHmmss}"
+            : $"MM{request.PatientId:D6}{DateTime.Now:HHmmss}";
         var requestId = Guid.NewGuid().ToString();
         var amount = (long)request.Amount;
-        var extraData = Convert.ToBase64String(Encoding.UTF8.GetBytes($"appointmentId={request.AppointmentId}"));
+        var extraData = string.IsNullOrWhiteSpace(request.OrderInfo)
+            ? Convert.ToBase64String(Encoding.UTF8.GetBytes($"appointmentId={request.AppointmentId}"))
+            : Convert.ToBase64String(Encoding.UTF8.GetBytes(request.OrderInfo));
 
+        var returnUrl = string.IsNullOrWhiteSpace(request.ReturnUrl) ? _settings.ReturnUrl : request.ReturnUrl;
         var rawSignature = $"accessKey={_settings.AccessKey}" +
                           $"&amount={amount}" +
                           $"&extraData={extraData}" +
@@ -34,7 +39,7 @@ public class MomoService : IMomoService
                           $"&orderId={orderId}" +
                           $"&orderInfo={request.OrderInfo}" +
                           $"&partnerCode={_settings.PartnerCode}" +
-                          $"&redirectUrl={_settings.ReturnUrl}" +
+                          $"&redirectUrl={returnUrl}" +
                           $"&requestId={requestId}" +
                           $"&requestType={_settings.RequestType}";
 
@@ -49,7 +54,7 @@ public class MomoService : IMomoService
             amount,
             orderId,
             orderInfo = request.OrderInfo,
-            redirectUrl = _settings.ReturnUrl,
+            redirectUrl = returnUrl,
             ipnUrl = _settings.NotifyUrl,
             lang = "vi",
             requestType = _settings.RequestType,

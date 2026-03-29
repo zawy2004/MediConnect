@@ -9,6 +9,7 @@ public class CreatePaymentRequestDto
     public string PaymentMethod { get; set; } = "VNPAY";
     public string OrderInfo { get; set; } = string.Empty;
     public string ClientIpAddress { get; set; } = string.Empty;
+    public string? ReturnUrl { get; set; }
 }
 
 public class PaymentUrlResultDto

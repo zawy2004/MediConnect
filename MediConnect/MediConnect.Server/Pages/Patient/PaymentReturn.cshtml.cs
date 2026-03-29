@@ -1,3 +1,4 @@
+using System.Linq;
 using MediConnect.Application.DTOs;
 using MediConnect.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -8,13 +9,16 @@ namespace MediConnect.Server.Pages.Patient;
 public class PaymentReturnModel : PageModel
 {
     private readonly IPaymentGatewayService _paymentGatewayService;
+    private readonly IDoctorPortalService _doctorPortalService;
     private readonly ILogger<PaymentReturnModel> _logger;
 
     public PaymentReturnModel(
         IPaymentGatewayService paymentGatewayService,
+        IDoctorPortalService doctorPortalService,
         ILogger<PaymentReturnModel> logger)
     {
         _paymentGatewayService = paymentGatewayService;
+        _doctorPortalService = doctorPortalService;
         _logger = logger;
     }
 
@@ -70,6 +74,7 @@ public class PaymentReturnModel : PageModel
         TransactionId = result.TransactionId;
         OrderId = result.OrderId;
         ErrorMessage = result.ErrorMessage;
+
         AppointmentId = ExtractAppointmentId(result.OrderId);
 
         if (IsSuccess)
@@ -108,6 +113,7 @@ public class PaymentReturnModel : PageModel
         TransactionId = result.TransactionId;
         OrderId = result.OrderId;
         ErrorMessage = result.ErrorMessage;
+
         AppointmentId = ExtractAppointmentId(result.OrderId);
 
         if (IsSuccess)

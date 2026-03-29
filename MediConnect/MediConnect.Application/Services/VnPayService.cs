@@ -19,7 +19,9 @@ public class VnPayService : IVnPayService
 
     public PaymentUrlResultDto CreatePaymentUrl(CreatePaymentRequestDto request)
     {
-        var orderId = $"MC{request.AppointmentId:D6}{DateTime.Now:HHmmss}";
+        var orderId = request.AppointmentId > 0
+            ? $"MC{request.AppointmentId:D6}{DateTime.Now:HHmmss}"
+            : $"MM{request.PatientId:D6}{DateTime.Now:HHmmss}";
         var createDate = DateTime.Now.ToString("yyyyMMddHHmmss");
         var expireDate = DateTime.Now.AddMinutes(_settings.ExpireMinutes).ToString("yyyyMMddHHmmss");
 
@@ -34,7 +36,7 @@ public class VnPayService : IVnPayService
             { "vnp_OrderInfo", WebUtility.UrlEncode(request.OrderInfo) },
             { "vnp_OrderType", _settings.OrderType },
             { "vnp_Locale", _settings.Locale },
-            { "vnp_ReturnUrl", _settings.ReturnUrl },
+            { "vnp_ReturnUrl", string.IsNullOrWhiteSpace(request.ReturnUrl) ? _settings.ReturnUrl : request.ReturnUrl },
             { "vnp_IpAddr", request.ClientIpAddress },
             { "vnp_CreateDate", createDate },
             { "vnp_ExpireDate", expireDate }
