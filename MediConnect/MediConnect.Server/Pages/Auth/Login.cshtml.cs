@@ -97,8 +97,26 @@ public class LoginModel : PageModel
             return Page();
         }
 
-        var email = User.FindFirstValue(ClaimTypes.Email);
-        var fullName = User.FindFirstValue(ClaimTypes.Name) ?? "Google User";
+        ClaimsPrincipal userPrincipal = User;
+        if (userPrincipal.Identity?.IsAuthenticated != true)
+        {
+            var authResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (authResult.Succeeded && authResult.Principal != null)
+            {
+                userPrincipal = authResult.Principal;
+            }
+        }
+
+        var email = userPrincipal.FindFirstValue(ClaimTypes.Email)
+            ?? userPrincipal.FindFirstValue("email")
+            ?? userPrincipal.FindFirstValue("urn:google:email")
+            ?? userPrincipal.FindFirstValue("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")
+            ?? userPrincipal.FindFirstValue("preferred_username");
+
+        var fullName = userPrincipal.FindFirstValue(ClaimTypes.Name)
+            ?? userPrincipal.FindFirstValue("name")
+            ?? userPrincipal.FindFirstValue("urn:google:name")
+            ?? "Google User";
 
         if (string.IsNullOrWhiteSpace(email))
         {
@@ -126,9 +144,9 @@ public class LoginModel : PageModel
         };
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var principal = new ClaimsPrincipal(identity);
+        var appPrincipal = new ClaimsPrincipal(identity);
 
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, appPrincipal);
 
         if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
         {

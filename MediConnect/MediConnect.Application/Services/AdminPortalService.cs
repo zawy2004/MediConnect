@@ -841,7 +841,7 @@ public class AdminPortalService : IAdminPortalService
             Gender = user.Gender,
             DateOfBirth = user.DateOfBirth,
             Address = user.Address,
-            RoleName = user.Role.RoleName,
+            RoleName = user.Role?.RoleName ?? "UNKNOWN",
             IsActive = user.IsActive,
             IsVerified = user.IsVerified,
             CreatedAt = user.CreatedAt,
@@ -931,6 +931,8 @@ public class AdminPortalService : IAdminPortalService
         var user = await _userRepository.GetByIdAsync(userId);
         if (user == null) return false;
 
+        if (string.IsNullOrWhiteSpace(user.Email)) return false;
+
         var tempPassword = GenerateTemporaryPassword();
         var passwordHash = BCrypt.Net.BCrypt.HashPassword(tempPassword);
         user.PasswordHash = passwordHash;
@@ -938,12 +940,30 @@ public class AdminPortalService : IAdminPortalService
 
         await _userRepository.UpdateAsync(user);
 
-        var description = $"Password reset for user {user.Email}. Temp password sent to email.";
-        await LogActionAsync(adminUserId, "RESET_PASSWORD", description, "WARNING");
+        var subject = "[MediConnect] Mat khau tam thoi cua ban";
+        var body = $"""
+Xin chao {user.FullName},
 
-        // TODO: Send password reset email to user
+Tai khoan MediConnect cua ban vua duoc dat lai mat khau boi quan tri vien.
+
+Mat khau tam thoi: {tempPassword}
+
+Vui long dang nhap va doi mat khau ngay de dam bao an toan.
+Neu ban khong yeu cau thao tac nay, vui long lien he ho tro ngay.
+
+Tran trong,
+MediConnect
+""";
+
+        var sendResult = await _emailMessagingService.SendAsync(user.Email.Trim(), subject, body, isBodyHtml: false);
+
+        var description = sendResult.Success
+            ? $"Password reset for user {user.Email}. Temp password sent to email."
+            : $"Password reset for user {user.Email} but email delivery failed: {sendResult.ErrorMessage}";
+
+        await LogActionAsync(adminUserId, "RESET_PASSWORD", description, sendResult.Success ? "WARNING" : "ERROR");
         await _unitOfWork.SaveChangesAsync();
-        return true;
+        return sendResult.Success;
     }
 
     public async Task<List<UserActivityItemDto>> GetUserActivityAsync(int userId, int limit = 50)

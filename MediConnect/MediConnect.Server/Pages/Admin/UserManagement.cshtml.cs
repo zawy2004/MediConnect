@@ -64,8 +64,19 @@ public class UserManagementModel : PageModel
 
     public async Task<IActionResult> OnPostToggleStatusAsync(int userId, bool isActive)
     {
-        await _adminPortalService.ToggleUserStatusAsync(userId, !isActive, GetUserId());
-        StatusMessage = "Trạng thái người dùng đã được cập nhật.";
+        var adminUserId = GetUserId();
+
+        // Avoid locking out current admin session by self-disable.
+        if (userId == adminUserId && !isActive)
+        {
+            StatusMessage = "Không thể tự vô hiệu hóa tài khoản đang đăng nhập.";
+            return RedirectToPage(new { SearchTerm, RoleFilter, SelectedUserId = (int?)null });
+        }
+
+        var success = await _adminPortalService.ToggleUserStatusAsync(userId, isActive, adminUserId);
+        StatusMessage = success
+            ? "Trạng thái người dùng đã được cập nhật."
+            : "Không thể cập nhật trạng thái người dùng.";
         return RedirectToPage(new { SearchTerm, RoleFilter, SelectedUserId = (int?)null });
     }
 
@@ -100,6 +111,13 @@ public class UserManagementModel : PageModel
         return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
     }
 
+    public async Task<IActionResult> OnPostExportUsersAsync()
+    {
+        var bytes = await _adminPortalService.ExportUsersExcelAsync(SelectedUserIds.Count > 0 ? SelectedUserIds : null);
+        var fileName = $"users-export-{DateTime.Now:yyyyMMdd-HHmmss}.xlsx";
+        return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+    }
+
     public async Task<IActionResult> OnGetUserDetailAsync(int userId)
     {
         var userDetail = await _adminPortalService.GetUserDetailAsync(userId);
@@ -115,6 +133,7 @@ public class UserManagementModel : PageModel
             phone = userDetail.PhoneNumber,
             gender = userDetail.Gender,
             dob = userDetail.DateOfBirth?.ToString("dd/MM/yyyy"),
+            address = userDetail.Address,
             roleName = userDetail.RoleName,
             isActive = userDetail.IsActive,
             createdAt = userDetail.CreatedAt.ToString("dd/MM/yyyy HH:mm"),
