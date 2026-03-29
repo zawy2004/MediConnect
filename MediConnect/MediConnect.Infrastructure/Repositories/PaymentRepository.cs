@@ -60,6 +60,7 @@ public class PaymentRepository : IPaymentRepository
             .Where(p => p.CreatedAt >= fromDate
                         && p.CreatedAt <= toDate
                         && p.PaymentStatus == "PAID"
+                        && p.Appointment != null
                         && p.Appointment.DoctorId == doctorId)
             .SumAsync(p => (decimal?)p.Amount) ?? 0m;
     }

@@ -19,7 +19,10 @@ public class VnPayService : IVnPayService
 
     public PaymentUrlResultDto CreatePaymentUrl(CreatePaymentRequestDto request)
     {
-        var orderId = $"MC{request.AppointmentId:D6}{DateTime.Now:HHmmss}";
+        var appointmentCode = request.AppointmentId.HasValue && request.AppointmentId.Value > 0
+            ? request.AppointmentId.Value.ToString("D6")
+            : "000000";
+        var orderId = $"MC{appointmentCode}{DateTime.Now:HHmmss}";
         var createDate = DateTime.Now.ToString("yyyyMMddHHmmss");
         var expireDate = DateTime.Now.AddMinutes(_settings.ExpireMinutes).ToString("yyyyMMddHHmmss");
 

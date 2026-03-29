@@ -32,7 +32,10 @@
         <section class="lg:col-span-9 space-y-4">
             <div class="flex items-center justify-between">
                 <h1 class="text-3xl font-black">@Model.Doctors.Count bác sĩ phù hợp</h1>
-                <a asp-page="/Patient/TriageAssistant" class="text-primary font-semibold no-underline">Gợi ý theo triệu chứng</a>
+                <a asp-page="/Patient/SymptomAssessment" class="text-primary font-semibold no-underline flex items-center gap-2">
+                    <span class="material-symbols-outlined text-lg">psychology</span>
+                    Gợi ý thông minh theo triệu chứng
+                </a>
             </div>
 
             @if (Model.Doctors.Count == 0)

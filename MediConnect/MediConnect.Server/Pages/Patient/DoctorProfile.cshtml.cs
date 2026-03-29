@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
 using MediConnect.Application.DTOs;
 using MediConnect.Application.Interfaces;
 using MediConnect.Domain.Constants;
@@ -13,12 +12,9 @@ namespace MediConnect.Server.Pages.Patient;
 public class DoctorProfileModel : PageModel
 {
     private readonly IPatientPortalService _patientPortalService;
-    private readonly IAppointmentService _appointmentService;
-
-    public DoctorProfileModel(IPatientPortalService patientPortalService, IAppointmentService appointmentService)
+    public DoctorProfileModel(IPatientPortalService patientPortalService)
     {
         _patientPortalService = patientPortalService;
-        _appointmentService = appointmentService;
     }
 
     [BindProperty(SupportsGet = true)]
@@ -69,22 +65,14 @@ public class DoctorProfileModel : PageModel
             return Page();
         }
 
-        var created = await _appointmentService.CreateAppointmentAsync(new CreateAppointmentDto
-        {
-            PatientId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!),
-            DoctorId = Data.Doctor.UserId,
-            SlotId = SlotId,
-            AppointmentDate = slot.SlotDate.ToDateTime(TimeOnly.MinValue),
-            SpecialtyId = null,
-            Reason = Reason
-        });
-
-        if (!created.Success || !created.AppointmentId.HasValue)
-        {
-            ErrorMessage = created.ErrorMessage ?? "Không thể đặt lịch.";
-            return Page();
-        }
-
-        return RedirectToPage("/Patient/PaymentConfirm", new { appointmentId = created.AppointmentId.Value });
+        // Chuyển sang màn xác nhận thanh toán để bệnh nhân chọn phương thức trước.
+        return RedirectToPage(
+            "/Patient/PaymentConfirm",
+            new
+            {
+                doctorProfileId = DoctorProfileId,
+                slotId = SlotId,
+                reason = Reason
+            });
     }
 }

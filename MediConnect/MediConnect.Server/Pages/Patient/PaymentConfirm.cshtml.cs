@@ -26,6 +26,15 @@ public class PaymentConfirmModel : PageModel
     [BindProperty(SupportsGet = true)]
     public int AppointmentId { get; set; }
 
+    [BindProperty(SupportsGet = true)]
+    public int DoctorProfileId { get; set; }
+
+    [BindProperty(SupportsGet = true)]
+    public int SlotId { get; set; }
+
+    [BindProperty(SupportsGet = true)]
+    public string? Reason { get; set; }
+
     [BindProperty, Required]
     public string PaymentMethod { get; set; } = "VNPAY";
 
@@ -34,12 +43,19 @@ public class PaymentConfirmModel : PageModel
 
     public async Task<IActionResult> OnGetAsync()
     {
-        if (AppointmentId <= 0)
+        if (AppointmentId > 0)
+        {
+            Summary = await _patientPortalService.GetPaymentConfirmAsync(GetUserId(), AppointmentId);
+        }
+        else if (DoctorProfileId > 0 && SlotId > 0)
+        {
+            Summary = await _patientPortalService.GetPaymentConfirmByDoctorSlotAsync(GetUserId(), DoctorProfileId, SlotId);
+        }
+        else
         {
             return RedirectToPage("/Patient/Appointments");
         }
 
-        Summary = await _patientPortalService.GetPaymentConfirmAsync(GetUserId(), AppointmentId);
         if (Summary == null)
         {
             return NotFound();
@@ -50,7 +66,15 @@ public class PaymentConfirmModel : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
-        Summary = await _patientPortalService.GetPaymentConfirmAsync(GetUserId(), AppointmentId);
+        if (AppointmentId > 0)
+        {
+            Summary = await _patientPortalService.GetPaymentConfirmAsync(GetUserId(), AppointmentId);
+        }
+        else if (DoctorProfileId > 0 && SlotId > 0)
+        {
+            Summary = await _patientPortalService.GetPaymentConfirmByDoctorSlotAsync(GetUserId(), DoctorProfileId, SlotId);
+        }
+
         if (Summary == null)
         {
             return NotFound();
@@ -65,14 +89,30 @@ public class PaymentConfirmModel : PageModel
         if (PaymentMethod.Equals("VNPAY", StringComparison.OrdinalIgnoreCase) ||
             PaymentMethod.Equals("MOMO", StringComparison.OrdinalIgnoreCase))
         {
+            var paymentAppointmentId = AppointmentId > 0 ? AppointmentId : (int?)null;
+            var orderInfo = $"Thanh toan lich kham #{AppointmentId} - BS {Summary.DoctorName}";
+
+            if (DoctorProfileId > 0 && SlotId > 0)
+            {
+                var doctorProfile = await _patientPortalService.GetDoctorProfileAsync(DoctorProfileId);
+                if (doctorProfile?.Doctor == null)
+                {
+                    ErrorMessage = "Không thể tải thông tin bác sĩ để thanh toán.";
+                    return Page();
+                }
+
+                orderInfo =
+                    $"doctorUserId={doctorProfile.Doctor.UserId};slotId={SlotId};appointmentDate={Summary.AppointmentDate:yyyy-MM-dd};reason={Uri.EscapeDataString(Reason ?? string.Empty)}";
+            }
+
             var paymentRequest = new CreatePaymentRequestDto
             {
-                AppointmentId = AppointmentId,
+                AppointmentId = paymentAppointmentId,
                 PatientId = GetUserId(),
                 Amount = Summary.Amount,
                 Currency = "VND",
                 PaymentMethod = PaymentMethod.ToUpperInvariant(),
-                OrderInfo = $"Thanh toan lich kham #{AppointmentId} - BS {Summary.DoctorName}",
+                OrderInfo = orderInfo,
                 ClientIpAddress = GetClientIpAddress()
             };
 
@@ -86,6 +126,12 @@ public class PaymentConfirmModel : PageModel
 
             // Redirect to payment gateway
             return Redirect(paymentResult.PaymentUrl);
+        }
+
+        if (DoctorProfileId > 0 && SlotId > 0)
+        {
+            ErrorMessage = "Lịch chưa được tạo. Vui lòng chọn thanh toán online (VNPAY hoặc MoMo).";
+            return Page();
         }
 
         // Handle on-site payment (ONSITE, CARD at clinic)

@@ -626,6 +626,7 @@ public partial class MediconnectContext : DbContext
             entity.HasOne(d => d.Appointment).WithMany(p => p.Payments)
                 .HasForeignKey(d => d.AppointmentId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
+                .IsRequired(false)
                 .HasConstraintName("FK_pay_appointment");
 
             entity.HasOne(d => d.Patient).WithMany(p => p.Payments)

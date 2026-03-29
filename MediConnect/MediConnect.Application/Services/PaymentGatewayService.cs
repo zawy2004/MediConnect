@@ -32,9 +32,13 @@ public class PaymentGatewayService : IPaymentGatewayService
     public async Task<PaymentUrlResultDto> CreatePaymentUrlAsync(CreatePaymentRequestDto request)
     {
         // Create pending payment record
+        var normalizedAppointmentId = request.AppointmentId.HasValue && request.AppointmentId.Value > 0
+            ? request.AppointmentId.Value
+            : (int?)null;
+
         var payment = new Payment
         {
-            AppointmentId = request.AppointmentId,
+            AppointmentId = normalizedAppointmentId,
             PatientId = request.PatientId,
             Amount = request.Amount,
             Currency = request.Currency,

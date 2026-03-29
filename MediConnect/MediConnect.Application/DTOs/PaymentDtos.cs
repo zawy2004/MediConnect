@@ -2,7 +2,7 @@ namespace MediConnect.Application.DTOs;
 
 public class CreatePaymentRequestDto
 {
-    public int AppointmentId { get; set; }
+    public int? AppointmentId { get; set; }
     public int PatientId { get; set; }
     public decimal Amount { get; set; }
     public string Currency { get; set; } = "VND";

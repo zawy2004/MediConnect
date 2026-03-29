@@ -61,23 +61,42 @@ public class AppointmentConfirmModel : PageModel
             return Page();
         }
 
-        var result = await _appointmentService.CreateAppointmentAsync(new CreateAppointmentDto
+        // Lấy thông tin bệnh nhân
+        var patientId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var doctor = Doctor;
+        if (doctor == null)
         {
-            PatientId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!),
-            DoctorId = DoctorUserId,
-            SlotId = SlotId,
-            SpecialtyId = SpecialtyId,
-            AppointmentDate = AppointmentDate,
-            Reason = Reason
-        });
-
-        if (!result.Success || !result.AppointmentId.HasValue)
-        {
-            ErrorMessage = result.ErrorMessage ?? "Không thể tạo lịch hẹn.";
+            ErrorMessage = "Không tìm thấy thông tin bác sĩ.";
             return Page();
         }
 
-        return RedirectToPage("/Patient/AppointmentSuccess", new { appointmentId = result.AppointmentId.Value });
+        // Tạo payment request
+        var paymentRequest = new MediConnect.Application.DTOs.CreatePaymentRequestDto
+        {
+            PatientId = patientId,
+            Amount = doctor.ConsultationFee,
+            Currency = "VND",
+            PaymentMethod = "VNPAY", // hoặc lấy từ lựa chọn của user nếu có
+            OrderInfo = $"doctorUserId={DoctorUserId};slotId={SlotId};specialtyId={SpecialtyId};appointmentDate={AppointmentDate:yyyy-MM-dd};reason={Reason}",
+            ClientIpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? ""
+        };
+
+        var paymentService = HttpContext.RequestServices.GetService(typeof(MediConnect.Application.Interfaces.IPaymentGatewayService)) as MediConnect.Application.Interfaces.IPaymentGatewayService;
+        if (paymentService == null)
+        {
+            ErrorMessage = "Không thể khởi tạo dịch vụ thanh toán.";
+            return Page();
+        }
+
+        var paymentResult = await paymentService.CreatePaymentUrlAsync(paymentRequest);
+        if (!paymentResult.Success || string.IsNullOrEmpty(paymentResult.PaymentUrl))
+        {
+            ErrorMessage = paymentResult.ErrorMessage ?? "Không thể khởi tạo thanh toán.";
+            return Page();
+        }
+
+        // Redirect sang payment gateway
+        return Redirect(paymentResult.PaymentUrl);
     }
 
     private async Task LoadData()

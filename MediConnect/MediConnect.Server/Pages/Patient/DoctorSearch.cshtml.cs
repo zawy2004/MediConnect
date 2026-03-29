@@ -36,8 +36,8 @@ public class DoctorSearchModel : PageModel
         var specialties = await _doctorService.GetActiveSpecialtiesAsync();
         var departments = await _doctorService.GetActiveDepartmentsAsync();
 
-        SpecialtyList = new SelectList(specialties, "SpecialtyId", "SpecialtyName");
-        DepartmentList = new SelectList(departments, "DepartmentId", "DepartmentName");
+        SpecialtyList = new SelectList(specialties, "SpecialtyId", "SpecialtyName", SpecialtyId);
+        DepartmentList = new SelectList(departments, "DepartmentId", "DepartmentName", DepartmentId);
 
         Doctors = await _doctorService.SearchDoctorsAsync(new DoctorSearchFilterDto
         {

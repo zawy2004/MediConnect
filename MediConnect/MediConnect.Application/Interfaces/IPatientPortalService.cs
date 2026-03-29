@@ -7,6 +7,7 @@ public interface IPatientPortalService
     Task<PatientPortalDashboardDto> GetDashboardAsync(int patientId, int schedulePage = 1, int schedulePageSize = 4);
     Task<PatientDoctorScheduleDto?> GetDoctorScheduleAsync(int doctorUserId, DateOnly fromDate, int days);
     Task<PatientDoctorProfileDto?> GetDoctorProfileAsync(int doctorProfileId);
+    Task<PatientPaymentConfirmDto?> GetPaymentConfirmByDoctorSlotAsync(int patientId, int doctorProfileId, int slotId);
     Task<PatientAppointmentManagerDto> GetAppointmentManagerAsync(int patientId);
     Task<PatientTriageResultDto> AnalyzeSymptomsAsync(int patientId, string symptomText);
     Task<PatientPaymentConfirmDto?> GetPaymentConfirmAsync(int patientId, int appointmentId);
