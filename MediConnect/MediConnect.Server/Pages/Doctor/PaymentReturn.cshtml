@@ -1,0 +1,62 @@
+@page
+@model MediConnect.Server.Pages.Doctor.PaymentReturnModel
+@{
+    ViewData["Title"] = "Kết quả thanh toán gói thành viên";
+}
+
+<div class="min-h-screen bg-[#f8fafc]">
+    <div class="max-w-[1000px] mx-auto px-6 py-8">
+        <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                    <p class="text-sm text-slate-500">Doctor Membership Payment</p>
+                    <h1 class="text-4xl font-black">@((Model.IsSuccess) ? "Thanh toán hoàn tất" : "Thanh toán thất bại")</h1>
+                </div>
+                <div class="inline-flex items-center rounded-2xl px-4 py-2 text-sm font-semibold @((Model.IsSuccess) ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-700")">
+                    <span class="material-symbols-outlined mr-2">@(Model.IsSuccess ? "check_circle" : "error")</span>
+                    @(Model.IsSuccess ? "Thành công" : "Thất bại")
+                </div>
+            </div>
+
+            <div class="mt-8 grid gap-4">
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="rounded-2xl bg-rose-50 border border-rose-200 p-5 text-rose-700">
+                        @Model.ErrorMessage
+                    </div>
+                }
+
+                <div class="grid gap-4 md:grid-cols-2">
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                        <p class="text-sm text-slate-500">Mã đơn</p>
+                        <p class="mt-3 text-lg font-semibold">@Model.OrderId</p>
+                    </div>
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                        <p class="text-sm text-slate-500">Mã giao dịch</p>
+                        <p class="mt-3 text-lg font-semibold">@Model.TransactionId</p>
+                    </div>
+                </div>
+
+                <div class="grid gap-4 md:grid-cols-2">
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                        <p class="text-sm text-slate-500">Mã gói</p>
+                        <p class="mt-3 text-lg font-semibold">@Model.PlanCode</p>
+                    </div>
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                        <p class="text-sm text-slate-500">Doctor ID</p>
+                        <p class="mt-3 text-lg font-semibold">@Model.DoctorId</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <a asp-page="/Doctor/Payment" asp-route-planCode="@Model.PlanCode" class="inline-flex items-center justify-center rounded-xl bg-primary px-6 py-3 text-white font-semibold transition hover:bg-primary/90">
+                        Quay lại Trang Thanh toán
+                    </a>
+                    <a asp-page="/Doctor/Payment" class="inline-flex items-center justify-center rounded-xl border border-slate-200 px-6 py-3 text-slate-700 transition hover:bg-slate-100">
+                        Về trang gói thành viên
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
