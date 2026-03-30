@@ -79,7 +79,7 @@ public class PaymentGatewayService : IPaymentGatewayService
 
         if (result.Success)
         {
-            await UpdatePaymentStatusAsync(result.OrderId, result.TransactionId, "PAID");
+            await UpdatePaymentStatusAsync(result.OrderId, result.TransactionId, "COMPLETED");
         }
 
         return result;
@@ -91,7 +91,7 @@ public class PaymentGatewayService : IPaymentGatewayService
 
         if (result.Success)
         {
-            await UpdatePaymentStatusAsync(result.OrderId, result.TransactionId, "PAID");
+            await UpdatePaymentStatusAsync(result.OrderId, result.TransactionId, "COMPLETED");
         }
 
         return result;
@@ -108,15 +108,15 @@ public class PaymentGatewayService : IPaymentGatewayService
                 var payment = await _paymentRepository.GetLatestByAppointmentAsync(appointmentId);
                 if (payment != null)
                 {
-                    var wasPaid = string.Equals(payment.PaymentStatus, "PAID", StringComparison.OrdinalIgnoreCase);
+                    var wasPaid = string.Equals(payment.PaymentStatus, "COMPLETED", StringComparison.OrdinalIgnoreCase);
 
                     payment.PaymentStatus = status;
                     payment.TransactionId = transactionId;
                     payment.PaidAt = DateTime.Now;
                     payment.UpdatedAt = DateTime.Now;
 
-                    // Create notification when the payment transitions to PAID.
-                    if (!wasPaid && string.Equals(status, "PAID", StringComparison.OrdinalIgnoreCase))
+                    // Create notification when the payment transitions to COMPLETED.
+                    if (!wasPaid && string.Equals(status, "COMPLETED", StringComparison.OrdinalIgnoreCase))
                     {
                         var appointment = await _appointmentRepository.GetByIdAsync(appointmentId);
                         if (appointment != null)

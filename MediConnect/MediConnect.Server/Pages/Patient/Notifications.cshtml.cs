@@ -24,7 +24,7 @@ public class NotificationsModel : PageModel
         var patientId = GetUserId();
         // Đồng bộ với icon header: đánh dấu đã đọc khi mở trang (cùng nguồn IN_APP / IsRead).
         await _patientPortalService.MarkAllInAppNotificationsReadAsync(patientId);
-        Items = await _patientPortalService.GetRecentInAppNotificationsAsync(patientId, 30);
+        Items = await _patientPortalService.GetRecentInAppNotificationsAsync(patientId, 200);
     }
 
     private int GetUserId() => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

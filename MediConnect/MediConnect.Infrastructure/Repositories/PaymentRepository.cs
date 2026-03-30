@@ -50,7 +50,7 @@ public class PaymentRepository : IPaymentRepository
     public async Task<decimal> SumPaidAmountAsync(DateTime fromDate, DateTime toDate)
     {
         return await _context.Payments
-            .Where(p => p.CreatedAt >= fromDate && p.CreatedAt <= toDate && p.PaymentStatus == "PAID")
+            .Where(p => p.CreatedAt >= fromDate && p.CreatedAt <= toDate && p.PaymentStatus == "COMPLETED")
             .SumAsync(p => (decimal?)p.Amount) ?? 0m;
     }
 
@@ -59,7 +59,7 @@ public class PaymentRepository : IPaymentRepository
         return await _context.Payments
             .Where(p => p.CreatedAt >= fromDate
                         && p.CreatedAt <= toDate
-                        && p.PaymentStatus == "PAID"
+                        && p.PaymentStatus == "COMPLETED"
                         && p.Appointment != null
                         && p.Appointment.DoctorId == doctorId)
             .SumAsync(p => (decimal?)p.Amount) ?? 0m;

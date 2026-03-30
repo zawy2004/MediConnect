@@ -287,7 +287,7 @@ public class PatientPortalService : IPatientPortalService
         }
 
         var existing = await _paymentRepository.GetLatestByAppointmentAsync(appointmentId);
-        if (existing != null && existing.PaymentStatus == "PAID")
+        if (existing != null && existing.PaymentStatus == "COMPLETED")
         {
             return new PatientPaymentResultDto
             {
@@ -298,7 +298,9 @@ public class PatientPortalService : IPatientPortalService
         }
 
         var transactionId = $"MC-{DateTime.UtcNow:yyyyMMddHHmmss}-{appointmentId}";
-        var amount = appointment.Doctor.DoctorProfileUser?.ConsultationFee ?? 250000m;
+        var consultationFee = appointment.Doctor.DoctorProfileUser?.ConsultationFee ?? 250000m;
+        var serviceFee = 10000m;
+        var amount = consultationFee + serviceFee;
 
         var payment = new Payment
         {
@@ -307,7 +309,7 @@ public class PatientPortalService : IPatientPortalService
             Amount = amount,
             Currency = "VND",
             PaymentMethod = string.IsNullOrWhiteSpace(paymentMethod) ? "VNPAY" : paymentMethod,
-            PaymentStatus = "PAID",
+            PaymentStatus = "COMPLETED",
             TransactionId = transactionId,
             PaidAt = DateTime.Now,
             CreatedAt = DateTime.Now,
@@ -365,7 +367,7 @@ public class PatientPortalService : IPatientPortalService
 
     public async Task<List<PatientNotificationItemDto>> GetRecentInAppNotificationsAsync(int patientId, int take = 20)
     {
-        var safeTake = Math.Clamp(take, 1, 50);
+        var safeTake = Math.Clamp(take, 1, 200);
         var notifications = await _notificationRepository.GetRecentByUserIdAndChannelAsync(patientId, "IN_APP", safeTake);
         return notifications.Select(n => new PatientNotificationItemDto
         {
@@ -384,7 +386,7 @@ public class PatientPortalService : IPatientPortalService
 
     public async Task<List<PatientPaymentHistoryItemDto>> GetPaidAppointmentPaymentHistoryAsync(int patientId, int take = 20)
     {
-        var safeTake = Math.Clamp(take, 1, 50);
+        var safeTake = Math.Clamp(take, 1, 200);
 
         // Load appointments once to avoid N+1 queries.
         var appointments = await _appointmentRepository.GetByPatientIdAsync(patientId);
@@ -393,10 +395,8 @@ public class PatientPortalService : IPatientPortalService
         var payments = await _paymentRepository.GetByPatientIdAsync(patientId);
 
         var paidSuccessful = payments
-            .Where(p => string.Equals(p.PaymentStatus, "PAID", StringComparison.OrdinalIgnoreCase))
-            .Where(p => p.AppointmentId.HasValue && appointmentMap.TryGetValue(p.AppointmentId.Value, out var appt)
-                        && appt.Status != AppointmentStatus.CancelledByPatient
-                        && appt.Status != AppointmentStatus.CancelledByDoctor)
+            .Where(p => string.Equals(p.PaymentStatus, "COMPLETED", StringComparison.OrdinalIgnoreCase))
+            .Where(p => p.AppointmentId.HasValue && appointmentMap.ContainsKey(p.AppointmentId.Value))
             .OrderByDescending(p => p.PaidAt ?? p.CreatedAt)
             .Take(safeTake);
 

@@ -27,6 +27,10 @@
                     <p class="text-sm font-bold text-slate-800">Tổng cộng</p>
                     <p class="text-2xl font-black text-primary">@Model.Items.Count</p>
                 </div>
+                <div class="text-right">
+                    <p class="text-sm font-bold text-slate-800">Tổng chi trả</p>
+                    <p class="text-2xl font-black text-emerald-600">@Model.TotalPaidAmount.ToString("N0") VND</p>
+                </div>
             </div>
 
             <div class="overflow-x-auto">

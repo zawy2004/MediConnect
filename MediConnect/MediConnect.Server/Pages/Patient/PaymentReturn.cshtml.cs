@@ -9,15 +9,18 @@ namespace MediConnect.Server.Pages.Patient;
 public class PaymentReturnModel : PageModel
 {
     private readonly IPaymentGatewayService _paymentGatewayService;
+    private readonly IPatientPortalService _patientPortalService;
     private readonly IDoctorPortalService _doctorPortalService;
     private readonly ILogger<PaymentReturnModel> _logger;
 
     public PaymentReturnModel(
         IPaymentGatewayService paymentGatewayService,
+        IPatientPortalService patientPortalService,
         IDoctorPortalService doctorPortalService,
         ILogger<PaymentReturnModel> logger)
     {
         _paymentGatewayService = paymentGatewayService;
+        _patientPortalService = patientPortalService;
         _doctorPortalService = doctorPortalService;
         _logger = logger;
     }
@@ -99,7 +102,18 @@ public class PaymentReturnModel : PageModel
                 ErrorMessage = createResult.ErrorMessage ?? "Không thể tạo lịch hẹn sau thanh toán.";
                 return Page();
             }
+
             AppointmentId = createResult.AppointmentId.Value;
+
+            // Ensure a PAID record is persisted for the newly created appointment.
+            var patientId = appointmentDto.PatientId;
+            var finalizePayment = await _patientPortalService.CompletePaymentAsync(patientId, AppointmentId, "VNPAY");
+            if (!finalizePayment.Success)
+            {
+                _logger.LogWarning("Unable to finalize payment history for appointment {AppointmentId}: {Error}",
+                    AppointmentId, finalizePayment.ErrorMessage);
+            }
+
             return RedirectToPage("/Patient/BookingSuccess", new { appointmentId = AppointmentId, transactionId = TransactionId });
         }
 
@@ -159,7 +173,18 @@ public class PaymentReturnModel : PageModel
                 ErrorMessage = createResult.ErrorMessage ?? "Không thể tạo lịch hẹn sau thanh toán.";
                 return Page();
             }
+
             AppointmentId = createResult.AppointmentId.Value;
+
+            // Ensure a PAID record is persisted for the newly created appointment.
+            var patientId = appointmentDto.PatientId;
+            var finalizePayment = await _patientPortalService.CompletePaymentAsync(patientId, AppointmentId, "MOMO");
+            if (!finalizePayment.Success)
+            {
+                _logger.LogWarning("Unable to finalize payment history for appointment {AppointmentId}: {Error}",
+                    AppointmentId, finalizePayment.ErrorMessage);
+            }
+
             return RedirectToPage("/Patient/BookingSuccess", new { appointmentId = AppointmentId, transactionId = TransactionId });
         }
 
@@ -215,4 +240,5 @@ public class PaymentReturnModel : PageModel
         }
         return 0;
     }
+
 }
