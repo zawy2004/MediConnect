@@ -13,17 +13,35 @@
 
             <form method="get" class="flex items-center gap-2 flex-wrap">
                 <input asp-for="SearchTerm" class="rounded-xl border-slate-200" placeholder="Tìm theo tiêu đề, bệnh nhân, bác sĩ..." />
+                <select asp-for="CategoryFilter" class="rounded-xl border-slate-200">
+                    <option value="">Tất cả danh mục</option>
+                    <option value="QUALITY">Chất lượng dịch vụ</option>
+                    <option value="PAYMENT">Vấn đề thanh toán</option>
+                    <option value="BEHAVIOR">Hành vi nhân viên</option>
+                    <option value="SERVICE">Vấn đề dịch vụ</option>
+                    <option value="OTHER">Khác</option>
+                </select>
+                <select asp-for="PriorityFilter" class="rounded-xl border-slate-200">
+                    <option value="">Tất cả mức độ</option>
+                    <option value="CRITICAL">🔴 Nguy hiểm</option>
+                    <option value="HIGH">🟠 Cao</option>
+                    <option value="NORMAL">🟡 Bình thường</option>
+                    <option value="LOW">🟢 Thấp</option>
+                </select>
                 <select asp-for="StatusFilter" class="rounded-xl border-slate-200">
-                    <option value="ALL">Tất cả trạng thái</option>
-                    <option value="OPEN">OPEN</option>
-                    <option value="PROCESSING">PROCESSING</option>
-                    <option value="RESOLVED">RESOLVED</option>
-                    <option value="REJECTED">REJECTED</option>
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="OPEN">Mới</option>
+                    <option value="PROCESSING">Đang xử lý</option>
+                    <option value="ESCALATED">Leo thang</option>
+                    <option value="RESOLVED">Đã giải quyết</option>
+                    <option value="REJECTED">Từ chối</option>
                 </select>
                 <button type="submit" class="px-3 py-2 border rounded-lg text-sm font-semibold">Lọc</button>
                 <a asp-page-handler="ExportCsv"
                    asp-route-searchTerm="@Model.SearchTerm"
                    asp-route-statusFilter="@Model.StatusFilter"
+                   asp-route-categoryFilter="@Model.CategoryFilter"
+                   asp-route-priorityFilter="@Model.PriorityFilter"
                    asp-route-selectedComplaintId="@Model.SelectedComplaintId"
                    class="px-3 py-2 border rounded-lg text-sm font-semibold text-[#0d141b] no-underline bg-white">
                     Xuất CSV
@@ -37,10 +55,11 @@
                 <div class="bg-green-50 border border-green-200 text-green-700 rounded-lg px-4 py-3 text-sm">@Model.StatusMessage</div>
             }
 
-            <section class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-white border rounded-2xl p-4"><p class="text-xs text-slate-500">Tổng khiếu nại</p><p class="text-2xl font-black mt-2">@Model.Data.TotalComplaints</p></div>
                 <div class="bg-white border rounded-2xl p-4"><p class="text-xs text-slate-500">Chờ xử lý</p><p class="text-2xl font-black mt-2">@Model.Data.OpenComplaints</p></div>
-                <div class="bg-white border rounded-2xl p-4"><p class="text-xs text-slate-500">Ưu tiên cao</p><p class="text-2xl font-black mt-2">@Model.Data.ProcessingComplaints</p></div>
+                <div class="bg-white border rounded-2xl p-4"><p class="text-xs text-slate-500">Nguy hiểm 🔴</p><p class="text-2xl font-black mt-2 text-red-600">@Model.Data.CriticalComplaints</p></div>
+                <div class="bg-white border rounded-2xl p-4"><p class="text-xs text-slate-500">Đang xử lý</p><p class="text-2xl font-black mt-2">@Model.Data.ProcessingComplaints</p></div>
             </section>
 
             <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -53,33 +72,86 @@
                         <thead class="bg-slate-50 text-slate-500">
                             <tr>
                                 <th class="text-left px-4 py-3">Tiêu đề</th>
-                                <th class="text-left px-4 py-3">Bệnh nhân</th>
+                                <th class="text-left px-4 py-3">Danh mục</th>
+                                <th class="text-left px-4 py-3">Mức độ</th>
                                 <th class="text-left px-4 py-3">Trạng thái</th>
+                                <th class="text-left px-4 py-3">Được giao cho</th>
                             </tr>
                         </thead>
                         <tbody>
                             @if (Model.Data.Complaints.Count == 0)
                             {
                                 <tr>
-                                    <td colspan="3" class="px-4 py-8 text-center text-slate-500">Không có khiếu nại phù hợp với bộ lọc hiện tại.</td>
+                                    <td colspan="5" class="px-4 py-8 text-center text-slate-500">Không có khiếu nại phù hợp với bộ lọc hiện tại.</td>
                                 </tr>
                             }
                             else
                             {
                                 @foreach (var item in Model.Data.Complaints)
                                 {
+                                    var priorityColor = item.Priority switch
+                                    {
+                                        "CRITICAL" => "bg-red-100 text-red-700",
+                                        "HIGH" => "bg-orange-100 text-orange-700",
+                                        "NORMAL" => "bg-yellow-100 text-yellow-700",
+                                        "LOW" => "bg-green-100 text-green-700",
+                                        _ => "bg-slate-100 text-slate-700"
+                                    };
+
                                     <tr class="border-t border-slate-100 hover:bg-slate-50">
                                         <td class="px-4 py-3">
                                             <a asp-page="/Admin/ComplaintManagement"
                                                asp-route-selectedComplaintId="@item.ComplaintId"
                                                asp-route-searchTerm="@Model.SearchTerm"
                                                asp-route-statusFilter="@Model.StatusFilter"
-                                               class="font-semibold text-[#0d141b] no-underline">
+                                               asp-route-categoryFilter="@Model.CategoryFilter"
+                                               asp-route-priorityFilter="@Model.PriorityFilter"
+                                               class="font-semibold text-[#0d141b] no-underline hover:text-primary">
                                                 @item.Subject
                                             </a>
                                         </td>
-                                        <td class="px-4 py-3">@item.PatientName</td>
-                                        <td class="px-4 py-3">@item.Status</td>
+                                        <td class="px-4 py-3 text-xs">
+                                            @{
+                                                var categoryName = item.Category switch
+                                                {
+                                                    "QUALITY" => "Chất lượng",
+                                                    "PAYMENT" => "Thanh toán",
+                                                    "BEHAVIOR" => "Hành vi",
+                                                    "SERVICE" => "Dịch vụ",
+                                                    _ => item.Category
+                                                };
+                                            }
+                                            <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700">@categoryName</span>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <span class="px-2 py-1 rounded-full text-xs font-bold @priorityColor">@item.Priority</span>
+                                        </td>
+                                        <td class="px-4 py-3 text-xs">
+                                            @{
+                                                var statusName = item.Status switch
+                                                {
+                                                    "OPEN" => "Mới",
+                                                    "PROCESSING" => "Đang xử lý",
+                                                    "ESCALATED" => "Leo thang",
+                                                    "RESOLVED" => "Giải quyết",
+                                                    "REJECTED" => "Từ chối",
+                                                    _ => item.Status
+                                                };
+                                                var statusBg = item.Status switch
+                                                {
+                                                    "OPEN" => "bg-blue-50 text-blue-700",
+                                                    "PROCESSING" => "bg-yellow-50 text-yellow-700",
+                                                    "ESCALATED" => "bg-red-50 text-red-700",
+                                                    "RESOLVED" => "bg-green-50 text-green-700",
+                                                    "REJECTED" => "bg-slate-50 text-slate-600",
+                                                    _ => "bg-slate-50"
+                                                };
+                                            }
+                                            <span class="px-2 py-1 rounded-full @statusBg">@statusName</span>
+                                        </td>
+                                        <td class="px-4 py-3 text-xs">
+                                            @(item.AssignedToName ?? "<span class=\"text-slate-400\">Chưa giao</span>")
+                                        </td>
                                     </tr>
                                 }
                             }
@@ -87,33 +159,204 @@
                     </table>
                 </div>
 
-                <div class="bg-white border rounded-2xl p-5">
+                <div class="bg-white border rounded-2xl p-5 space-y-4">
                     @if (Model.Data.SelectedComplaint == null)
                     {
                         <p class="text-slate-500">Chọn một khiếu nại để xem chi tiết.</p>
                     }
                     else
                     {
-                        <span class="px-2 py-1 text-[10px] rounded-full bg-red-50 text-red-600 font-bold">SENTIMENT NEGATIVE</span>
-                        <h2 class="text-lg font-bold mt-3">Chi tiết Khiếu nại #@Model.Data.SelectedComplaint.ComplaintId</h2>
-                        <p class="text-sm text-slate-500 mt-1">Người gửi: @Model.Data.SelectedComplaint.PatientName</p>
-                        <div class="mt-3 p-3 rounded-xl bg-slate-50 border border-slate-100 text-sm">@Model.Data.SelectedComplaint.Description</div>
+                        <!-- Status Header -->
+                        <div class="pb-4 border-b border-slate-100">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h2 class="text-lg font-bold">Chi tiết Khiếu nại #@Model.Data.SelectedComplaint.ComplaintId</h2>
+                                    <p class="text-sm text-slate-500 mt-1">Người gửi: <span class="font-semibold">@Model.Data.SelectedComplaint.PatientName</span></p>
+                                    @if (!string.IsNullOrEmpty(Model.Data.SelectedComplaint.DoctorName))
+                                    {
+                                        <p class="text-sm text-slate-500">Liên quan: <span class="font-semibold">@Model.Data.SelectedComplaint.DoctorName</span></p>
+                                    }
+                                </div>
+                                <div class="text-right">
+                                    @{
+                                        var statusBg = Model.Data.SelectedComplaint.Status switch
+                                        {
+                                            "OPEN" => "bg-blue-50 text-blue-700",
+                                            "PROCESSING" => "bg-yellow-50 text-yellow-700",
+                                            "ESCALATED" => "bg-red-50 text-red-700",
+                                            "RESOLVED" => "bg-green-50 text-green-700",
+                                            "REJECTED" => "bg-slate-50 text-slate-600",
+                                            _ => "bg-slate-50"
+                                        };
+                                        var priorityColor = Model.Data.SelectedComplaint.Priority switch
+                                        {
+                                            "CRITICAL" => "bg-red-100 text-red-700",
+                                            "HIGH" => "bg-orange-100 text-orange-700",
+                                            "NORMAL" => "bg-yellow-100 text-yellow-700",
+                                            "LOW" => "bg-green-100 text-green-700",
+                                            _ => "bg-slate-100 text-slate-700"
+                                        };
+                                    }
+                                    <span class="block px-2 py-1 text-xs rounded-full @statusBg font-bold mb-2">
+                                        @(Model.Data.SelectedComplaint.Status switch
+                                        {
+                                            "OPEN" => "Mới",
+                                            "PROCESSING" => "Đang xử lý",
+                                            "ESCALATED" => "Leo thang",
+                                            "RESOLVED" => "Giải quyết",
+                                            "REJECTED" => "Từ chối",
+                                            _ => Model.Data.SelectedComplaint.Status
+                                        })
+                                    </span>
+                                    <span class="block px-2 py-1 text-xs rounded-full @priorityColor font-bold">
+                                        @Model.Data.SelectedComplaint.Priority
+                                    </span>
+                                </div>
+                            </div>
+                            @if (Model.Data.SelectedComplaint.EscalationLevel > 0)
+                            {
+                                <p class="text-xs text-red-600 font-bold mt-2">⚠️ Leo thang lần @Model.Data.SelectedComplaint.EscalationLevel</p>
+                            }
+                        </div>
 
-                        <form method="post" asp-page-handler="Resolve" class="mt-5 space-y-3">
-                            <input type="hidden" name="ComplaintId" value="@Model.Data.SelectedComplaint.ComplaintId" />
-                            <input type="hidden" asp-for="SearchTerm" />
-                            <input type="hidden" asp-for="StatusFilter" />
-                            <select asp-for="NextStatus" class="w-full rounded-lg border-slate-200">
-                                <option value="PROCESSING">PROCESSING</option>
-                                <option value="RESOLVED">RESOLVED</option>
-                                <option value="REJECTED">REJECTED</option>
-                            </select>
-                            <textarea asp-for="ResolutionNote" rows="4" placeholder="Nhập phản hồi thủ công tại đây..." class="w-full rounded-lg border-slate-200"></textarea>
-                            <button class="w-full px-4 py-3 bg-primary text-white rounded-xl font-semibold">Gửi phản hồi</button>
-                        </form>
+                        <!-- Complaint Info -->
+                        <div class="space-y-3">
+                            <div class="grid grid-cols-2 gap-3 text-sm">
+                                <div>
+                                    <p class="text-xs text-slate-500">Danh mục</p>
+                                    <p class="font-semibold">
+                                        @(Model.Data.SelectedComplaint.Category switch
+                                        {
+                                            "QUALITY" => "Chất lượng dịch vụ",
+                                            "PAYMENT" => "Vấn đề thanh toán",
+                                            "BEHAVIOR" => "Hành vi nhân viên",
+                                            "SERVICE" => "Vấn đề dịch vụ",
+                                            _ => Model.Data.SelectedComplaint.Category
+                                        })
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-slate-500">Được giao cho</p>
+                                    <p class="font-semibold">@(Model.Data.SelectedComplaint.AssignedToName ?? "Chưa giao")</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-slate-500">Tạo lúc</p>
+                                    <p class="font-semibold">@Model.Data.SelectedComplaint.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                                </div>
+                                @if (Model.Data.SelectedComplaint.FollowUpReminderDate.HasValue)
+                                {
+                                    <div>
+                                        <p class="text-xs text-slate-500">Nhắc lại</p>
+                                        <p class="font-semibold text-orange-600">@Model.Data.SelectedComplaint.FollowUpReminderDate.Value.ToString("dd/MM/yyyy HH:mm")</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div>
+                            <p class="text-xs text-slate-500 mb-2">Nội dung khiếu nại</p>
+                            <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 text-sm min-h-[80px]">@Model.Data.SelectedComplaint.Description</div>
+                        </div>
+
+                        <!-- Tabs for actions -->
+                        <div class="border-t-2 pt-4">
+                            <div id="actionTabs" class="flex gap-2 mb-4 text-sm">
+                                <button type="button" class="px-3 py-2 font-semibold border-b-2 border-primary text-primary tabs-btn" onclick="switchTab('resolve')">Xử lý</button>
+                                <button type="button" class="px-3 py-2 font-semibold border-b-2 border-transparent text-slate-500 tabs-btn" onclick="switchTab('escalate')">Leo thang</button>
+                                <button type="button" class="px-3 py-2 font-semibold border-b-2 border-transparent text-slate-500 tabs-btn" onclick="switchTab('reminder')">Nhắc lại</button>
+                                <button type="button" class="px-3 py-2 font-semibold border-b-2 border-transparent text-slate-500 tabs-btn" onclick="switchTab('assign')">Giao cho</button>
+                            </div>
+
+                            <!-- Resolve Tab -->
+                            <form id="resolveTab" method="post" asp-page-handler="Resolve" class="space-y-3 tab-content">
+                                <input type="hidden" name="ComplaintId" value="@Model.Data.SelectedComplaint.ComplaintId" />
+                                <input type="hidden" asp-for="SearchTerm" />
+                                <input type="hidden" asp-for="StatusFilter" />
+                                <input type="hidden" asp-for="CategoryFilter" />
+                                <input type="hidden" asp-for="PriorityFilter" />
+                                <div>
+                                    <label class="text-xs text-slate-500 block mb-1">Trạng thái sau cùng</label>
+                                    <select asp-for="NextStatus" class="w-full rounded-lg border-slate-200 text-sm">
+                                        <option value="PROCESSING">Đang xử lý</option>
+                                        <option value="RESOLVED">Đã giải quyết</option>
+                                        <option value="REJECTED">Từ chối</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-xs text-slate-500 block mb-1">Phản hồi cho bệnh nhân</label>
+                                    <textarea asp-for="ResolutionNote" rows="3" placeholder="Nhập phản hồi tại đây..." class="w-full rounded-lg border-slate-200 text-sm"></textarea>
+                                </div>
+                                <button type="submit" class="w-full px-4 py-2 bg-primary text-white rounded-lg font-semibold text-sm hover:opacity-90">Gửi phản hồi</button>
+                            </form>
+
+                            <!-- Escalate Tab -->
+                            <form id="escalateTab" method="post" asp-page-handler="Escalate" class="space-y-3 tab-content hidden">
+                                <input type="hidden" name="ComplaintId" value="@Model.Data.SelectedComplaint.ComplaintId" />
+                                <input type="hidden" asp-for="SearchTerm" />
+                                <input type="hidden" asp-for="StatusFilter" />
+                                <input type="hidden" asp-for="CategoryFilter" />
+                                <input type="hidden" asp-for="PriorityFilter" />
+                                <p class="text-xs text-orange-600 bg-orange-50 px-3 py-2 rounded-lg">⚠️ Leo thang giúp vấn đề được xem xét bởi quản lý cấp cao hơn</p>
+                                <div>
+                                    <label class="text-xs text-slate-500 block mb-1">Lý do leo thang</label>
+                                    <textarea asp-for="EscalationReason" rows="2" placeholder="Giải thích tại sao cần leo thang..." class="w-full rounded-lg border-slate-200 text-sm"></textarea>
+                                </div>
+                                <button type="submit" class="w-full px-4 py-2 bg-orange-600 text-white rounded-lg font-semibold text-sm hover:bg-orange-700">Leo thang khiếu nại</button>
+                            </form>
+
+                            <!-- Reminder Tab -->
+                            <form id="reminderTab" method="post" asp-page-handler="SetReminder" class="space-y-3 tab-content hidden">
+                                <input type="hidden" name="ComplaintId" value="@Model.Data.SelectedComplaint.ComplaintId" />
+                                <input type="hidden" asp-for="SearchTerm" />
+                                <input type="hidden" asp-for="StatusFilter" />
+                                <input type="hidden" asp-for="CategoryFilter" />
+                                <input type="hidden" asp-for="PriorityFilter" />
+                                <div>
+                                    <label class="text-xs text-slate-500 block mb-1">Nhắc lại vào ngày/giờ</label>
+                                    <input type="datetime-local" asp-for="FollowUpReminderDate" class="w-full rounded-lg border-slate-200 text-sm" required />
+                                </div>
+                                <button type="submit" class="w-full px-4 py-2 bg-slate-600 text-white rounded-lg font-semibold text-sm hover:bg-slate-700">Đặt nhắc lại</button>
+                            </form>
+
+                            <!-- Assign Tab -->
+                            <form id="assignTab" method="post" asp-page-handler="AutoAssign" class="space-y-3 tab-content hidden">
+                                <input type="hidden" name="ComplaintId" value="@Model.Data.SelectedComplaint.ComplaintId" />
+                                <input type="hidden" asp-for="SearchTerm" />
+                                <input type="hidden" asp-for="StatusFilter" />
+                                <input type="hidden" asp-for="CategoryFilter" />
+                                <input type="hidden" asp-for="PriorityFilter" />
+                                <p class="text-xs text-blue-600 bg-blue-50 px-3 py-2 rounded-lg">ℹ️ Giao khiếu nại cho nhân viên chuyên trách phù hợp</p>
+                                <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold text-sm hover:bg-blue-700">Tự động giao phó</button>
+                            </form>
+                        </div>
                     }
                 </div>
             </section>
         </div>
     </main>
 </div>
+
+<script>
+function switchTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+    
+    // Remove active border from all buttons
+    document.querySelectorAll('.tabs-btn').forEach(btn => {
+        btn.classList.remove('border-primary', 'text-primary');
+        btn.classList.add('border-transparent', 'text-slate-500');
+    });
+    
+    // Show selected tab
+    const tabId = tabName + 'Tab';
+    const tabElement = document.getElementById(tabId);
+    if (tabElement) {
+        tabElement.classList.remove('hidden');
+    }
+    
+    // Highlight selected button
+    event.target.classList.add('border-primary', 'text-primary');
+    event.target.classList.remove('border-transparent', 'text-slate-500');
+}
+</script>

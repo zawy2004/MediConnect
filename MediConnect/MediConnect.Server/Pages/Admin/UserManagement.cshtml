@@ -65,10 +65,30 @@
                 }
             </section>
 
+            <!-- Bulk Actions Toolbar -->
+            <div id="bulkActionsBar" class="hidden bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <input type="checkbox" id="selectAllCheckbox" class="w-4 h-4" />
+                    <span id="bulkSelectCount" class="text-sm font-semibold text-slate-700">0 được chọn</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="bulkExportBtn" class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8m0 8l-4-2m4 2l4-2"></path>
+                        </svg>
+                        Xuất Excel
+                    </button>
+                    <button id="bulkClearBtn" class="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg text-sm font-bold">Hủy chọn</button>
+                </div>
+            </div>
+
             <section class="bg-white border rounded-2xl overflow-hidden">
                 <table class="w-full text-sm">
                     <thead class="bg-slate-50 text-slate-500">
                         <tr>
+                            <th class="text-left px-4 py-3 w-10">
+                                <input type="checkbox" class="bulk-check-header w-4 h-4" />
+                            </th>
                             <th class="text-left px-4 py-3">Người dùng</th>
                             <th class="text-left px-4 py-3">Vai trò / Đặc điểm</th>
                             <th class="text-left px-4 py-3">Trạng thái</th>
@@ -79,7 +99,10 @@
                     <tbody>
                         @foreach (var user in Model.Users)
                         {
-                            <tr class="border-t border-slate-100">
+                            <tr class="border-t border-slate-100 hover:bg-slate-50 transition">
+                                <td class="px-4 py-3">
+                                    <input type="checkbox" class="bulk-check w-4 h-4 user-checkbox" data-user-id="@user.UserId" />
+                                </td>
                                 <td class="px-4 py-3">
                                     <p class="font-semibold">@user.FullName</p>
                                     <p class="text-xs text-slate-500">@user.Email</p>
@@ -91,7 +114,33 @@
                                     </span>
                                 </td>
                                 <td class="px-4 py-3 text-slate-500">@user.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
-                                <td class="px-4 py-3 text-slate-400">• • •</td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-2">
+                                        <!-- Toggle Status Button -->
+                                        <form method="post" asp-page-handler="ToggleStatus" class="inline">
+                                            <input type="hidden" name="userId" value="@user.UserId" />
+                                            <input type="hidden" name="isActive" value="@(!user.IsActive)" />
+                                            <button type="submit" class="px-2 py-1 text-xs rounded-lg @(user.IsActive ? "bg-red-100 text-red-700 hover:bg-red-200" : "bg-green-100 text-green-700 hover:bg-green-200")" title="@(user.IsActive ? "Vô hiệu hóa" : "Kích hoạt")">
+                                                @(user.IsActive ? "Tắt" : "Bật")
+                                            </button>
+                                        </form>
+                                        
+                                        <!-- Reset Password Button -->
+                                        <button type="button" class="px-2 py-1 text-xs rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200" onclick="openResetPasswordModal(@user.UserId, '@user.FullName', '@user.Email')">  
+                                            Đặt lại
+                                        </button>
+                                        
+                                        <!-- Edit Button -->
+                                        <button type="button" class="px-2 py-1 text-xs rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300" onclick="openEditModal(@user.UserId, '@user.FullName', '@user.Email')">  
+                                            Sửa
+                                        </button>
+                                        
+                                        <!-- View Details Button -->
+                                        <button type="button" class="px-2 py-1 text-xs rounded-lg bg-purple-100 text-purple-700 hover:bg-purple-200" onclick="openDetailsModal(@user.UserId)">  
+                                            Chi tiết
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
                         }
                     </tbody>
@@ -100,3 +149,263 @@
         </div>
     </main>
 </div>
+
+<!-- Reset Password Modal -->
+<div id="resetPasswordModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-lg max-w-md w-full p-6 space-y-4">
+        <h3 class="text-xl font-bold">Đặt lại mật khẩu</h3>
+        <p class="text-sm text-slate-600">Hệ thống sẽ gửi mật khẩu tạm thời đến <span id="resetModalEmail" class="font-semibold"></span></p>
+        
+        <form id="resetPasswordForm" method="post" asp-page-handler="ResetPassword">
+            <input type="hidden" id="resetModalUserId" name="userId" />
+            <div class="space-y-4">
+                <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
+                    Xác nhận đặt lại
+                </button>
+                <button type="button" onclick="closeResetPasswordModal()" class="w-full px-4 py-2 border border-slate-300 text-slate-700 rounded-lg font-semibold hover:bg-slate-50">
+                    Hủy
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div id="editUserModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-lg max-w-md w-full p-6 space-y-4 my-8">
+        <h3 class="text-xl font-bold">Chỉnh sửa thông tin người dùng</h3>
+        
+        <form id="editUserForm" method="post" asp-page-handler="UpdateUser" class="space-y-4">
+            <input type="hidden" id="editUserId" name="EditForm.UserId" />
+            
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Họ và tên</label>
+                <input type="text" id="editFullName" name="EditForm.FullName" class="w-full px-3 py-2 border border-slate-300 rounded-lg" required />
+            </div>
+            
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Email</label>
+                <input type="email" id="editEmail" name="EditForm.Email" class="w-full px-3 py-2 border border-slate-300 rounded-lg" disabled />
+            </div>
+            
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Số điện thoại</label>
+                <input type="tel" id="editPhone" name="EditForm.PhoneNumber" class="w-full px-3 py-2 border border-slate-300 rounded-lg" />
+            </div>
+            
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Giới tính</label>
+                <select id="editGender" name="EditForm.Gender" class="w-full px-3 py-2 border border-slate-300 rounded-lg">
+                    <option value="">Chọn giới tính</option>
+                    <option value="MALE">Nam</option>
+                    <option value="FEMALE">Nữ</option>
+                    <option value="OTHER">Khác</option>
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Ngày sinh</label>
+                <input type="date" id="editDOB" name="EditForm.DateOfBirth" class="w-full px-3 py-2 border border-slate-300 rounded-lg" />
+            </div>
+            
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Địa chỉ</label>
+                <input type="text" id="editAddress" name="EditForm.Address" class="w-full px-3 py-2 border border-slate-300 rounded-lg" />
+            </div>
+            
+            <div class="flex gap-3 pt-4">
+                <button type="submit" class="flex-1 px-4 py-2 bg-primary text-white rounded-lg font-semibold hover:opacity-90">
+                    Lưu thay đổi
+                </button>
+                <button type="button" onclick="closeEditModal()" class="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg font-semibold hover:bg-slate-50">
+                    Hủy
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- User Details Modal -->
+<div id="detailsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-lg max-w-2xl w-full p-6 space-y-4 my-8">
+        <h3 class="text-xl font-bold">Chi tiết người dùng</h3>
+        
+        <div id="detailsContent" class="space-y-4 max-h-96 overflow-y-auto">
+            <div class="animate-pulse space-y-3">
+                <div class="h-4 bg-slate-200 rounded w-3/4"></div>
+                <div class="h-4 bg-slate-200 rounded"></div>
+            </div>
+        </div>
+        
+        <button type="button" onclick="closeDetailsModal()" class="w-full px-4 py-2 border border-slate-300 text-slate-700 rounded-lg font-semibold hover:bg-slate-50">
+            Đóng
+        </button>
+    </div>
+</div>
+
+<script>
+// Bulk Selection Logic
+let selectedUserIds = new Set();
+
+document.querySelectorAll('.user-checkbox').forEach(checkbox => {
+    checkbox.addEventListener('change', updateBulkUI);
+});
+
+document.getElementById('selectAllCheckbox').addEventListener('change', function() {
+    const isChecked = this.checked;
+    document.querySelectorAll('.user-checkbox').forEach(checkbox => {
+        checkbox.checked = isChecked;
+    });
+    updateBulkUI();
+});
+
+function updateBulkUI() {
+    selectedUserIds.clear();
+    document.querySelectorAll('.user-checkbox:checked').forEach(checkbox => {
+        selectedUserIds.add(parseInt(checkbox.dataset.userId));
+    });
+    
+    const bulkBar = document.getElementById('bulkActionsBar');
+    const countSpan = document.getElementById('bulkSelectCount');
+    
+    if (selectedUserIds.size > 0) {
+        bulkBar.classList.remove('hidden');
+        countSpan.textContent = `${selectedUserIds.size} được chọn`;
+    } else {
+        bulkBar.classList.add('hidden');
+    }
+}
+
+document.getElementById('bulkExportBtn').addEventListener('click', function() {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '?handler=ExportUsers';
+    
+    selectedUserIds.forEach(id => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'SelectedUserIds';
+        input.value = id;
+        form.appendChild(input);
+    });
+    
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+});
+
+document.getElementById('bulkClearBtn').addEventListener('click', function() {
+    document.querySelectorAll('.user-checkbox, .bulk-check-header').forEach(cb => cb.checked = false);
+    updateBulkUI();
+});
+
+// Reset Password Modal
+function openResetPasswordModal(userId, userName, userEmail) {
+    document.getElementById('resetModalUserId').value = userId;
+    document.getElementById('resetModalEmail').textContent = userEmail;
+    document.getElementById('resetPasswordModal').classList.remove('hidden');
+}
+
+function closeResetPasswordModal() {
+    document.getElementById('resetPasswordModal').classList.add('hidden');
+}
+
+// Edit User Modal
+function openEditModal(userId, fullName, email) {
+    document.getElementById('editUserId').value = userId;
+    document.getElementById('editFullName').value = fullName;
+    document.getElementById('editEmail').value = email;
+    // Fetch full user details to populate the form
+    fetch(`?handler=GetUserDetail&userId=${userId}`)
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById('editPhone').value = data.phone || '';
+            document.getElementById('editGender').value = data.gender || '';
+            document.getElementById('editDOB').value = data.dob ? data.dob.split('/').reverse().join('-') : '';
+            document.getElementById('editAddress').value = data.address || '';
+            document.getElementById('editUserModal').classList.remove('hidden');
+        })
+        .catch(() => {
+            document.getElementById('editUserModal').classList.remove('hidden');
+        });
+}
+
+function closeEditModal() {
+    document.getElementById('editUserModal').classList.add('hidden');
+}
+
+// Details Modal
+function openDetailsModal(userId) {
+    const modal = document.getElementById('detailsModal');
+    const content = document.getElementById('detailsContent');
+    modal.classList.remove('hidden');
+    
+    // Fetch user details via AJAX
+    fetch(`?handler=GetUserDetail&userId=${userId}`)
+        .then(r => r.json())
+        .then(data => {
+            content.innerHTML = `
+                <div class="space-y-3">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-xs text-slate-500">Họ và tên</p>
+                            <p class="font-semibold">${data.fullName}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500">Email</p>
+                            <p class="font-semibold">${data.email}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500">Vai trò</p>
+                            <p class="font-semibold">${data.roleName}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500">Trạng thái</p>
+                            <p class="font-semibold">${data.isActive ? 'Hoạt động' : 'Tạm khóa'}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500">Điện thoại</p>
+                            <p class="font-semibold">${data.phone || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500">Ngày sinh</p>
+                            <p class="font-semibold">${data.dob || 'N/A'}</p>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4" />
+                    
+                    <h4 class="font-bold text-sm">Lịch sử hoạt động</h4>
+                    <div class="space-y-2 max-h-48 overflow-y-auto">
+                        ${data.activities.map(a => `
+                            <div class="border border-slate-200 rounded-lg p-2 text-xs">
+                                <div class="flex justify-between">
+                                    <span class="font-semibold">${a.action}</span>
+                                    <span class="text-slate-500">${new Date(a.createdAt).toLocaleDateString('vi-VN')}</span>
+                                </div>
+                                <p class="text-slate-600">${a.description || ''}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        })
+        .catch(() => {
+            content.innerHTML = '<p class="text-red-600">Lỗi tải dữ liệu</p>';
+        });
+}
+
+function closeDetailsModal() {
+    document.getElementById('detailsModal').classList.add('hidden');
+}
+
+// Close modals on Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeResetPasswordModal();
+        closeEditModal();
+        closeDetailsModal();
+    }
+});
+</script>
+

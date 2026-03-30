@@ -4,6 +4,7 @@ using MediConnect.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MediConnect.Infrastructure.Migrations
 {
     [DbContext(typeof(MediconnectContext))]
-    partial class MediconnectContextModelSnapshot : ModelSnapshot
+    [Migration("20260328050958_AddComplaintExtendedFields")]
+    partial class AddComplaintExtendedFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -872,7 +875,7 @@ namespace MediConnect.Infrastructure.Migrations
                         .HasColumnType("decimal(12, 2)")
                         .HasColumnName("amount");
 
-                    b.Property<int?>("AppointmentId")
+                    b.Property<int>("AppointmentId")
                         .HasColumnType("int")
                         .HasColumnName("appointment_id");
 
@@ -1619,6 +1622,7 @@ namespace MediConnect.Infrastructure.Migrations
                     b.HasOne("MediConnect.Domain.Entities.Appointment", "Appointment")
                         .WithMany("Payments")
                         .HasForeignKey("AppointmentId")
+                        .IsRequired()
                         .HasConstraintName("FK_pay_appointment");
 
                     b.HasOne("MediConnect.Domain.Entities.User", "Patient")

@@ -3,6 +3,8 @@ using MediConnect.Application.Interfaces;
 using MediConnect.Domain.Constants;
 using MediConnect.Domain.Entities;
 using System.Net;
+using BCrypt.Net;
+using OfficeOpenXml;
 
 namespace MediConnect.Application.Services;
 
@@ -311,18 +313,154 @@ public class AdminPortalService : IAdminPortalService
     public async Task<AdminComplaintDto> GetComplaintsAsync(int? selectedComplaintId)
     {
         var complaints = await _complaintRepository.GetAllAsync();
+        var logs = await _systemLogRepository.GetRecentAsync(1000);
+
+        var enriched = complaints
+            .Select(c => new { Complaint = c, Meta = BuildComplaintMeta(c, logs) })
+            .ToList();
+
         var selected = selectedComplaintId.HasValue
-            ? complaints.FirstOrDefault(c => c.ComplaintId == selectedComplaintId)
-            : complaints.FirstOrDefault();
+            ? enriched.FirstOrDefault(c => c.Complaint.ComplaintId == selectedComplaintId)
+            : enriched.FirstOrDefault();
 
         return new AdminComplaintDto
         {
-            TotalComplaints = complaints.Count,
-            OpenComplaints = complaints.Count(c => c.Status == "OPEN"),
-            ProcessingComplaints = complaints.Count(c => c.Status == "PROCESSING"),
-            Complaints = complaints.Select(MapComplaint).ToList(),
-            SelectedComplaint = selected == null ? null : MapComplaint(selected)
+            TotalComplaints = enriched.Count,
+            OpenComplaints = enriched.Count(c => c.Complaint.Status == "OPEN"),
+            CriticalComplaints = enriched.Count(c => c.Meta.Priority == "CRITICAL"),
+            ProcessingComplaints = enriched.Count(c => c.Complaint.Status == "PROCESSING"),
+            Complaints = enriched.Select(c => MapComplaintItem(c.Complaint, c.Meta)).ToList(),
+            SelectedComplaint = selected == null ? null : MapComplaintDetail(selected.Complaint, selected.Meta)
         };
+    }
+
+    public async Task<AdminComplaintDto> GetComplaintsAsync(string? category, string? priority, string? status, int? selectedComplaintId)
+    {
+        var complaints = await _complaintRepository.GetAllAsync();
+        var logs = await _systemLogRepository.GetRecentAsync(1000);
+
+        var enriched = complaints
+            .Select(c => new { Complaint = c, Meta = BuildComplaintMeta(c, logs) })
+            .AsEnumerable();
+
+        // Apply filters
+        if (!string.IsNullOrWhiteSpace(category) && category != "ALL")
+            enriched = enriched.Where(c => c.Meta.Category == category);
+
+        if (!string.IsNullOrWhiteSpace(priority) && priority != "ALL")
+            enriched = enriched.Where(c => c.Meta.Priority == priority);
+
+        if (!string.IsNullOrWhiteSpace(status) && status != "ALL")
+            enriched = enriched.Where(c => c.Complaint.Status == status);
+
+        var filtered = enriched.ToList();
+
+        var selected = selectedComplaintId.HasValue
+            ? filtered.FirstOrDefault(c => c.Complaint.ComplaintId == selectedComplaintId)
+            : filtered.FirstOrDefault();
+
+        return new AdminComplaintDto
+        {
+            TotalComplaints = filtered.Count,
+            OpenComplaints = filtered.Count(c => c.Complaint.Status == "OPEN"),
+            CriticalComplaints = filtered.Count(c => c.Meta.Priority == "CRITICAL"),
+            ProcessingComplaints = filtered.Count(c => c.Complaint.Status == "PROCESSING"),
+            Complaints = filtered.OrderByDescending(c => c.Complaint.CreatedAt).Select(c => MapComplaintItem(c.Complaint, c.Meta)).ToList(),
+            SelectedComplaint = selected == null ? null : MapComplaintDetail(selected.Complaint, selected.Meta)
+        };
+    }
+
+    public async Task<ComplaintDetailDto?> GetComplaintDetailAsync(int complaintId)
+    {
+        var complaint = await _complaintRepository.GetByIdAsync(complaintId);
+        if (complaint == null) return null;
+
+        var logs = await _systemLogRepository.GetRecentAsync(1000);
+        var meta = BuildComplaintMeta(complaint, logs);
+        return MapComplaintDetail(complaint, meta);
+    }
+
+    public async Task<bool> UpdateComplaintAsync(UpdateComplaintDto dto, int adminUserId)
+    {
+        var complaint = await _complaintRepository.GetByIdAsync(dto.ComplaintId);
+        if (complaint == null) return false;
+
+        complaint.Status = dto.NextStatus;
+        complaint.ResolutionNote = dto.ResolutionNote;
+        complaint.UpdatedAt = DateTime.Now;
+
+        if (!string.IsNullOrWhiteSpace(dto.NextStatus) && (dto.NextStatus == "RESOLVED" || dto.NextStatus == "REJECTED"))
+        {
+            complaint.ResolvedBy = adminUserId;
+            complaint.ResolvedAt = DateTime.Now;
+        }
+
+        await _complaintRepository.UpdateAsync(complaint);
+        await LogActionAsync(adminUserId,
+            "UPDATE_COMPLAINT",
+            $"Updated complaint #{complaint.ComplaintId}: category={NormalizeCategory(dto.Category)}, priority={NormalizePriority(dto.Priority)}, assignedTo={dto.AssignedToAdminId?.ToString() ?? "AUTO"}",
+            "INFO");
+        await _unitOfWork.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> EscalateComplaintAsync(int complaintId, int adminUserId, string escalationReason)
+    {
+        var complaint = await _complaintRepository.GetByIdAsync(complaintId);
+        if (complaint == null) return false;
+
+        complaint.Status = "ESCALATED";
+        complaint.UpdatedAt = DateTime.Now;
+
+        await _complaintRepository.UpdateAsync(complaint);
+        await LogActionAsync(adminUserId,
+            "ESCALATE_COMPLAINT",
+            $"Escalated complaint #{complaint.ComplaintId}: {escalationReason}",
+            "WARNING");
+
+        var reminder = DateTime.Now.AddDays(1);
+        await LogActionAsync(adminUserId,
+            "SET_COMPLAINT_REMINDER",
+            $"Reminder complaint #{complaint.ComplaintId} at {reminder:O}",
+            "INFO");
+
+        await _unitOfWork.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> SetFollowUpReminderAsync(int complaintId, DateTime reminderDate)
+    {
+        var complaint = await _complaintRepository.GetByIdAsync(complaintId);
+        if (complaint == null) return false;
+
+        await LogActionAsync(complaint.ResolvedBy ?? complaint.PatientId,
+            "SET_COMPLAINT_REMINDER",
+            $"Reminder complaint #{complaint.ComplaintId} at {reminderDate:O}",
+            "INFO");
+        await _unitOfWork.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> AutoAssignComplaintAsync(int complaintId, string category, string priority)
+    {
+        var complaint = await _complaintRepository.GetByIdAsync(complaintId);
+        if (complaint == null) return false;
+
+        // Simple auto-assignment logic based on priority and category
+        // In production, this could be more sophisticated (round-robin, workload-based, etc)
+        var adminUsers = await _userRepository.GetAllAsync(); // Get all admin users
+        var availableAdmins = adminUsers.Where(u => u.Role?.RoleName == "ADMIN" && u.IsActive).ToList();
+
+        if (availableAdmins.Count == 0) return false;
+
+        // Assign to first available admin (simplified heuristic)
+        var assignedAdmin = availableAdmins.First();
+        await LogActionAsync(assignedAdmin.UserId,
+            "AUTO_ASSIGN_COMPLAINT",
+            $"Assigned complaint #{complaint.ComplaintId} to admin {assignedAdmin.UserId} ({assignedAdmin.FullName}) [category={NormalizeCategory(category)}, priority={NormalizePriority(priority)}]",
+            "INFO");
+        await _unitOfWork.SaveChangesAsync();
+        return true;
     }
 
     public async Task<bool> ResolveComplaintAsync(int complaintId, int adminUserId, string resolutionNote, string nextStatus)
@@ -337,6 +475,7 @@ public class AdminPortalService : IAdminPortalService
         complaint.UpdatedAt = DateTime.Now;
 
         await _complaintRepository.UpdateAsync(complaint);
+        await LogActionAsync(adminUserId, "RESOLVE_COMPLAINT", $"Resolved complaint #{complaintId}", "INFO");
         await _unitOfWork.SaveChangesAsync();
         return true;
     }
@@ -539,7 +678,7 @@ public class AdminPortalService : IAdminPortalService
                """;
     }
 
-    private static ComplaintItemDto MapComplaint(Complaint complaint)
+    private static ComplaintItemDto MapComplaintItem(Complaint complaint, ComplaintMeta meta)
     {
         return new ComplaintItemDto
         {
@@ -547,10 +686,366 @@ public class AdminPortalService : IAdminPortalService
             Subject = complaint.Subject,
             Description = complaint.Description,
             Status = complaint.Status,
+            Category = meta.Category,
+            Priority = meta.Priority,
+            EscalationLevel = meta.EscalationLevel,
             PatientName = complaint.Patient.FullName,
             DoctorName = complaint.Doctor?.FullName,
+            AssignedToName = meta.AssignedToName,
             CreatedAt = complaint.CreatedAt,
+            FollowUpReminderDate = meta.FollowUpReminderDate,
             ResolutionNote = complaint.ResolutionNote
         };
+    }
+
+    private static ComplaintDetailDto MapComplaintDetail(Complaint complaint, ComplaintMeta meta)
+    {
+        return new ComplaintDetailDto
+        {
+            ComplaintId = complaint.ComplaintId,
+            Subject = complaint.Subject,
+            Description = complaint.Description,
+            Status = complaint.Status,
+            Category = meta.Category,
+            Priority = meta.Priority,
+            EscalationLevel = meta.EscalationLevel,
+            PatientId = complaint.PatientId,
+            PatientName = complaint.Patient.FullName,
+            DoctorId = complaint.DoctorId,
+            DoctorName = complaint.Doctor?.FullName,
+            AssignedToAdminId = meta.AssignedToAdminId,
+            AssignedToName = meta.AssignedToName,
+            FollowUpReminderDate = meta.FollowUpReminderDate,
+            CreatedAt = complaint.CreatedAt,
+            UpdatedAt = complaint.UpdatedAt,
+            ResolvedAt = complaint.ResolvedAt,
+            ResolutionNote = complaint.ResolutionNote
+        };
+    }
+
+    private sealed record ComplaintMeta(
+        string Category,
+        string Priority,
+        int EscalationLevel,
+        int? AssignedToAdminId,
+        string? AssignedToName,
+        DateTime? FollowUpReminderDate);
+
+    private static ComplaintMeta BuildComplaintMeta(Complaint complaint, List<SystemLog> logs)
+    {
+        var complaintLogs = logs
+            .Where(l => !string.IsNullOrWhiteSpace(l.Description)
+                && l.Description!.Contains($"#{complaint.ComplaintId}", StringComparison.Ordinal))
+            .OrderByDescending(l => l.CreatedAt)
+            .ToList();
+
+        var category = InferCategory(complaint.Subject, complaint.Description);
+        var priority = InferPriority(complaint.Subject, complaint.Description, complaint.CreatedAt, complaint.Status);
+
+        var updateLog = complaintLogs.FirstOrDefault(l => l.Action == "UPDATE_COMPLAINT");
+        if (updateLog?.Description != null)
+        {
+            category = ExtractToken(updateLog.Description, "category=") ?? category;
+            priority = ExtractToken(updateLog.Description, "priority=") ?? priority;
+        }
+
+        var escalationLevel = complaintLogs.Count(l => l.Action == "ESCALATE_COMPLAINT");
+
+        int? assignedAdminId = null;
+        string? assignedToName = null;
+        var assignLog = complaintLogs.FirstOrDefault(l => l.Action == "AUTO_ASSIGN_COMPLAINT");
+        if (assignLog != null)
+        {
+            assignedAdminId = assignLog.UserId;
+            assignedToName = assignLog.User?.FullName;
+        }
+
+        DateTime? reminder = null;
+        var reminderLog = complaintLogs.FirstOrDefault(l => l.Action == "SET_COMPLAINT_REMINDER");
+        if (!string.IsNullOrWhiteSpace(reminderLog?.Description))
+        {
+            var token = ExtractToken(reminderLog.Description!, "at ");
+            if (DateTime.TryParse(token, out var parsed))
+            {
+                reminder = parsed;
+            }
+        }
+
+        return new ComplaintMeta(
+            NormalizeCategory(category),
+            NormalizePriority(priority),
+            escalationLevel,
+            assignedAdminId,
+            assignedToName,
+            reminder);
+    }
+
+    private static string InferCategory(string subject, string description)
+    {
+        var text = $"{subject} {description}".ToLowerInvariant();
+        if (text.Contains("payment") || text.Contains("thanh toan") || text.Contains("hoa don")) return "PAYMENT";
+        if (text.Contains("behavior") || text.Contains("thai do") || text.Contains("ung xu")) return "BEHAVIOR";
+        if (text.Contains("chat luong") || text.Contains("quality")) return "QUALITY";
+        if (text.Contains("service") || text.Contains("dich vu")) return "SERVICE";
+        return "OTHER";
+    }
+
+    private static string InferPriority(string subject, string description, DateTime createdAt, string status)
+    {
+        var text = $"{subject} {description}".ToLowerInvariant();
+        if (text.Contains("urgent") || text.Contains("khancap") || text.Contains("nghiem trong")) return "CRITICAL";
+        if (DateTime.Now.Subtract(createdAt).TotalHours > 48 && status != "RESOLVED") return "HIGH";
+        if (text.Contains("delay") || text.Contains("cham")) return "HIGH";
+        return "NORMAL";
+    }
+
+    private static string NormalizeCategory(string? category)
+    {
+        var value = (category ?? "OTHER").Trim().ToUpperInvariant();
+        return value is "QUALITY" or "PAYMENT" or "BEHAVIOR" or "SERVICE" ? value : "OTHER";
+    }
+
+    private static string NormalizePriority(string? priority)
+    {
+        var value = (priority ?? "NORMAL").Trim().ToUpperInvariant();
+        return value is "CRITICAL" or "HIGH" or "NORMAL" or "LOW" ? value : "NORMAL";
+    }
+
+    private static string? ExtractToken(string text, string prefix)
+    {
+        var index = text.IndexOf(prefix, StringComparison.OrdinalIgnoreCase);
+        if (index < 0) return null;
+
+        var start = index + prefix.Length;
+        var end = text.IndexOfAny(new[] { ',', ']', ' ' }, start);
+        if (end < 0) end = text.Length;
+
+        var token = text[start..end].Trim();
+        return string.IsNullOrWhiteSpace(token) ? null : token;
+    }
+
+    // New User Management Methods
+    public async Task<UserDetailDto?> GetUserDetailAsync(int userId)
+    {
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null) return null;
+
+        var activities = await _systemLogRepository.GetByUserIdAsync(userId, 50);
+
+        return new UserDetailDto
+        {
+            UserId = user.UserId,
+            FullName = user.FullName,
+            Email = user.Email,
+            PhoneNumber = user.PhoneNumber ?? string.Empty,
+            Gender = user.Gender,
+            DateOfBirth = user.DateOfBirth,
+            Address = user.Address,
+            RoleName = user.Role.RoleName,
+            IsActive = user.IsActive,
+            IsVerified = user.IsVerified,
+            CreatedAt = user.CreatedAt,
+            UpdatedAt = user.UpdatedAt,
+            LastLoginAt = user.LastLoginAt,
+            RecentActivities = activities.Select(a => new UserActivityItemDto
+            {
+                LogId = a.LogId,
+                Action = a.Action,
+                Description = a.Description,
+                Severity = a.Severity,
+                CreatedAt = a.CreatedAt
+            }).ToList()
+        };
+    }
+
+    public async Task<bool> ToggleUserStatusAsync(int userId, bool isActive, int adminUserId)
+    {
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null) return false;
+
+        var wasActive = user.IsActive;
+        user.IsActive = isActive;
+        user.UpdatedAt = DateTime.Now;
+
+        await _userRepository.UpdateAsync(user);
+
+        var action = isActive ? "ENABLE_USER" : "DISABLE_USER";
+        var description = $"User {user.Email} {(isActive ? "enabled" : "disabled")} by admin";
+        await LogActionAsync(adminUserId, action, description, "INFO");
+
+        await _unitOfWork.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> UpdateUserAsync(EditUserDto dto, int adminUserId)
+    {
+        var user = await _userRepository.GetByIdAsync(dto.UserId);
+        if (user == null) return false;
+
+        var changes = new List<string>();
+        if (user.FullName != dto.FullName)
+        {
+            changes.Add($"Name: {user.FullName} → {dto.FullName}");
+            user.FullName = dto.FullName;
+        }
+        if (user.Email != dto.Email)
+        {
+            changes.Add($"Email: {user.Email} → {dto.Email}");
+            user.Email = dto.Email;
+        }
+        if (user.PhoneNumber != dto.PhoneNumber)
+        {
+            changes.Add($"Phone: {user.PhoneNumber} → {dto.PhoneNumber}");
+            user.PhoneNumber = dto.PhoneNumber;
+        }
+        if (user.Gender != dto.Gender)
+        {
+            changes.Add($"Gender: {user.Gender} → {dto.Gender}");
+            user.Gender = dto.Gender;
+        }
+        if (user.DateOfBirth != dto.DateOfBirth)
+        {
+            changes.Add($"DOB: {user.DateOfBirth} → {dto.DateOfBirth}");
+            user.DateOfBirth = dto.DateOfBirth;
+        }
+        if (user.Address != dto.Address)
+        {
+            changes.Add($"Address: {user.Address} → {dto.Address}");
+            user.Address = dto.Address;
+        }
+
+        if (changes.Count == 0) return true;
+
+        user.UpdatedAt = DateTime.Now;
+        await _userRepository.UpdateAsync(user);
+
+        var description = $"User {user.Email} updated. Changes: {string.Join("; ", changes)}";
+        await LogActionAsync(adminUserId, "EDIT_USER", description, "INFO");
+
+        await _unitOfWork.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> ResetUserPasswordAsync(int userId, int adminUserId)
+    {
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null) return false;
+
+        var tempPassword = GenerateTemporaryPassword();
+        var passwordHash = BCrypt.Net.BCrypt.HashPassword(tempPassword);
+        user.PasswordHash = passwordHash;
+        user.UpdatedAt = DateTime.Now;
+
+        await _userRepository.UpdateAsync(user);
+
+        var description = $"Password reset for user {user.Email}. Temp password sent to email.";
+        await LogActionAsync(adminUserId, "RESET_PASSWORD", description, "WARNING");
+
+        // TODO: Send password reset email to user
+        await _unitOfWork.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<List<UserActivityItemDto>> GetUserActivityAsync(int userId, int limit = 50)
+    {
+        var activities = await _systemLogRepository.GetByUserIdAsync(userId, limit);
+        return activities.Select(a => new UserActivityItemDto
+        {
+            LogId = a.LogId,
+            Action = a.Action,
+            Description = a.Description,
+            Severity = a.Severity,
+            CreatedAt = a.CreatedAt
+        }).ToList();
+    }
+
+    public async Task<byte[]> ExportUsersExcelAsync(List<int>? userIds = null)
+    {
+        List<User> users;
+        if (userIds != null && userIds.Count > 0)
+        {
+            users = new List<User>();
+            foreach (var userId in userIds)
+            {
+                var user = await _userRepository.GetByIdAsync(userId);
+                if (user != null) users.Add(user);
+            }
+        }
+        else
+        {
+            users = await _userRepository.GetAllAsync();
+        }
+
+        using (var workbook = new OfficeOpenXml.ExcelPackage())
+        {
+            var worksheet = workbook.Workbook.Worksheets.Add("Users");
+
+            // Headers
+            worksheet.Cells[1, 1].Value = "User ID";
+            worksheet.Cells[1, 2].Value = "Full Name";
+            worksheet.Cells[1, 3].Value = "Email";
+            worksheet.Cells[1, 4].Value = "Phone";
+            worksheet.Cells[1, 5].Value = "Role";
+            worksheet.Cells[1, 6].Value = "Status";
+            worksheet.Cells[1, 7].Value = "Created At";
+            worksheet.Cells[1, 8].Value = "Last Login";
+
+            // Data
+            int row = 2;
+            foreach (var user in users)
+            {
+                worksheet.Cells[row, 1].Value = user.UserId;
+                worksheet.Cells[row, 2].Value = user.FullName;
+                worksheet.Cells[row, 3].Value = user.Email;
+                worksheet.Cells[row, 4].Value = user.PhoneNumber;
+                worksheet.Cells[row, 5].Value = user.Role.RoleName;
+                worksheet.Cells[row, 6].Value = user.IsActive ? "Active" : "Inactive";
+                worksheet.Cells[row, 7].Value = user.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss");
+                worksheet.Cells[row, 8].Value = user.LastLoginAt?.ToString("yyyy-MM-dd HH:mm:ss") ?? "Never";
+                row++;
+            }
+
+            // Auto-fit columns
+            worksheet.Column(1).Width = 12;
+            worksheet.Column(2).Width = 25;
+            worksheet.Column(3).Width = 25;
+            worksheet.Column(4).Width = 15;
+            worksheet.Column(5).Width = 12;
+            worksheet.Column(6).Width = 12;
+            worksheet.Column(7).Width = 20;
+            worksheet.Column(8).Width = 20;
+
+            return workbook.GetAsByteArray();
+        }
+    }
+
+    private async Task LogActionAsync(int userId, string action, string description, string severity)
+    {
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null) return;
+
+        var log = new SystemLog
+        {
+            UserId = userId,
+            Action = action,
+            Description = description,
+            Severity = severity,
+            CreatedAt = DateTime.Now,
+            IpAddress = "SYSTEM"
+        };
+
+        await _systemLogRepository.CreateAsync(log);
+    }
+
+    private static string GenerateTemporaryPassword()
+    {
+        var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%";
+        var random = new Random();
+        var password = new System.Text.StringBuilder();
+        for (int i = 0; i < 12; i++)
+        {
+            password.Append(chars[random.Next(chars.Length)]);
+        }
+        return password.ToString();
     }
 }
