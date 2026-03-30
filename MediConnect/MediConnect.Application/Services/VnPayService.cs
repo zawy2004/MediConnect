@@ -37,7 +37,7 @@ public class VnPayService : IVnPayService
             { "vnp_OrderInfo", WebUtility.UrlEncode(request.OrderInfo) },
             { "vnp_OrderType", _settings.OrderType },
             { "vnp_Locale", _settings.Locale },
-            { "vnp_ReturnUrl", _settings.ReturnUrl },
+            { "vnp_ReturnUrl", string.IsNullOrWhiteSpace(request.ReturnUrl) ? _settings.ReturnUrl : request.ReturnUrl },
             { "vnp_IpAddr", request.ClientIpAddress },
             { "vnp_CreateDate", createDate },
             { "vnp_ExpireDate", expireDate }

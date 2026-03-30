@@ -2,42 +2,52 @@
 @model MediConnect.Server.Pages.Doctor.PaymentModel
 @{
     ViewData["Title"] = "Thanh toán gói thành viên";
+    ViewData["HideLayout"] = true;
 }
 
-<div class="min-h-screen bg-[#f8fafc]">
-    <div class="max-w-[1200px] mx-auto px-6 py-8">
-        <h1 class="text-5xl font-black">Thanh toán Gói Thành viên</h1>
-        <p class="text-slate-500 mt-2">Hoàn tất thanh toán để duy trì các đặc quyền của bạn.</p>
+<div class="min-h-screen bg-[#f8fafc] flex">
+    @await Html.PartialAsync("_DoctorSidebar", "membership")
+    <main class="flex-1 overflow-y-auto p-8">
+        <div class="max-w-[1200px] mx-auto">
+            <h1 class="text-5xl font-black">Thanh toán Gói Thành viên</h1>
+            <p class="text-slate-500 mt-2">Hoàn tất thanh toán để duy trì các đặc quyền của bạn.</p>
 
-    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
-    {
-        <div class="mt-4 p-3 rounded-xl bg-green-50 text-green-700">@Model.SuccessMessage</div>
-    }
+        @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+        {
+            <div class="mt-4 p-3 rounded-xl bg-green-50 text-green-700">@Model.SuccessMessage</div>
+        }
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="mt-4 p-3 rounded-xl bg-red-50 text-red-700">@Model.ErrorMessage</div>
+        }
 
         <form method="post" class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+            <input type="hidden" asp-for="PlanCode" />
+
             <div class="lg:col-span-2 bg-white border rounded-2xl p-5 space-y-3">
-            <h2 class="text-lg font-bold">Phương thức thanh toán</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                @foreach (var method in Model.Summary.PaymentMethods)
-                {
-                    <label class="flex items-center justify-between border border-slate-200 rounded-xl p-3 cursor-pointer">
-                        <div class="flex items-center gap-2">
-                            <input type="radio" asp-for="PaymentMethod" value="@method" />
-                            <span>@method</span>
-                        </div>
-                        <span class="material-symbols-outlined text-slate-400">payments</span>
-                    </label>
-                }
+                <h2 class="text-lg font-bold">Phương thức thanh toán</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    @foreach (var method in Model.Summary.PaymentMethods)
+                    {
+                        <label class="flex items-center justify-between border border-slate-200 rounded-xl p-3 cursor-pointer">
+                            <div class="flex items-center gap-2">
+                                <input type="radio" asp-for="PaymentMethod" value="@method" />
+                                <span>@method</span>
+                            </div>
+                            <span class="material-symbols-outlined text-slate-400">payments</span>
+                        </label>
+                    }
+                </div>
             </div>
-        </div>
 
             <div class="bg-white border rounded-2xl p-5 h-fit sticky top-6">
-            <h2 class="text-lg font-bold">Tóm tắt đơn hàng</h2>
-            <p class="text-sm text-slate-500 mt-2">Gói: @Model.Summary.PlanName (@Model.Summary.PlanCode)</p>
-            <p class="text-sm text-slate-500 mt-1">Thời hạn: @Model.Summary.DurationDays ngày</p>
-            <p class="text-3xl font-black mt-4">@Model.Summary.Amount.ToString("N0")đ</p>
-            <button type="submit" class="w-full mt-5 py-3 bg-primary text-white rounded-xl font-semibold">Xác nhận Thanh toán</button>
-        </div>
-    </form>
+                <h2 class="text-lg font-bold">Tóm tắt đơn hàng</h2>
+                <p class="text-sm text-slate-500 mt-2">Gói: @Model.Summary.PlanName (@Model.Summary.PlanCode)</p>
+                <p class="text-sm text-slate-500 mt-1">Thời hạn: @Model.Summary.DurationDays ngày</p>
+                <p class="text-3xl font-black mt-4">@Model.Summary.Amount.ToString("N0")đ</p>
+                <button type="submit" class="w-full mt-5 py-3 bg-primary text-white rounded-xl font-semibold">Xác nhận Thanh toán</button>
+            </div>
+        </form>
+            </div>
+        </main>
     </div>
-</div>
