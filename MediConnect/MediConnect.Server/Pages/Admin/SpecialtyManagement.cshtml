@@ -14,10 +14,51 @@
         </header>
 
         <div class="p-8 space-y-6">
+            @if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+            {
+                <div class="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-sm text-blue-800">@Model.StatusMessage</div>
+            }
+
             <div class="bg-violet-50 border border-violet-200 rounded-2xl p-4 flex items-center justify-between">
                 <p class="text-sm"><span class="font-bold text-violet-700">AI Insight:</span> Chuyên khoa Nhi đang có nhu cầu tăng cao, ưu tiên điều động thêm bác sĩ trực.</p>
                 <button class="px-4 py-2 bg-white border border-violet-200 text-violet-700 rounded-lg text-sm font-semibold">Thực hiện ngay</button>
             </div>
+
+            <section class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                <form method="post" asp-page-handler="CreateSpecialty" class="bg-white border rounded-2xl p-5 space-y-3">
+                    <h2 class="text-lg font-bold">Thêm chuyên khoa</h2>
+                    <div>
+                        <label class="text-xs text-slate-500">Tên chuyên khoa</label>
+                        <input asp-for="CreateSpecialtyForm.SpecialtyName" class="w-full rounded-xl border-slate-200" required />
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500">Mô tả</label>
+                        <input asp-for="CreateSpecialtyForm.Description" class="w-full rounded-xl border-slate-200" />
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500">Icon URL</label>
+                        <input asp-for="CreateSpecialtyForm.IconUrl" class="w-full rounded-xl border-slate-200" />
+                    </div>
+                    <button class="px-4 py-2 bg-primary text-white rounded-xl text-sm font-semibold">Tạo chuyên khoa</button>
+                </form>
+
+                <form method="post" asp-page-handler="CreateDepartment" class="bg-white border rounded-2xl p-5 space-y-3">
+                    <h2 class="text-lg font-bold">Thêm khoa/phòng</h2>
+                    <div>
+                        <label class="text-xs text-slate-500">Tên khoa/phòng</label>
+                        <input asp-for="CreateDepartmentForm.DepartmentName" class="w-full rounded-xl border-slate-200" required />
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500">Mô tả</label>
+                        <input asp-for="CreateDepartmentForm.Description" class="w-full rounded-xl border-slate-200" />
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500">Vị trí</label>
+                        <input asp-for="CreateDepartmentForm.Location" class="w-full rounded-xl border-slate-200" />
+                    </div>
+                    <button class="px-4 py-2 bg-primary text-white rounded-xl text-sm font-semibold">Tạo khoa/phòng</button>
+                </form>
+            </section>
 
             <section class="grid grid-cols-1 xl:grid-cols-4 gap-6">
                 <div class="xl:col-span-3 bg-white border rounded-2xl overflow-hidden">
@@ -43,7 +84,18 @@
                                             @(specialty.IsActive ? "Hoạt động" : "Tạm dừng")
                                         </span>
                                     </td>
-                                    <td class="px-4 py-3"><a asp-page="/Admin/SpecialtyConfig" asp-route-specialtyId="@specialty.SpecialtyId" class="text-primary no-underline text-sm">Cấu hình</a></td>
+                                    <td class="px-4 py-3">
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <a asp-page="/Admin/SpecialtyConfig" asp-route-specialtyId="@specialty.SpecialtyId" class="text-primary no-underline text-xs">Cấu hình</a>
+                                            <form method="post" asp-page-handler="ToggleSpecialtyStatus" class="inline">
+                                                <input type="hidden" name="specialtyId" value="@specialty.SpecialtyId" />
+                                                <input type="hidden" name="isActive" value="@(!specialty.IsActive ? "true" : "false")" />
+                                                <button class="px-2 py-1 rounded-lg text-xs font-semibold @(specialty.IsActive ? "bg-red-100 text-red-700" : "bg-emerald-100 text-emerald-700")">
+                                                    @(specialty.IsActive ? "Tạm dừng" : "Kích hoạt")
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
                                 </tr>
                             }
                         </tbody>
@@ -59,14 +111,48 @@
             </section>
 
             <section class="bg-white border rounded-2xl p-5">
+                <h2 class="text-lg font-bold mb-3">Chỉnh sửa chuyên khoa</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    @foreach (var specialty in Model.Specialties)
+                    {
+                        <form method="post" asp-page-handler="UpdateSpecialty" class="border border-slate-200 rounded-xl p-3 space-y-2">
+                            <input type="hidden" name="EditSpecialtyForm.SpecialtyId" value="@specialty.SpecialtyId" />
+                            <input type="text" name="EditSpecialtyForm.SpecialtyName" value="@specialty.SpecialtyName" class="w-full rounded-lg border-slate-200 font-semibold" required />
+                            <input type="text" name="EditSpecialtyForm.Description" value="@specialty.Description" class="w-full rounded-lg border-slate-200 text-sm" placeholder="Mô tả" />
+                            <input type="text" name="EditSpecialtyForm.IconUrl" value="@specialty.IconUrl" class="w-full rounded-lg border-slate-200 text-sm" placeholder="Icon URL" />
+                            <button class="px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 text-xs font-semibold">Lưu chuyên khoa</button>
+                        </form>
+                    }
+                </div>
+            </section>
+
+            <section class="bg-white border rounded-2xl p-5">
                 <h2 class="text-lg font-bold mb-3">Danh sách khoa/phòng</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     @foreach (var department in Model.Departments)
                     {
                         <div class="border border-slate-200 rounded-xl p-3">
-                            <p class="font-semibold">@department.DepartmentName</p>
-                            <p class="text-sm text-slate-500">@department.Description</p>
-                            <p class="text-xs text-slate-400 mt-1">@department.Location</p>
+                            <form method="post" asp-page-handler="UpdateDepartment" class="space-y-2">
+                                <input type="hidden" name="EditDepartmentForm.DepartmentId" value="@department.DepartmentId" />
+                                <input type="text" name="EditDepartmentForm.DepartmentName" value="@department.DepartmentName" class="w-full rounded-lg border-slate-200 font-semibold" required />
+                                <input type="text" name="EditDepartmentForm.Description" value="@department.Description" class="w-full rounded-lg border-slate-200 text-sm" placeholder="Mô tả" />
+                                <input type="text" name="EditDepartmentForm.Location" value="@department.Location" class="w-full rounded-lg border-slate-200 text-xs" placeholder="Vị trí" />
+                                <div class="flex items-center gap-2 pt-1">
+                                    <button class="px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 text-xs font-semibold">Lưu</button>
+                                </div>
+                            </form>
+                            <div class="flex items-center gap-2 pt-1">
+                                    <form method="post" asp-page-handler="ToggleDepartmentStatus" class="inline">
+                                        <input type="hidden" name="departmentId" value="@department.DepartmentId" />
+                                        <input type="hidden" name="isActive" value="@(!department.IsActive ? "true" : "false")" />
+                                        <button class="px-3 py-1.5 rounded-lg text-xs font-semibold @(department.IsActive ? "bg-red-100 text-red-700" : "bg-emerald-100 text-emerald-700")">
+                                            @(department.IsActive ? "Tạm dừng" : "Kích hoạt")
+                                        </button>
+                                    </form>
+                                    <span class="text-[11px] px-2 py-1 rounded-full @(department.IsActive ? "bg-green-50 text-green-700" : "bg-slate-100 text-slate-500")">
+                                        @(department.IsActive ? "Hoạt động" : "Tạm dừng")
+                                    </span>
+                            </div>
                         </div>
                     }
                 </div>

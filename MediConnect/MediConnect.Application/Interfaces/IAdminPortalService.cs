@@ -9,6 +9,12 @@ public interface IAdminPortalService
     Task<bool> ApproveDoctorAsync(int doctorProfileId, int adminUserId);
     Task<bool> RejectDoctorAsync(int doctorProfileId, int adminUserId);
     Task<AdminSpecialtyDepartmentDto> GetSpecialtyDepartmentAsync();
+    Task<bool> CreateSpecialtyAsync(CreateSpecialtyDto dto);
+    Task<bool> UpdateSpecialtyAsync(UpdateSpecialtyDto dto);
+    Task<bool> SetSpecialtyActiveAsync(int specialtyId, bool isActive);
+    Task<bool> CreateDepartmentAsync(CreateDepartmentDto dto);
+    Task<bool> UpdateDepartmentAsync(UpdateDepartmentDto dto);
+    Task<bool> SetDepartmentActiveAsync(int departmentId, bool isActive);
     Task<AdminSpecialtyConfigDto?> GetSpecialtyConfigAsync(int specialtyId);
     Task<bool> SaveSpecialtyConfigAsync(SaveSpecialtyConfigDto dto);
     Task<AdminStatisticsDto> GetStatisticsAsync(DateTime? fromDate, DateTime? toDate);
@@ -31,4 +37,5 @@ public interface IAdminPortalService
     Task<bool> ResetUserPasswordAsync(int userId, int adminUserId);
     Task<List<UserActivityItemDto>> GetUserActivityAsync(int userId, int limit = 50);
     Task<byte[]> ExportUsersExcelAsync(List<int>? userIds = null);
+    Task<bool> CreateUserAsync(CreateAdminUserDto dto, int adminUserId);
 }

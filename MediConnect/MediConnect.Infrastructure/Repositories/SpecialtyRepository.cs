@@ -14,6 +14,14 @@ public class SpecialtyRepository : ISpecialtyRepository
         _context = context;
     }
 
+    public async Task<List<Specialty>> GetAllAsync()
+    {
+        return await _context.Specialties
+            .AsNoTracking()
+            .OrderBy(s => s.SpecialtyName)
+            .ToListAsync();
+    }
+
     public async Task<List<Specialty>> GetActiveAsync()
     {
         return await _context.Specialties
@@ -33,6 +41,12 @@ public class SpecialtyRepository : ISpecialtyRepository
     public async Task<int> CountActiveAsync()
     {
         return await _context.Specialties.CountAsync(s => s.IsActive);
+    }
+
+    public Task CreateAsync(Specialty specialty)
+    {
+        _context.Specialties.Add(specialty);
+        return Task.CompletedTask;
     }
 
     public Task UpdateAsync(Specialty specialty)

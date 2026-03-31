@@ -11,6 +11,7 @@ namespace MediConnect.Application.Services;
 public class AdminPortalService : IAdminPortalService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IRoleRepository _roleRepository;
     private readonly IAppointmentRepository _appointmentRepository;
     private readonly IDoctorRepository _doctorRepository;
     private readonly ISpecialtyRepository _specialtyRepository;
@@ -27,6 +28,7 @@ public class AdminPortalService : IAdminPortalService
 
     public AdminPortalService(
         IUserRepository userRepository,
+        IRoleRepository roleRepository,
         IAppointmentRepository appointmentRepository,
         IDoctorRepository doctorRepository,
         ISpecialtyRepository specialtyRepository,
@@ -42,6 +44,7 @@ public class AdminPortalService : IAdminPortalService
         IUnitOfWork unitOfWork)
     {
         _userRepository = userRepository;
+        _roleRepository = roleRepository;
         _appointmentRepository = appointmentRepository;
         _doctorRepository = doctorRepository;
         _specialtyRepository = specialtyRepository;
@@ -62,6 +65,7 @@ public class AdminPortalService : IAdminPortalService
         var today = DateOnly.FromDateTime(DateTime.Today);
         var recentAppointments = await _appointmentRepository.GetByDateRangeAsync(today.AddDays(-6), today);
         var todayAppointments = recentAppointments.Where(a => a.AppointmentDate == today).ToList();
+        var recentLogs = await _systemLogRepository.GetRecentAsync(100);
 
         var specialties = await _specialtyRepository.GetActiveAsync();
         var specialtyLoads = specialties
@@ -83,6 +87,9 @@ public class AdminPortalService : IAdminPortalService
             })
             .ToList();
 
+        var predictedLoad = await GenerateLoadPredictionAsync(recentAppointments, recentLogs);
+        var recommendedAction = BuildRecommendedActionMessage(specialtyLoads, trend);
+
         return new AdminOverviewDto
         {
             TotalUsers = await _userRepository.CountAllActiveAsync(),
@@ -90,6 +97,8 @@ public class AdminPortalService : IAdminPortalService
             ProcessingAppointmentsToday = todayAppointments.Count(a => a.Status == AppointmentStatus.Pending),
             UptimePercent = 99.9m,
             ErrorRatePercent = 0.01m,
+            PredictedLoadMessage = predictedLoad,
+            RecommendedActionMessage = recommendedAction,
             SpecialtyLoads = specialtyLoads,
             TrendCounts = trend
         };
@@ -154,8 +163,8 @@ public class AdminPortalService : IAdminPortalService
 
     public async Task<AdminSpecialtyDepartmentDto> GetSpecialtyDepartmentAsync()
     {
-        var specialties = await _specialtyRepository.GetActiveAsync();
-        var departments = await _departmentRepository.GetActiveAsync();
+        var specialties = await _specialtyRepository.GetAllAsync();
+        var departments = await _departmentRepository.GetAllAsync();
 
         var specialtyItems = new List<SpecialtyDepartmentItemDto>();
         foreach (var specialty in specialties)
@@ -166,6 +175,7 @@ public class AdminPortalService : IAdminPortalService
                 SpecialtyId = specialty.SpecialtyId,
                 SpecialtyName = specialty.SpecialtyName,
                 Description = specialty.Description,
+                IconUrl = specialty.IconUrl,
                 IsActive = specialty.IsActive,
                 DoctorCount = mappings.Select(m => m.UserId).Distinct().Count()
             });
@@ -183,6 +193,132 @@ public class AdminPortalService : IAdminPortalService
                 IsActive = d.IsActive
             }).ToList()
         };
+    }
+
+    public async Task<bool> CreateSpecialtyAsync(CreateSpecialtyDto dto)
+    {
+        var name = (dto.SpecialtyName ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(name)) return false;
+
+        var all = await _specialtyRepository.GetAllAsync();
+        if (all.Any(s => string.Equals(s.SpecialtyName, name, StringComparison.OrdinalIgnoreCase)))
+        {
+            return false;
+        }
+
+        await _specialtyRepository.CreateAsync(new Specialty
+        {
+            SpecialtyName = name,
+            Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim(),
+            IconUrl = string.IsNullOrWhiteSpace(dto.IconUrl) ? null : dto.IconUrl.Trim(),
+            IsActive = true,
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
+        });
+
+        await _unitOfWork.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> UpdateSpecialtyAsync(UpdateSpecialtyDto dto)
+    {
+        var specialty = await _specialtyRepository.GetByIdAsync(dto.SpecialtyId);
+        if (specialty == null) return false;
+
+        var name = (dto.SpecialtyName ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(name)) return false;
+
+        var all = await _specialtyRepository.GetAllAsync();
+        if (all.Any(s => s.SpecialtyId != dto.SpecialtyId
+            && string.Equals(s.SpecialtyName, name, StringComparison.OrdinalIgnoreCase)))
+        {
+            return false;
+        }
+
+        specialty.SpecialtyName = name;
+        specialty.Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim();
+        specialty.IconUrl = string.IsNullOrWhiteSpace(dto.IconUrl) ? null : dto.IconUrl.Trim();
+        specialty.UpdatedAt = DateTime.Now;
+
+        await _specialtyRepository.UpdateAsync(specialty);
+        await _unitOfWork.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> SetSpecialtyActiveAsync(int specialtyId, bool isActive)
+    {
+        var specialty = await _specialtyRepository.GetByIdAsync(specialtyId);
+        if (specialty == null) return false;
+
+        specialty.IsActive = isActive;
+        specialty.UpdatedAt = DateTime.Now;
+
+        await _specialtyRepository.UpdateAsync(specialty);
+        await _unitOfWork.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> CreateDepartmentAsync(CreateDepartmentDto dto)
+    {
+        var name = (dto.DepartmentName ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(name)) return false;
+
+        var all = await _departmentRepository.GetAllAsync();
+        if (all.Any(d => string.Equals(d.DepartmentName, name, StringComparison.OrdinalIgnoreCase)))
+        {
+            return false;
+        }
+
+        await _departmentRepository.CreateAsync(new Department
+        {
+            DepartmentName = name,
+            Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim(),
+            Location = string.IsNullOrWhiteSpace(dto.Location) ? null : dto.Location.Trim(),
+            IsActive = true,
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
+        });
+
+        await _unitOfWork.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> UpdateDepartmentAsync(UpdateDepartmentDto dto)
+    {
+        var department = await _departmentRepository.GetByIdAsync(dto.DepartmentId);
+        if (department == null) return false;
+
+        var name = (dto.DepartmentName ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(name)) return false;
+
+        var all = await _departmentRepository.GetAllAsync();
+        if (all.Any(d => d.DepartmentId != dto.DepartmentId
+            && string.Equals(d.DepartmentName, name, StringComparison.OrdinalIgnoreCase)))
+        {
+            return false;
+        }
+
+        department.DepartmentName = name;
+        department.Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim();
+        department.Location = string.IsNullOrWhiteSpace(dto.Location) ? null : dto.Location.Trim();
+        department.UpdatedAt = DateTime.Now;
+
+        await _departmentRepository.UpdateAsync(department);
+        await _unitOfWork.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> SetDepartmentActiveAsync(int departmentId, bool isActive)
+    {
+        var department = await _departmentRepository.GetByIdAsync(departmentId);
+        if (department == null) return false;
+
+        department.IsActive = isActive;
+        department.UpdatedAt = DateTime.Now;
+
+        await _departmentRepository.UpdateAsync(department);
+        await _unitOfWork.SaveChangesAsync();
+        return true;
     }
 
     public async Task<AdminSpecialtyConfigDto?> GetSpecialtyConfigAsync(int specialtyId)
@@ -280,12 +416,17 @@ public class AdminPortalService : IAdminPortalService
             .Select(g => new KeywordWeightDto { Keyword = g.Key, Weight = g.Count() })
             .ToList();
 
+        var anomalySummary = BuildAnomalySummary(trend);
+        var sentimentSummary = BuildSentimentSummary(csat, complaints.Count, keywordCandidates);
+
         return new AdminStatisticsDto
         {
             TotalVisits = appointments.Count,
             Revenue = paidRevenue,
             CompletionRatePercent = completionRate,
             Csat = csat,
+            AnomalySummary = anomalySummary,
+            SentimentSummary = sentimentSummary,
             AppointmentTrend = trend,
             FeedbackKeywords = keywordCandidates
         };
@@ -299,6 +440,17 @@ public class AdminPortalService : IAdminPortalService
         var today = DateOnly.FromDateTime(DateTime.Today);
         var recentAppointments = await _appointmentRepository.GetByDateRangeAsync(today.AddDays(-7), today.AddDays(7));
         var predictedLoadMessage = await GenerateLoadPredictionAsync(recentAppointments, logs);
+        var tomorrow = today.AddDays(1);
+        var hourlyForecast = recentAppointments
+            .Where(a => a.AppointmentDate == tomorrow)
+            .GroupBy(a => a.StartTime.Hour)
+            .OrderBy(g => g.Key)
+            .Select(g => new HourlyLoadForecastDto
+            {
+                HourLabel = $"{g.Key:00}:00",
+                AppointmentCount = g.Count()
+            })
+            .ToList();
 
         return new AdminMonitoringDto
         {
@@ -314,8 +466,68 @@ public class AdminPortalService : IAdminPortalService
                 Username = l.User?.Email ?? "System"
             }).ToList(),
             BackupProgressPercent = 74,
-            PredictedLoadMessage = predictedLoadMessage
+            PredictedLoadMessage = predictedLoadMessage,
+            HourlyLoadForecast = hourlyForecast
         };
+    }
+
+    private static string BuildRecommendedActionMessage(List<SpecialtyLoadDto> specialtyLoads, List<DailyCountDto> trend)
+    {
+        if (specialtyLoads.Count == 0)
+        {
+            return "Chưa có đủ dữ liệu để đề xuất điều phối.";
+        }
+
+        var top = specialtyLoads.OrderByDescending(x => x.Count).First();
+        var avg = trend.Count == 0 ? 0 : trend.Average(x => x.Count);
+        var latest = trend.Count == 0 ? 0 : trend.Last().Count;
+
+        if (avg > 0 && latest > avg * 1.2)
+        {
+            return $"Tải lịch hẹn đang tăng nhanh. Ưu tiên mở thêm ca khám cho {top.SpecialtyName}.";
+        }
+
+        return $"Duy trì phân bổ hiện tại, theo dõi thêm chuyên khoa {top.SpecialtyName} vì đang có lượng đặt lịch cao nhất.";
+    }
+
+    private static string BuildAnomalySummary(List<DailyCountDto> trend)
+    {
+        if (trend.Count < 3)
+        {
+            return "Chưa đủ dữ liệu để phát hiện bất thường.";
+        }
+
+        var values = trend.Select(x => (double)x.Count).ToList();
+        var avg = values.Average();
+        var variance = values.Average(v => Math.Pow(v - avg, 2));
+        var stdDev = Math.Sqrt(variance);
+        var threshold = avg + stdDev * 1.5;
+
+        var spikes = trend.Where(x => x.Count > threshold).ToList();
+        if (spikes.Count == 0)
+        {
+            return "Không phát hiện biến động bất thường trong kỳ lọc.";
+        }
+
+        var topSpike = spikes.OrderByDescending(x => x.Count).First();
+        return $"Phát hiện {spikes.Count} điểm tăng đột biến, cao nhất vào {topSpike.Date:dd/MM/yyyy} ({topSpike.Count} lịch hẹn).";
+    }
+
+    private static string BuildSentimentSummary(decimal csat, int complaintCount, List<KeywordWeightDto> keywords)
+    {
+        var tone = csat >= 4m
+            ? "tích cực"
+            : csat >= 3m
+                ? "trung tính"
+                : "cần cải thiện";
+
+        var topKeyword = keywords.FirstOrDefault()?.Keyword;
+        if (string.IsNullOrWhiteSpace(topKeyword))
+        {
+            return $"Mức độ hài lòng tổng thể ở mức {tone}.";
+        }
+
+        return $"Mức độ hài lòng {tone}. Từ khóa phản hồi nổi bật: {topKeyword}. Tổng khiếu nại ghi nhận: {complaintCount}.";
     }
 
     private async Task<string> GenerateLoadPredictionAsync(IEnumerable<Appointment> appointments, IEnumerable<SystemLog> logs)
@@ -1328,6 +1540,64 @@ MediConnect
 
             return workbook.GetAsByteArray();
         }
+    }
+
+    public async Task<bool> CreateUserAsync(CreateAdminUserDto dto, int adminUserId)
+    {
+        var email = (dto.Email ?? string.Empty).Trim();
+        var fullName = (dto.FullName ?? string.Empty).Trim();
+        var password = dto.Password ?? string.Empty;
+        var roleName = (dto.RoleName ?? string.Empty).Trim().ToUpperInvariant();
+
+        if (string.IsNullOrWhiteSpace(fullName)
+            || string.IsNullOrWhiteSpace(email)
+            || string.IsNullOrWhiteSpace(password))
+        {
+            return false;
+        }
+
+        if (password.Length < 8)
+        {
+            return false;
+        }
+
+        if (roleName is not (RoleNames.Admin or RoleNames.Doctor or RoleNames.Patient))
+        {
+            roleName = RoleNames.Patient;
+        }
+
+        if (await _userRepository.EmailExistsAsync(email))
+        {
+            return false;
+        }
+
+        var role = await _roleRepository.GetByNameAsync(roleName);
+        if (role == null)
+        {
+            return false;
+        }
+
+        var user = new User
+        {
+            RoleId = role.RoleId,
+            FullName = fullName,
+            Email = email,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
+            PhoneNumber = string.IsNullOrWhiteSpace(dto.PhoneNumber) ? null : dto.PhoneNumber.Trim(),
+            Gender = string.IsNullOrWhiteSpace(dto.Gender) ? null : dto.Gender.Trim().ToUpperInvariant(),
+            DateOfBirth = dto.DateOfBirth,
+            Address = string.IsNullOrWhiteSpace(dto.Address) ? null : dto.Address.Trim(),
+            IsActive = true,
+            IsVerified = true,
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now,
+            LastLoginAt = null
+        };
+
+        await _userRepository.CreateAsync(user);
+        await LogActionAsync(adminUserId, "CREATE_USER", $"Created user {email} with role {roleName}", "INFO");
+        await _unitOfWork.SaveChangesAsync();
+        return true;
     }
 
     private async Task LogActionAsync(int userId, string action, string description, string severity)

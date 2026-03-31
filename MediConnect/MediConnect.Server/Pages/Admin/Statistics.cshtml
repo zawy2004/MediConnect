@@ -36,7 +36,24 @@
             <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-2 bg-white border rounded-2xl p-5">
                     <h2 class="text-lg font-bold mb-3">Xu hướng đặt lịch & AI Anomaly Detection</h2>
-                    <div class="h-72 rounded-xl border border-slate-100 bg-slate-50 flex items-center justify-center text-slate-400">Biểu đồ xu hướng 30 ngày</div>
+                    <div class="space-y-2">
+                        @foreach (var point in Model.Data.AppointmentTrend.TakeLast(14))
+                        {
+                            var width = Model.Data.AppointmentTrend.Count == 0
+                                ? 0
+                                : (int)Math.Round(point.Count * 100.0 / Math.Max(1, Model.Data.AppointmentTrend.Max(x => x.Count)));
+                            <div>
+                                <div class="flex items-center justify-between text-xs text-slate-500 mb-1">
+                                    <span>@point.Date.ToString("dd/MM")</span>
+                                    <span>@point.Count</span>
+                                </div>
+                                <div class="h-2 rounded-full bg-slate-100">
+                                    <div class="h-2 rounded-full bg-primary" style="width:@width%"></div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <p class="text-sm text-amber-700 font-semibold mt-4">@Model.Data.AnomalySummary</p>
                 </div>
 
                 <div class="bg-white border rounded-2xl p-5">
@@ -47,7 +64,7 @@
                             <span class="px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 text-sm">@key.Keyword</span>
                         }
                     </div>
-                    <p class="text-sm text-emerald-600 font-semibold mt-4">Sentiment summary: tích cực</p>
+                    <p class="text-sm text-emerald-600 font-semibold mt-4">@Model.Data.SentimentSummary</p>
                 </div>
             </section>
 

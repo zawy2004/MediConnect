@@ -14,6 +14,48 @@
         </header>
 
         <div class="p-8 space-y-6">
+            <section class="bg-white border rounded-2xl p-5">
+                <div class="flex items-center justify-between gap-3">
+                    <h2 class="text-lg font-bold">AI Self-check (Quick)</h2>
+                    <form method="post" asp-page-handler="AiSelfCheck">
+                        <button class="px-4 py-2 bg-slate-900 text-white rounded-xl text-sm font-semibold">Chạy quick-check realtime</button>
+                    </form>
+                </div>
+
+                @if (Model.SelfCheckResult != null)
+                {
+                    <div class="mt-4 text-sm text-slate-600">
+                        <span class="font-semibold">Checked:</span> @Model.SelfCheckResult.CheckedAt.ToString("dd/MM/yyyy HH:mm:ss")
+                        <span class="mx-2">|</span>
+                        <span class="font-semibold @(Model.SelfCheckResult.IsOverallPassed ? "text-emerald-600" : "text-rose-600")">
+                            @(Model.SelfCheckResult.IsOverallPassed ? "PASS" : "FAIL")
+                        </span>
+                    </div>
+
+                    <div class="mt-3 overflow-hidden border rounded-xl">
+                        <table class="w-full text-sm">
+                            <thead class="bg-slate-50 text-slate-500">
+                                <tr>
+                                    <th class="text-left px-4 py-2">Hạng mục</th>
+                                    <th class="text-left px-4 py-2">Kết quả</th>
+                                    <th class="text-left px-4 py-2">Chi tiết</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.SelfCheckResult.Items)
+                                {
+                                    <tr class="border-t border-slate-100">
+                                        <td class="px-4 py-2">@item.Name</td>
+                                        <td class="px-4 py-2 font-semibold @(item.Passed ? "text-emerald-600" : "text-rose-600")">@(item.Passed ? "PASS" : "FAIL")</td>
+                                        <td class="px-4 py-2 text-slate-600">@item.Detail</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </section>
+
             <div class="bg-violet-50 border border-violet-200 rounded-2xl p-4">
                 <p class="font-semibold text-violet-700">AI Insight Analysis</p>
                 <p class="text-sm text-slate-600 mt-1">@Model.Data.PredictedLoadMessage</p>
@@ -64,8 +106,30 @@
                 </div>
                 <div class="bg-white border rounded-2xl p-5">
                     <h3 class="font-bold text-lg">Dự báo Tải trọng AI</h3>
-                    <div class="h-28 border border-slate-100 rounded-xl bg-slate-50 mt-3"></div>
-                    <p class="text-sm text-amber-600 mt-3">Dự báo hệ thống quá tải vào 09:00 AM ngày mai.</p>
+                    <div class="mt-3 space-y-2">
+                        @if (Model.Data.HourlyLoadForecast.Count == 0)
+                        {
+                            <p class="text-sm text-slate-500">Chưa có lịch hẹn cho ngày mai để dựng biểu đồ tải theo giờ.</p>
+                        }
+                        else
+                        {
+                            @foreach (var item in Model.Data.HourlyLoadForecast)
+                            {
+                                var maxCount = Math.Max(1, Model.Data.HourlyLoadForecast.Max(x => x.AppointmentCount));
+                                var width = (int)Math.Round(item.AppointmentCount * 100.0 / maxCount);
+                                <div>
+                                    <div class="flex items-center justify-between text-xs text-slate-500 mb-1">
+                                        <span>@item.HourLabel</span>
+                                        <span>@item.AppointmentCount</span>
+                                    </div>
+                                    <div class="h-2 rounded-full bg-slate-100">
+                                        <div class="h-2 rounded-full bg-amber-400" style="width:@width%"></div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                    <p class="text-sm text-amber-600 mt-3">@Model.Data.PredictedLoadMessage</p>
                 </div>
             </section>
         </div>

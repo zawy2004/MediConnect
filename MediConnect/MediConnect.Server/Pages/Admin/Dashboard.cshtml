@@ -27,11 +27,11 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-5">
                     <div class="bg-white/10 border border-white/10 rounded-2xl p-4">
                         <p class="text-xs uppercase tracking-wider text-red-300 font-bold">Cảnh báo tải trọng</p>
-                        <p class="mt-2">Chuyên khoa có nhu cầu tăng cao, cần bổ sung bác sĩ trực trong tuần tới.</p>
+                        <p class="mt-2">@Model.Data.PredictedLoadMessage</p>
                     </div>
                     <div class="bg-white/10 border border-white/10 rounded-2xl p-4">
                         <p class="text-xs uppercase tracking-wider text-emerald-300 font-bold">Đề xuất tối ưu</p>
-                        <p class="mt-2">Ưu tiên điều phối lại lịch trực và mở thêm ca khám buổi sáng.</p>
+                        <p class="mt-2">@Model.Data.RecommendedActionMessage</p>
                     </div>
                 </div>
             </section>

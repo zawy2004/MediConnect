@@ -1,3 +1,5 @@
+using MediConnect.Domain.Constants;
+
 namespace MediConnect.Application.DTOs;
 
 public class AdminOverviewDto
@@ -7,6 +9,8 @@ public class AdminOverviewDto
     public int ProcessingAppointmentsToday { get; set; }
     public decimal UptimePercent { get; set; }
     public decimal ErrorRatePercent { get; set; }
+    public string PredictedLoadMessage { get; set; } = string.Empty;
+    public string RecommendedActionMessage { get; set; } = string.Empty;
     public List<SpecialtyLoadDto> SpecialtyLoads { get; set; } = new();
     public List<DailyCountDto> TrendCounts { get; set; } = new();
 }
@@ -40,6 +44,7 @@ public class SpecialtyDepartmentItemDto
     public int SpecialtyId { get; set; }
     public string SpecialtyName { get; set; } = string.Empty;
     public string? Description { get; set; }
+    public string? IconUrl { get; set; }
     public bool IsActive { get; set; }
     public int DoctorCount { get; set; }
 }
@@ -69,6 +74,8 @@ public class AdminStatisticsDto
     public decimal Revenue { get; set; }
     public decimal CompletionRatePercent { get; set; }
     public decimal Csat { get; set; }
+    public string AnomalySummary { get; set; } = string.Empty;
+    public string SentimentSummary { get; set; } = string.Empty;
     public List<DailyCountDto> AppointmentTrend { get; set; } = new();
     public List<KeywordWeightDto> FeedbackKeywords { get; set; } = new();
 }
@@ -87,6 +94,13 @@ public class AdminMonitoringDto
     public List<SystemLogItemDto> Logs { get; set; } = new();
     public int BackupProgressPercent { get; set; }
     public string PredictedLoadMessage { get; set; } = string.Empty;
+    public List<HourlyLoadForecastDto> HourlyLoadForecast { get; set; } = new();
+}
+
+public class HourlyLoadForecastDto
+{
+    public string HourLabel { get; set; } = string.Empty;
+    public int AppointmentCount { get; set; }
 }
 
 public class SystemLogItemDto
@@ -223,4 +237,60 @@ public class BulkUserActionDto
     public List<int> UserIds { get; set; } = new();
     public string Action { get; set; } = string.Empty; // ENABLE, DISABLE, EXPORT
     public int AdminUserId { get; set; }
+}
+
+public class CreateSpecialtyDto
+{
+    public string SpecialtyName { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public string? IconUrl { get; set; }
+}
+
+public class UpdateSpecialtyDto
+{
+    public int SpecialtyId { get; set; }
+    public string SpecialtyName { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public string? IconUrl { get; set; }
+}
+
+public class CreateDepartmentDto
+{
+    public string DepartmentName { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public string? Location { get; set; }
+}
+
+public class UpdateDepartmentDto
+{
+    public int DepartmentId { get; set; }
+    public string DepartmentName { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public string? Location { get; set; }
+}
+
+public class CreateAdminUserDto
+{
+    public string FullName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+    public string RoleName { get; set; } = RoleNames.Patient;
+    public string? PhoneNumber { get; set; }
+    public string? Gender { get; set; }
+    public DateOnly? DateOfBirth { get; set; }
+    public string? Address { get; set; }
+}
+
+public class AdminAiSelfCheckResultDto
+{
+    public DateTime CheckedAt { get; set; }
+    public bool IsOverallPassed { get; set; }
+    public List<AdminAiSelfCheckItemDto> Items { get; set; } = new();
+}
+
+public class AdminAiSelfCheckItemDto
+{
+    public string Name { get; set; } = string.Empty;
+    public bool Passed { get; set; }
+    public string Detail { get; set; } = string.Empty;
 }

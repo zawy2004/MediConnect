@@ -24,11 +24,78 @@ public class SpecialtyManagementModel : PageModel
     public List<SpecialtyDepartmentItemDto> Specialties { get; set; } = new();
     public List<DepartmentDto> Departments { get; set; } = new();
 
+    [BindProperty]
+    public CreateSpecialtyDto CreateSpecialtyForm { get; set; } = new();
+
+    [BindProperty]
+    public UpdateSpecialtyDto EditSpecialtyForm { get; set; } = new();
+
+    [BindProperty]
+    public CreateDepartmentDto CreateDepartmentForm { get; set; } = new();
+
+    [BindProperty]
+    public UpdateDepartmentDto EditDepartmentForm { get; set; } = new();
+
+    [TempData]
+    public string? StatusMessage { get; set; }
+
     public async Task OnGetAsync()
     {
-        var data = await _adminPortalService.GetSpecialtyDepartmentAsync();
-        Specialties = data.SpecialtyItems;
-        Departments = data.Departments;
+        await LoadDataAsync();
+    }
+
+    public async Task<IActionResult> OnPostCreateSpecialtyAsync()
+    {
+        var created = await _adminPortalService.CreateSpecialtyAsync(CreateSpecialtyForm);
+        StatusMessage = created
+            ? "Đã tạo chuyên khoa mới."
+            : "Không thể tạo chuyên khoa (tên trống hoặc đã tồn tại).";
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostUpdateSpecialtyAsync()
+    {
+        var updated = await _adminPortalService.UpdateSpecialtyAsync(EditSpecialtyForm);
+        StatusMessage = updated
+            ? "Đã cập nhật chuyên khoa."
+            : "Không thể cập nhật chuyên khoa.";
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostToggleSpecialtyStatusAsync(int specialtyId, bool isActive)
+    {
+        var changed = await _adminPortalService.SetSpecialtyActiveAsync(specialtyId, isActive);
+        StatusMessage = changed
+            ? (isActive ? "Đã kích hoạt chuyên khoa." : "Đã tạm dừng chuyên khoa.")
+            : "Không thể cập nhật trạng thái chuyên khoa.";
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostCreateDepartmentAsync()
+    {
+        var created = await _adminPortalService.CreateDepartmentAsync(CreateDepartmentForm);
+        StatusMessage = created
+            ? "Đã tạo khoa/phòng mới."
+            : "Không thể tạo khoa/phòng (tên trống hoặc đã tồn tại).";
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostUpdateDepartmentAsync()
+    {
+        var updated = await _adminPortalService.UpdateDepartmentAsync(EditDepartmentForm);
+        StatusMessage = updated
+            ? "Đã cập nhật khoa/phòng."
+            : "Không thể cập nhật khoa/phòng.";
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostToggleDepartmentStatusAsync(int departmentId, bool isActive)
+    {
+        var changed = await _adminPortalService.SetDepartmentActiveAsync(departmentId, isActive);
+        StatusMessage = changed
+            ? (isActive ? "Đã kích hoạt khoa/phòng." : "Đã tạm dừng khoa/phòng.")
+            : "Không thể cập nhật trạng thái khoa/phòng.";
+        return RedirectToPage();
     }
 
     public async Task<IActionResult> OnGetExportForecastPdfAsync()
@@ -133,5 +200,12 @@ public class SpecialtyManagementModel : PageModel
 
         static IContainer CellBody(IContainer container)
             => container.Border(1).BorderColor(Colors.Grey.Lighten1).Padding(6);
+    }
+
+    private async Task LoadDataAsync()
+    {
+        var data = await _adminPortalService.GetSpecialtyDepartmentAsync();
+        Specialties = data.SpecialtyItems;
+        Departments = data.Departments;
     }
 }

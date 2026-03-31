@@ -31,6 +31,9 @@ public class UserManagementModel : PageModel
     public EditUserDto EditForm { get; set; } = new();
 
     [BindProperty]
+    public CreateAdminUserDto CreateUserForm { get; set; } = new();
+
+    [BindProperty]
     public List<int> SelectedUserIds { get; set; } = new();
 
     public List<SystemUserItemDto> Users { get; set; } = new();
@@ -102,6 +105,15 @@ public class UserManagementModel : PageModel
             ? "Thông tin người dùng đã được cập nhật thành công."
             : "Không thể cập nhật thông tin người dùng.";
         return RedirectToPage(new { SearchTerm, RoleFilter, SelectedUserId = EditForm.UserId });
+    }
+
+    public async Task<IActionResult> OnPostCreateUserAsync()
+    {
+        var success = await _adminPortalService.CreateUserAsync(CreateUserForm, GetUserId());
+        StatusMessage = success
+            ? "Tài khoản mới đã được tạo thành công."
+            : "Không thể tạo tài khoản (kiểm tra email, mật khẩu hoặc vai trò).";
+        return RedirectToPage(new { SearchTerm, RoleFilter });
     }
 
     public async Task<IActionResult> OnGetExportUsersAsync()

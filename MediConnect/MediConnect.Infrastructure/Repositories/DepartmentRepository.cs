@@ -14,6 +14,14 @@ public class DepartmentRepository : IDepartmentRepository
         _context = context;
     }
 
+    public async Task<List<Department>> GetAllAsync()
+    {
+        return await _context.Departments
+            .AsNoTracking()
+            .OrderBy(d => d.DepartmentName)
+            .ToListAsync();
+    }
+
     public async Task<List<Department>> GetActiveAsync()
     {
         return await _context.Departments
@@ -28,5 +36,17 @@ public class DepartmentRepository : IDepartmentRepository
         return await _context.Departments
             .AsNoTracking()
             .FirstOrDefaultAsync(d => d.DepartmentId == departmentId);
+    }
+
+    public Task CreateAsync(Department department)
+    {
+        _context.Departments.Add(department);
+        return Task.CompletedTask;
+    }
+
+    public Task UpdateAsync(Department department)
+    {
+        _context.Departments.Update(department);
+        return Task.CompletedTask;
     }
 }

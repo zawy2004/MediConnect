@@ -14,10 +14,41 @@
         </header>
 
         <div class="p-8 space-y-6">
+            @if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+            {
+                <div class="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-sm text-blue-800">@Model.StatusMessage</div>
+            }
+
             <div class="flex items-center gap-1 p-1 bg-slate-100 rounded-xl w-fit">
                 <button class="px-5 py-2 text-sm font-bold bg-white shadow-sm rounded-lg text-primary">Tất cả người dùng</button>
                 <button class="px-5 py-2 text-sm font-semibold text-slate-500">Bác sĩ chờ duyệt</button>
             </div>
+
+            <section class="bg-white border rounded-2xl p-5 space-y-3">
+                <h2 class="text-lg font-bold">Tạo tài khoản mới</h2>
+                <form method="post" asp-page-handler="CreateUser" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <input asp-for="CreateUserForm.FullName" placeholder="Họ và tên" class="rounded-xl border-slate-200" required />
+                    <input asp-for="CreateUserForm.Email" type="email" placeholder="Email" class="rounded-xl border-slate-200" required />
+                    <input asp-for="CreateUserForm.Password" type="password" placeholder="Mật khẩu (>= 8 ký tự)" class="rounded-xl border-slate-200" required />
+                    <select asp-for="CreateUserForm.RoleName" class="rounded-xl border-slate-200">
+                        <option value="PATIENT">PATIENT</option>
+                        <option value="DOCTOR">DOCTOR</option>
+                        <option value="ADMIN">ADMIN</option>
+                    </select>
+                    <input asp-for="CreateUserForm.PhoneNumber" placeholder="Số điện thoại" class="rounded-xl border-slate-200" />
+                    <select asp-for="CreateUserForm.Gender" class="rounded-xl border-slate-200">
+                        <option value="">Giới tính</option>
+                        <option value="MALE">Nam</option>
+                        <option value="FEMALE">Nữ</option>
+                        <option value="OTHER">Khác</option>
+                    </select>
+                    <input asp-for="CreateUserForm.DateOfBirth" type="date" class="rounded-xl border-slate-200" />
+                    <input asp-for="CreateUserForm.Address" placeholder="Địa chỉ" class="rounded-xl border-slate-200 md:col-span-2" />
+                    <div class="flex items-center">
+                        <button class="px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold">Tạo tài khoản</button>
+                    </div>
+                </form>
+            </section>
 
             <form method="get" class="bg-white border rounded-2xl p-5 flex flex-wrap items-center gap-3">
                 <input asp-for="SearchTerm" placeholder="Tìm theo Tên, Email hoặc Vai trò..." class="rounded-xl border-slate-200 min-w-[300px]" />
