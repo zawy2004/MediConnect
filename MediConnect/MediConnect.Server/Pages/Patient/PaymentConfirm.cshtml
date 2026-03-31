@@ -58,7 +58,14 @@
                         <p><span class="text-slate-500">Chuyên khoa:</span> <span class="font-semibold">@Model.Summary.SpecialtyName</span></p>
                         <p><span class="text-slate-500">Thời gian:</span> <span class="font-semibold">@Model.Summary.AppointmentDate.ToString("dd/MM/yyyy") @Model.Summary.StartTime.ToString("HH:mm")</span></p>
                         <p><span class="text-slate-500">Địa điểm:</span> <span class="font-semibold">@(Model.Summary.Location ?? "MediConnect")</span></p>
-                        <p><span class="text-slate-500">Mã lịch hẹn:</span> <span class="font-semibold">#@Model.Summary.AppointmentId</span></p>
+                        @if (Model.AppointmentId > 0)
+                        {
+                            <p><span class="text-slate-500">Mã lịch hẹn:</span> <span class="font-semibold">#@Model.Summary.AppointmentId</span></p>
+                        }
+                        else
+                        {
+                            <p><span class="text-slate-500">Mã lịch hẹn:</span> <span class="font-semibold">Sẽ tạo sau thanh toán thành công</span></p>
+                        }
                     </div>
                 </div>
 
@@ -72,6 +79,9 @@
 
                     <form method="post" class="pt-2" id="payment-form">
                         <input asp-for="AppointmentId" type="hidden" />
+                        <input asp-for="DoctorProfileId" type="hidden" />
+                        <input asp-for="SlotId" type="hidden" />
+                        <input asp-for="Reason" type="hidden" />
                         <button type="submit" class="w-full py-3.5 bg-primary text-white rounded-xl font-bold">Xác nhận & Thanh toán</button>
                     </form>
                     <a asp-page="/Patient/DoctorProfile" class="block text-center text-sm text-slate-500 no-underline">Quay lại</a>

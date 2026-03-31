@@ -68,8 +68,11 @@ public class SymptomAssessmentModel : PageModel
             suggestedDoctors = result.SuggestedDoctors.Select(d => new
             {
                 doctorProfileId = d.DoctorProfileId,
+                userId = d.UserId,
                 fullName = d.FullName,
-                departmentName = d.DepartmentName
+                departmentName = d.DepartmentName,
+                averageRating = d.AverageRating,
+                yearsOfExperience = d.YearsOfExperience
             })
         });
     }

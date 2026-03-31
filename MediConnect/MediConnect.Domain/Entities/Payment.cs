@@ -7,7 +7,7 @@ public partial class Payment
 {
     public int PaymentId { get; set; }
 
-    public int AppointmentId { get; set; }
+    public int? AppointmentId { get; set; }
 
     public int PatientId { get; set; }
 
@@ -31,7 +31,7 @@ public partial class Payment
 
     public DateTime UpdatedAt { get; set; }
 
-    public virtual Appointment Appointment { get; set; } = null!;
+    public virtual Appointment? Appointment { get; set; }
 
     public virtual User Patient { get; set; } = null!;
 }

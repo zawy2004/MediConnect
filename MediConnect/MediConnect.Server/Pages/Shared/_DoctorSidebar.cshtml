@@ -9,7 +9,7 @@
 
 <aside class="w-64 flex-shrink-0 bg-white border-r border-slate-200 flex flex-col">
     <div class="p-5 flex flex-col h-full">
-        <div class="flex items-center gap-3 mb-8 px-2">
+        <a asp-page="/Doctor/Dashboard" class="flex items-center gap-3 mb-8 px-2 no-underline hover:opacity-90">
             <div class="size-11 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
                 <span class="material-symbols-outlined">health_and_safety</span>
             </div>
@@ -17,7 +17,7 @@
                 <h2 class="text-xl font-black tracking-tight text-blue-800">MediConnect</h2>
                 <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Doctor Portal</p>
             </div>
-        </div>
+        </a>
 
         <nav class="flex flex-col gap-1 grow">
             <a asp-page="/Doctor/Dashboard" class="@NavClass("dashboard")"><span class="material-symbols-outlined">dashboard</span><p class="text-sm">Bảng điều khiển</p></a>
@@ -26,7 +26,9 @@
             <a asp-page="/Doctor/ConfirmAppointmentRequest" class="@NavClass("requests")"><span class="material-symbols-outlined">rule</span><p class="text-sm">Yêu cầu</p></a>
             <a asp-page="/Doctor/PerformanceAnalysis" class="@NavClass("performance")"><span class="material-symbols-outlined">monitoring</span><p class="text-sm">Hiệu suất</p></a>
             <a asp-page="/Doctor/SpecialtyProfile" class="@NavClass("specialty")"><span class="material-symbols-outlined">medical_services</span><p class="text-sm">Hồ sơ chuyên môn</p></a>
-            <a asp-page="/Doctor/Profile" class="@NavClass("profile")"><span class="material-symbols-outlined">edit_square</span><p class="text-sm">Cập nhật hồ sơ</p></a>
+            <div class="flex flex-col gap-1 ml-6">
+                <a asp-page="/Doctor/UpdateProfile" class="@NavClass("profile")"><span class="material-symbols-outlined">edit_square</span><p class="text-sm">Cập nhật hồ sơ</p></a>
+            </div>
             <a asp-page="/Doctor/Membership" class="@NavClass("membership")"><span class="material-symbols-outlined">credit_card</span><p class="text-sm">Tài chính & gói cước</p></a>
         </nav>
 
@@ -35,12 +37,12 @@
             <a asp-page="/Doctor/Membership" class="block text-center py-2 rounded-lg bg-primary text-white text-sm font-semibold no-underline">Nâng cấp gói</a>
         </div>
 
-        <div class="mt-auto pt-5 border-t border-slate-100 flex items-center gap-3 px-2">
+        <a asp-page="/Doctor/SpecialtyProfile" class="mt-auto pt-5 border-t border-slate-100 flex items-center gap-3 px-2 no-underline hover:bg-slate-50">
             <div class="size-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 text-xs font-bold">DR</div>
             <div>
                 <p class="text-xs font-bold">BS. James Smith</p>
                 <p class="text-[10px] text-slate-500 uppercase">Tim mạch</p>
             </div>
-        </div>
+        </a>
     </div>
 </aside>

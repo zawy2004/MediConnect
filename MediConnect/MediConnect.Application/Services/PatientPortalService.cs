@@ -140,6 +140,40 @@ public class PatientPortalService : IPatientPortalService
         };
     }
 
+    public async Task<PatientPaymentConfirmDto?> GetPaymentConfirmByDoctorSlotAsync(int patientId, int doctorProfileId, int slotId)
+    {
+        var detail = await _doctorService.GetDoctorDetailAsync(doctorProfileId);
+        if (detail == null)
+        {
+            return null;
+        }
+
+        var slot = await _timeSlotRepository.GetByIdAsync(slotId);
+        if (slot == null || slot.UserId != detail.UserId || !slot.IsAvailable || slot.BookedCount >= slot.MaxCapacity)
+        {
+            return null;
+        }
+
+        var user = await _userRepository.GetByIdAsync(patientId);
+        var consultationFee = detail.ConsultationFee > 0 ? detail.ConsultationFee : 250000m;
+        var serviceFee = 10000m;
+        var totalAmount = consultationFee + serviceFee;
+
+        return new PatientPaymentConfirmDto
+        {
+            AppointmentId = 0,
+            PatientName = user?.FullName ?? "Bệnh nhân",
+            PhoneNumber = user?.PhoneNumber,
+            DoctorName = detail.FullName,
+            SpecialtyName = detail.Specialties.FirstOrDefault(),
+            AppointmentDate = slot.SlotDate,
+            StartTime = slot.StartTime,
+            Location = detail.Location,
+            Amount = totalAmount,
+            Currency = "VND"
+        };
+    }
+
     public async Task<PatientAppointmentManagerDto> GetAppointmentManagerAsync(int patientId)
     {
         var appointments = await _appointmentRepository.GetByPatientIdAsync(patientId);
@@ -226,7 +260,9 @@ public class PatientPortalService : IPatientPortalService
         }
 
         var user = await _userRepository.GetByIdAsync(patientId);
-        var amount = appointment.Doctor.DoctorProfileUser?.ConsultationFee ?? 0m;
+        var consultationFee = appointment.Doctor.DoctorProfileUser?.ConsultationFee ?? 0m;
+        var serviceFee = 10000m;
+        var totalAmount = (consultationFee > 0 ? consultationFee : 250000m) + serviceFee;
 
         return new PatientPaymentConfirmDto
         {
@@ -238,7 +274,7 @@ public class PatientPortalService : IPatientPortalService
             AppointmentDate = appointment.AppointmentDate,
             StartTime = appointment.StartTime,
             Location = appointment.Doctor.DoctorProfileUser?.Location,
-            Amount = amount > 0 ? amount : 250000m
+            Amount = totalAmount
         };
     }
 
@@ -251,7 +287,7 @@ public class PatientPortalService : IPatientPortalService
         }
 
         var existing = await _paymentRepository.GetLatestByAppointmentAsync(appointmentId);
-        if (existing != null && existing.PaymentStatus == "PAID")
+        if (existing != null && existing.PaymentStatus == "COMPLETED")
         {
             return new PatientPaymentResultDto
             {
@@ -262,7 +298,9 @@ public class PatientPortalService : IPatientPortalService
         }
 
         var transactionId = $"MC-{DateTime.UtcNow:yyyyMMddHHmmss}-{appointmentId}";
-        var amount = appointment.Doctor.DoctorProfileUser?.ConsultationFee ?? 250000m;
+        var consultationFee = appointment.Doctor.DoctorProfileUser?.ConsultationFee ?? 250000m;
+        var serviceFee = 10000m;
+        var amount = consultationFee + serviceFee;
 
         var payment = new Payment
         {
@@ -271,7 +309,7 @@ public class PatientPortalService : IPatientPortalService
             Amount = amount,
             Currency = "VND",
             PaymentMethod = string.IsNullOrWhiteSpace(paymentMethod) ? "VNPAY" : paymentMethod,
-            PaymentStatus = "PAID",
+            PaymentStatus = "COMPLETED",
             TransactionId = transactionId,
             PaidAt = DateTime.Now,
             CreatedAt = DateTime.Now,
@@ -329,7 +367,7 @@ public class PatientPortalService : IPatientPortalService
 
     public async Task<List<PatientNotificationItemDto>> GetRecentInAppNotificationsAsync(int patientId, int take = 20)
     {
-        var safeTake = Math.Clamp(take, 1, 50);
+        var safeTake = Math.Clamp(take, 1, 200);
         var notifications = await _notificationRepository.GetRecentByUserIdAndChannelAsync(patientId, "IN_APP", safeTake);
         return notifications.Select(n => new PatientNotificationItemDto
         {
@@ -348,7 +386,7 @@ public class PatientPortalService : IPatientPortalService
 
     public async Task<List<PatientPaymentHistoryItemDto>> GetPaidAppointmentPaymentHistoryAsync(int patientId, int take = 20)
     {
-        var safeTake = Math.Clamp(take, 1, 50);
+        var safeTake = Math.Clamp(take, 1, 200);
 
         // Load appointments once to avoid N+1 queries.
         var appointments = await _appointmentRepository.GetByPatientIdAsync(patientId);
@@ -357,24 +395,22 @@ public class PatientPortalService : IPatientPortalService
         var payments = await _paymentRepository.GetByPatientIdAsync(patientId);
 
         var paidSuccessful = payments
-            .Where(p => string.Equals(p.PaymentStatus, "PAID", StringComparison.OrdinalIgnoreCase))
-            .Where(p => appointmentMap.TryGetValue(p.AppointmentId, out var appt)
-                        && appt.Status != AppointmentStatus.CancelledByPatient
-                        && appt.Status != AppointmentStatus.CancelledByDoctor)
+            .Where(p => string.Equals(p.PaymentStatus, "COMPLETED", StringComparison.OrdinalIgnoreCase))
+            .Where(p => p.AppointmentId.HasValue && appointmentMap.ContainsKey(p.AppointmentId.Value))
             .OrderByDescending(p => p.PaidAt ?? p.CreatedAt)
             .Take(safeTake);
 
         return paidSuccessful
             .Select(p =>
             {
-                appointmentMap.TryGetValue(p.AppointmentId, out var appt);
+                appointmentMap.TryGetValue(p.AppointmentId!.Value, out var appt);
                 return new PatientPaymentHistoryItemDto
                 {
                     PaymentId = p.PaymentId,
-                    AppointmentId = p.AppointmentId,
+                    AppointmentId = p.AppointmentId ?? 0,
                     BookingCode = appt != null
                         ? $"MC-{appt.AppointmentId:0000}-{appt.AppointmentDate:ddMM}"
-                        : $"MC-{p.AppointmentId:0000}",
+                        : (p.AppointmentId.HasValue ? $"MC-{p.AppointmentId.Value:0000}" : ""),
                     DoctorName = appt?.Doctor?.FullName ?? "Bác sĩ",
                     SpecialtyName = appt?.Specialty?.SpecialtyName,
                     AppointmentDate = appt?.AppointmentDate ?? DateOnly.FromDateTime(p.CreatedAt),

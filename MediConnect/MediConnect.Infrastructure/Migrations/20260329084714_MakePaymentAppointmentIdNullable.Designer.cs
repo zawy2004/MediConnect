@@ -4,6 +4,7 @@ using MediConnect.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MediConnect.Infrastructure.Migrations
 {
     [DbContext(typeof(MediconnectContext))]
-    partial class MediconnectContextModelSnapshot : ModelSnapshot
+    [Migration("20260329084714_MakePaymentAppointmentIdNullable")]
+    partial class MakePaymentAppointmentIdNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -251,18 +254,6 @@ namespace MediConnect.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("appointment_id");
 
-                    b.Property<int?>("AssignedToAdminId")
-                        .HasColumnType("int")
-                        .HasColumnName("assigned_to_admin_id");
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasDefaultValue("OTHER")
-                        .HasColumnName("category");
-
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
@@ -278,27 +269,9 @@ namespace MediConnect.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("doctor_id");
 
-                    b.Property<int>("EscalationLevel")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0)
-                        .HasColumnName("escalation_level");
-
-                    b.Property<DateTime?>("FollowUpReminderDate")
-                        .HasColumnType("datetime")
-                        .HasColumnName("follow_up_reminder_date");
-
                     b.Property<int>("PatientId")
                         .HasColumnType("int")
                         .HasColumnName("patient_id");
-
-                    b.Property<string>("Priority")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasDefaultValue("NORMAL")
-                        .HasColumnName("priority");
 
                     b.Property<string>("ResolutionNote")
                         .HasColumnType("nvarchar(max)")
@@ -333,8 +306,6 @@ namespace MediConnect.Infrastructure.Migrations
                         .HasDefaultValueSql("(getdate())");
 
                     b.HasKey("ComplaintId");
-
-                    b.HasIndex("AssignedToAdminId");
 
                     b.HasIndex("ResolvedBy");
 
@@ -1453,11 +1424,6 @@ namespace MediConnect.Infrastructure.Migrations
                         .HasForeignKey("AppointmentId")
                         .HasConstraintName("FK_comp_appointment");
 
-                    b.HasOne("MediConnect.Domain.Entities.User", "AssignedToAdmin")
-                        .WithMany()
-                        .HasForeignKey("AssignedToAdminId")
-                        .HasConstraintName("FK_comp_assigned_admin");
-
                     b.HasOne("MediConnect.Domain.Entities.User", "Doctor")
                         .WithMany("ComplaintDoctors")
                         .HasForeignKey("DoctorId")
@@ -1475,8 +1441,6 @@ namespace MediConnect.Infrastructure.Migrations
                         .HasConstraintName("FK_comp_resolved_by");
 
                     b.Navigation("Appointment");
-
-                    b.Navigation("AssignedToAdmin");
 
                     b.Navigation("Doctor");
 

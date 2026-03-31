@@ -18,11 +18,13 @@ public class PaymentHistoryModel : PageModel
     }
 
     public List<PatientPaymentHistoryItemDto> Items { get; set; } = new();
+    public decimal TotalPaidAmount { get; set; }
 
     public async Task OnGetAsync()
     {
         var patientId = GetUserId();
-        Items = await _patientPortalService.GetPaidAppointmentPaymentHistoryAsync(patientId, 50);
+        Items = await _patientPortalService.GetPaidAppointmentPaymentHistoryAsync(patientId, 200);
+        TotalPaidAmount = Items.Sum(x => x.Amount);
     }
 
     private int GetUserId() => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

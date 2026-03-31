@@ -1,3 +1,4 @@
+using System.Linq;
 using MediConnect.Application.DTOs;
 using MediConnect.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -8,13 +9,19 @@ namespace MediConnect.Server.Pages.Patient;
 public class PaymentReturnModel : PageModel
 {
     private readonly IPaymentGatewayService _paymentGatewayService;
+    private readonly IPatientPortalService _patientPortalService;
+    private readonly IDoctorPortalService _doctorPortalService;
     private readonly ILogger<PaymentReturnModel> _logger;
 
     public PaymentReturnModel(
         IPaymentGatewayService paymentGatewayService,
+        IPatientPortalService patientPortalService,
+        IDoctorPortalService doctorPortalService,
         ILogger<PaymentReturnModel> logger)
     {
         _paymentGatewayService = paymentGatewayService;
+        _patientPortalService = patientPortalService;
+        _doctorPortalService = doctorPortalService;
         _logger = logger;
     }
 
@@ -70,10 +77,43 @@ public class PaymentReturnModel : PageModel
         TransactionId = result.TransactionId;
         OrderId = result.OrderId;
         ErrorMessage = result.ErrorMessage;
+
         AppointmentId = ExtractAppointmentId(result.OrderId);
 
         if (IsSuccess)
         {
+            // Parse OrderInfo để lấy thông tin đặt lịch
+            var orderInfo = callback.vnp_OrderInfo;
+            var appointmentDto = ParseOrderInfo(orderInfo, User);
+            if (appointmentDto == null)
+            {
+                ErrorMessage = "Không thể lấy thông tin đặt lịch từ thanh toán.";
+                return Page();
+            }
+            var appointmentService = HttpContext.RequestServices.GetService(typeof(MediConnect.Application.Interfaces.IAppointmentService)) as MediConnect.Application.Interfaces.IAppointmentService;
+            if (appointmentService == null)
+            {
+                ErrorMessage = "Không thể khởi tạo dịch vụ lịch hẹn.";
+                return Page();
+            }
+            var createResult = await appointmentService.CreateAppointmentAsync(appointmentDto);
+            if (!createResult.Success || !createResult.AppointmentId.HasValue)
+            {
+                ErrorMessage = createResult.ErrorMessage ?? "Không thể tạo lịch hẹn sau thanh toán.";
+                return Page();
+            }
+
+            AppointmentId = createResult.AppointmentId.Value;
+
+            // Ensure a PAID record is persisted for the newly created appointment.
+            var patientId = appointmentDto.PatientId;
+            var finalizePayment = await _patientPortalService.CompletePaymentAsync(patientId, AppointmentId, "VNPAY");
+            if (!finalizePayment.Success)
+            {
+                _logger.LogWarning("Unable to finalize payment history for appointment {AppointmentId}: {Error}",
+                    AppointmentId, finalizePayment.ErrorMessage);
+            }
+
             return RedirectToPage("/Patient/BookingSuccess", new { appointmentId = AppointmentId, transactionId = TransactionId });
         }
 
@@ -108,14 +148,83 @@ public class PaymentReturnModel : PageModel
         TransactionId = result.TransactionId;
         OrderId = result.OrderId;
         ErrorMessage = result.ErrorMessage;
+
         AppointmentId = ExtractAppointmentId(result.OrderId);
 
         if (IsSuccess)
         {
+            // Parse OrderInfo để lấy thông tin đặt lịch
+            var orderInfo = callback.OrderInfo;
+            var appointmentDto = ParseOrderInfo(orderInfo, User);
+            if (appointmentDto == null)
+            {
+                ErrorMessage = "Không thể lấy thông tin đặt lịch từ thanh toán.";
+                return Page();
+            }
+            var appointmentService = HttpContext.RequestServices.GetService(typeof(MediConnect.Application.Interfaces.IAppointmentService)) as MediConnect.Application.Interfaces.IAppointmentService;
+            if (appointmentService == null)
+            {
+                ErrorMessage = "Không thể khởi tạo dịch vụ lịch hẹn.";
+                return Page();
+            }
+            var createResult = await appointmentService.CreateAppointmentAsync(appointmentDto);
+            if (!createResult.Success || !createResult.AppointmentId.HasValue)
+            {
+                ErrorMessage = createResult.ErrorMessage ?? "Không thể tạo lịch hẹn sau thanh toán.";
+                return Page();
+            }
+
+            AppointmentId = createResult.AppointmentId.Value;
+
+            // Ensure a PAID record is persisted for the newly created appointment.
+            var patientId = appointmentDto.PatientId;
+            var finalizePayment = await _patientPortalService.CompletePaymentAsync(patientId, AppointmentId, "MOMO");
+            if (!finalizePayment.Success)
+            {
+                _logger.LogWarning("Unable to finalize payment history for appointment {AppointmentId}: {Error}",
+                    AppointmentId, finalizePayment.ErrorMessage);
+            }
+
             return RedirectToPage("/Patient/BookingSuccess", new { appointmentId = AppointmentId, transactionId = TransactionId });
         }
 
         return Page();
+    }
+
+    // Parse OrderInfo string to CreateAppointmentDto
+    private MediConnect.Application.DTOs.CreateAppointmentDto? ParseOrderInfo(string? orderInfo, System.Security.Claims.ClaimsPrincipal user)
+    {
+        if (string.IsNullOrEmpty(orderInfo)) return null;
+        var dict = new Dictionary<string, string>();
+        foreach (var part in orderInfo.Split(';'))
+        {
+            var kv = part.Split('=', 2);
+            if (kv.Length == 2)
+                dict[kv[0]] = kv[1];
+        }
+        try
+        {
+            var patientId = int.Parse(user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var doctorUserId = int.Parse(dict["doctorUserId"]);
+            var slotId = int.Parse(dict["slotId"]);
+            int? specialtyId = null;
+            if (dict.ContainsKey("specialtyId") && int.TryParse(dict["specialtyId"], out var spId)) specialtyId = spId;
+            var appointmentDate = DateTime.Parse(dict["appointmentDate"]);
+            var reason = dict.ContainsKey("reason") ? Uri.UnescapeDataString(dict["reason"]) : null;
+            return new MediConnect.Application.DTOs.CreateAppointmentDto
+            {
+                PatientId = patientId,
+                DoctorId = doctorUserId,
+                SlotId = slotId,
+                SpecialtyId = specialtyId,
+                AppointmentDate = appointmentDate,
+                Reason = reason
+            };
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     private static int ExtractAppointmentId(string orderId)
@@ -131,4 +240,5 @@ public class PaymentReturnModel : PageModel
         }
         return 0;
     }
+
 }

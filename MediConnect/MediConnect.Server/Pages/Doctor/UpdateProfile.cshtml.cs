@@ -10,11 +10,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace MediConnect.Server.Pages.Doctor;
 
 [Authorize(Roles = RoleNames.Doctor)]
-public class ProfileModel : PageModel
+public class UpdateProfileModel : PageModel
 {
     private readonly IDoctorPortalService _doctorPortalService;
 
-    public ProfileModel(IDoctorPortalService doctorPortalService)
+    public UpdateProfileModel(IDoctorPortalService doctorPortalService)
     {
         _doctorPortalService = doctorPortalService;
     }
