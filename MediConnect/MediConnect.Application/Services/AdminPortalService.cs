@@ -22,6 +22,7 @@ public class AdminPortalService : IAdminPortalService
     private readonly IComplaintRepository _complaintRepository;
     private readonly INotificationRepository _notificationRepository;
     private readonly IEmailMessagingService _emailMessagingService;
+    private readonly ILlmService _llmService;
     private readonly IUnitOfWork _unitOfWork;
 
     public AdminPortalService(
@@ -37,6 +38,7 @@ public class AdminPortalService : IAdminPortalService
         IComplaintRepository complaintRepository,
         INotificationRepository notificationRepository,
         IEmailMessagingService emailMessagingService,
+        ILlmService llmService,
         IUnitOfWork unitOfWork)
     {
         _userRepository = userRepository;
@@ -51,6 +53,7 @@ public class AdminPortalService : IAdminPortalService
         _complaintRepository = complaintRepository;
         _notificationRepository = notificationRepository;
         _emailMessagingService = emailMessagingService;
+        _llmService = llmService;
         _unitOfWork = unitOfWork;
     }
 
@@ -292,6 +295,11 @@ public class AdminPortalService : IAdminPortalService
     {
         var logs = await _systemLogRepository.GetRecentAsync(20);
 
+        // Gather data for AI load prediction
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var recentAppointments = await _appointmentRepository.GetByDateRangeAsync(today.AddDays(-7), today.AddDays(7));
+        var predictedLoadMessage = await GenerateLoadPredictionAsync(recentAppointments, logs);
+
         return new AdminMonitoringDto
         {
             ErrorCount = await _systemLogRepository.CountBySeverityAsync("ERROR"),
@@ -306,9 +314,76 @@ public class AdminPortalService : IAdminPortalService
                 Username = l.User?.Email ?? "System"
             }).ToList(),
             BackupProgressPercent = 74,
-            PredictedLoadMessage = "Dự báo tải cao vào 09:00 ngày mai. Khuyến nghị mở rộng tài nguyên trước 08:30."
+            PredictedLoadMessage = predictedLoadMessage
         };
     }
+
+    private async Task<string> GenerateLoadPredictionAsync(IEnumerable<Appointment> appointments, IEnumerable<SystemLog> logs)
+    {
+        try
+        {
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var tomorrow = today.AddDays(1);
+
+            // Analyze appointment patterns
+            var appointmentList = appointments.ToList();
+            var todayCount = appointmentList.Count(a => a.AppointmentDate == today);
+            var tomorrowCount = appointmentList.Count(a => a.AppointmentDate == tomorrow);
+            var avgLast7Days = appointmentList
+                .Where(a => a.AppointmentDate >= today.AddDays(-7) && a.AppointmentDate < today)
+                .GroupBy(a => a.AppointmentDate)
+                .Select(g => g.Count())
+                .DefaultIfEmpty(0)
+                .Average();
+
+            // Analyze by time slots
+            var tomorrowAppointments = appointmentList.Where(a => a.AppointmentDate == tomorrow).ToList();
+            var peakHour = tomorrowAppointments
+                .GroupBy(a => a.StartTime.Hour)
+                .OrderByDescending(g => g.Count())
+                .FirstOrDefault();
+
+            // Analyze error trends
+            var errorCount = logs.Count(l => l.Severity == "ERROR");
+            var warningCount = logs.Count(l => l.Severity == "WARNING");
+
+            // Specialty load analysis
+            var specialtyLoads = tomorrowAppointments
+                .Where(a => a.Specialty != null)
+                .GroupBy(a => a.Specialty!.SpecialtyName)
+                .Select(g => new { Specialty = g.Key, Count = g.Count() })
+                .OrderByDescending(x => x.Count)
+                .Take(3)
+                .ToList();
+
+            var dataContext = $@"
+Dữ liệu hệ thống MediConnect:
+- Lịch hẹn hôm nay: {todayCount}
+- Lịch hẹn ngày mai: {tomorrowCount}
+- Trung bình 7 ngày qua: {avgLast7Days:F1}
+- Giờ cao điểm ngày mai: {(peakHour != null ? $"{peakHour.Key}:00 với {peakHour.Count()} ca" : "chưa có dữ liệu")}
+- Chuyên khoa tải cao: {string.Join(", ", specialtyLoads.Select(s => $"{s.Specialty} ({s.Count} ca)"))}
+- Lỗi gần đây: {errorCount}, Cảnh báo: {warningCount}
+";
+
+            var messages = new List<LlmMessage>
+            {
+                new() { Role = "user", Content = dataContext }
+            };
+
+            var systemPrompt = @"Bạn là AI phân tích tải hệ thống y tế MediConnect. Dựa trên dữ liệu được cung cấp, hãy đưa ra một dự báo ngắn gọn (1-2 câu) về tình trạng tải hệ thống ngày mai và khuyến nghị cụ thể cho admin. Trả lời bằng tiếng Việt, chuyên nghiệp và súc tích.";
+
+            var response = await _llmService.GenerateResponseAsync(messages, systemPrompt);
+            return string.IsNullOrWhiteSpace(response)
+                ? "Dự báo tải cao vào 09:00 ngày mai. Khuyến nghị mở rộng tài nguyên trước 08:30."
+                : response.Trim();
+        }
+        catch
+        {
+            return "Dự báo tải cao vào 09:00 ngày mai. Khuyến nghị mở rộng tài nguyên trước 08:30.";
+        }
+    }
+
 
     public async Task<AdminComplaintDto> GetComplaintsAsync(int? selectedComplaintId)
     {
@@ -377,6 +452,29 @@ public class AdminPortalService : IAdminPortalService
 
         var logs = await _systemLogRepository.GetRecentAsync(1000);
         var meta = BuildComplaintMeta(complaint, logs);
+        
+        // Use AI to get better classification if not already explicitly set
+        var complaintLogs = logs
+            .Where(l => !string.IsNullOrWhiteSpace(l.Description)
+                && l.Description!.Contains($"#{complaint.ComplaintId}", StringComparison.Ordinal))
+            .ToList();
+        var hasExplicitUpdate = complaintLogs.Any(l => l.Action == "UPDATE_COMPLAINT");
+        
+        if (!hasExplicitUpdate)
+        {
+            var (aiCategory, aiPriority) = await ClassifyComplaintWithAiAsync(
+                complaint.Subject, 
+                complaint.Description, 
+                complaint.CreatedAt, 
+                complaint.Status);
+            
+            meta = meta with 
+            { 
+                Category = NormalizeCategory(aiCategory), 
+                Priority = NormalizePriority(aiPriority) 
+            };
+        }
+        
         return MapComplaintDetail(complaint, meta);
     }
 
@@ -446,21 +544,138 @@ public class AdminPortalService : IAdminPortalService
         var complaint = await _complaintRepository.GetByIdAsync(complaintId);
         if (complaint == null) return false;
 
-        // Simple auto-assignment logic based on priority and category
-        // In production, this could be more sophisticated (round-robin, workload-based, etc)
-        var adminUsers = await _userRepository.GetAllAsync(); // Get all admin users
+        // Get all admin users
+        var adminUsers = await _userRepository.GetAllAsync();
         var availableAdmins = adminUsers.Where(u => u.Role?.RoleName == "ADMIN" && u.IsActive).ToList();
 
         if (availableAdmins.Count == 0) return false;
 
-        // Assign to first available admin (simplified heuristic)
-        var assignedAdmin = availableAdmins.First();
+        // Get complaint logs to analyze admin workload
+        var recentLogs = await _systemLogRepository.GetRecentAsync(500);
+        var assignedAdmin = await SelectBestAdminWithAiAsync(
+            availableAdmins, 
+            complaint, 
+            category, 
+            priority, 
+            recentLogs);
+
         await LogActionAsync(assignedAdmin.UserId,
             "AUTO_ASSIGN_COMPLAINT",
             $"Assigned complaint #{complaint.ComplaintId} to admin {assignedAdmin.UserId} ({assignedAdmin.FullName}) [category={NormalizeCategory(category)}, priority={NormalizePriority(priority)}]",
             "INFO");
         await _unitOfWork.SaveChangesAsync();
         return true;
+    }
+
+    private async Task<User> SelectBestAdminWithAiAsync(
+        List<User> availableAdmins,
+        Complaint complaint,
+        string category,
+        string priority,
+        IEnumerable<SystemLog> recentLogs)
+    {
+        if (availableAdmins.Count == 1)
+            return availableAdmins.First();
+
+        try
+        {
+            // Calculate workload for each admin
+            var logList = recentLogs.ToList();
+            var adminWorkloads = availableAdmins.Select(admin =>
+            {
+                var assignedCount = logList.Count(l => 
+                    l.UserId == admin.UserId && 
+                    l.Action == "AUTO_ASSIGN_COMPLAINT" &&
+                    l.CreatedAt >= DateTime.Now.AddDays(-7));
+                
+                var resolvedCount = logList.Count(l => 
+                    l.UserId == admin.UserId && 
+                    l.Action == "RESOLVE_COMPLAINT" &&
+                    l.CreatedAt >= DateTime.Now.AddDays(-7));
+
+                // Check category expertise based on recent resolutions
+                var categoryExpertise = logList.Count(l => 
+                    l.UserId == admin.UserId && 
+                    l.Action == "RESOLVE_COMPLAINT" &&
+                    l.Description != null &&
+                    l.Description.Contains($"category={category}", StringComparison.OrdinalIgnoreCase));
+
+                return new
+                {
+                    Admin = admin,
+                    CurrentWorkload = assignedCount - resolvedCount,
+                    TotalAssigned = assignedCount,
+                    TotalResolved = resolvedCount,
+                    CategoryExpertise = categoryExpertise
+                };
+            }).ToList();
+
+            // Build context for AI decision
+            var adminInfo = string.Join("\n", adminWorkloads.Select((w, i) => 
+                $"Admin {i + 1}: {w.Admin.FullName} - Workload hiện tại: {w.CurrentWorkload}, Đã xử lý 7 ngày: {w.TotalResolved}, Chuyên môn {category}: {w.CategoryExpertise} case"));
+
+            var contextData = $@"
+Phân công khiếu nại:
+- Tiêu đề: {complaint.Subject}
+- Danh mục: {category}
+- Mức độ ưu tiên: {priority}
+
+Danh sách Admin có thể phân công:
+{adminInfo}
+
+Lựa chọn admin tốt nhất dựa trên: workload thấp, chuyên môn phù hợp, và thời gian phản hồi.
+";
+
+            var systemPrompt = @"Bạn là AI phân công khiếu nại thông minh. Dựa trên thông tin workload và expertise, hãy chọn admin phù hợp nhất.
+
+Nguyên tắc:
+1. Ưu tiên admin có workload thấp
+2. Ưu tiên admin có chuyên môn về category tương ứng
+3. Với khiếu nại CRITICAL, chọn admin có nhiều kinh nghiệm (đã xử lý nhiều)
+
+Trả lời CHỈ số thứ tự admin (1, 2, 3, ...). Không giải thích.";
+
+            var messages = new List<LlmMessage>
+            {
+                new() { Role = "user", Content = contextData }
+            };
+
+            var response = await _llmService.GenerateResponseAsync(messages, systemPrompt);
+            
+            // Parse the response to get admin index
+            if (!string.IsNullOrWhiteSpace(response))
+            {
+                var trimmed = response.Trim();
+                // Extract first digit
+                var digitStr = new string(trimmed.TakeWhile(char.IsDigit).ToArray());
+                if (int.TryParse(digitStr, out var index) && index >= 1 && index <= adminWorkloads.Count)
+                {
+                    return adminWorkloads[index - 1].Admin;
+                }
+            }
+
+            // Fallback: Select admin with lowest workload
+            return adminWorkloads
+                .OrderBy(w => w.CurrentWorkload)
+                .ThenByDescending(w => w.CategoryExpertise)
+                .First()
+                .Admin;
+        }
+        catch
+        {
+            // Fallback: Round-robin based on workload
+            var logList = recentLogs.ToList();
+            return availableAdmins
+                .Select(admin => new
+                {
+                    Admin = admin,
+                    Workload = logList.Count(l => l.UserId == admin.UserId && l.Action == "AUTO_ASSIGN_COMPLAINT" && l.CreatedAt >= DateTime.Now.AddDays(-7))
+                              - logList.Count(l => l.UserId == admin.UserId && l.Action == "RESOLVE_COMPLAINT" && l.CreatedAt >= DateTime.Now.AddDays(-7))
+                })
+                .OrderBy(x => x.Workload)
+                .First()
+                .Admin;
+        }
     }
 
     public async Task<bool> ResolveComplaintAsync(int complaintId, int adminUserId, string resolutionNote, string nextStatus)
@@ -739,8 +954,8 @@ public class AdminPortalService : IAdminPortalService
             .OrderByDescending(l => l.CreatedAt)
             .ToList();
 
-        var category = InferCategory(complaint.Subject, complaint.Description);
-        var priority = InferPriority(complaint.Subject, complaint.Description, complaint.CreatedAt, complaint.Status);
+        var category = FallbackInferCategory(complaint.Subject, complaint.Description);
+        var priority = FallbackInferPriority(complaint.Subject, complaint.Description, complaint.CreatedAt, complaint.Status);
 
         var updateLog = complaintLogs.FirstOrDefault(l => l.Action == "UPDATE_COMPLAINT");
         if (updateLog?.Description != null)
@@ -780,7 +995,83 @@ public class AdminPortalService : IAdminPortalService
             reminder);
     }
 
-    private static string InferCategory(string subject, string description)
+    private async Task<(string Category, string Priority)> ClassifyComplaintWithAiAsync(string subject, string description, DateTime createdAt, string status)
+    {
+        try
+        {
+            var ageHours = (DateTime.Now - createdAt).TotalHours;
+            var contextData = $@"
+Khiếu nại cần phân loại:
+- Tiêu đề: {subject}
+- Mô tả: {description}
+- Thời gian tạo: {createdAt:dd/MM/yyyy HH:mm} (cách đây {ageHours:F0} giờ)
+- Trạng thái hiện tại: {status}
+";
+
+            var systemPrompt = @"Bạn là AI phân loại khiếu nại y tế. Dựa trên nội dung khiếu nại, hãy phân loại:
+
+CATEGORY (chọn 1):
+- QUALITY: Chất lượng khám chữa bệnh, chẩn đoán sai, điều trị không hiệu quả
+- PAYMENT: Thanh toán, hóa đơn, chi phí, bảo hiểm
+- BEHAVIOR: Thái độ nhân viên, bác sĩ, phục vụ
+- SERVICE: Thời gian chờ, đặt lịch, quy trình
+- OTHER: Không thuộc các loại trên
+
+PRIORITY (chọn 1):
+- CRITICAL: Nguy hiểm sức khỏe, cần xử lý ngay (< 2 giờ)
+- HIGH: Nghiêm trọng, cần xử lý trong ngày
+- NORMAL: Bình thường, xử lý theo quy trình
+- LOW: Không khẩn cấp, có thể xử lý sau
+
+Trả lời CHÍNH XÁC theo format:
+CATEGORY: [giá trị]
+PRIORITY: [giá trị]";
+
+            var messages = new List<LlmMessage>
+            {
+                new() { Role = "user", Content = contextData }
+            };
+
+            var response = await _llmService.GenerateResponseAsync(messages, systemPrompt);
+            
+            // Parse response
+            var category = "OTHER";
+            var priority = "NORMAL";
+
+            if (!string.IsNullOrWhiteSpace(response))
+            {
+                var lines = response.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                foreach (var line in lines)
+                {
+                    var upper = line.ToUpperInvariant().Trim();
+                    if (upper.StartsWith("CATEGORY:"))
+                    {
+                        var val = upper.Replace("CATEGORY:", "").Trim();
+                        if (val is "QUALITY" or "PAYMENT" or "BEHAVIOR" or "SERVICE" or "OTHER")
+                            category = val;
+                    }
+                    else if (upper.StartsWith("PRIORITY:"))
+                    {
+                        var val = upper.Replace("PRIORITY:", "").Trim();
+                        if (val is "CRITICAL" or "HIGH" or "NORMAL" or "LOW")
+                            priority = val;
+                    }
+                }
+            }
+
+            return (category, priority);
+        }
+        catch
+        {
+            // Fallback to keyword-based classification
+            return (
+                FallbackInferCategory(subject, description),
+                FallbackInferPriority(subject, description, createdAt, status)
+            );
+        }
+    }
+
+    private static string FallbackInferCategory(string subject, string description)
     {
         var text = $"{subject} {description}".ToLowerInvariant();
         if (text.Contains("payment") || text.Contains("thanh toan") || text.Contains("hoa don")) return "PAYMENT";
@@ -790,7 +1081,7 @@ public class AdminPortalService : IAdminPortalService
         return "OTHER";
     }
 
-    private static string InferPriority(string subject, string description, DateTime createdAt, string status)
+    private static string FallbackInferPriority(string subject, string description, DateTime createdAt, string status)
     {
         var text = $"{subject} {description}".ToLowerInvariant();
         if (text.Contains("urgent") || text.Contains("khancap") || text.Contains("nghiem trong")) return "CRITICAL";
