@@ -12,6 +12,23 @@
     <!-- Material Symbols -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <script>
+        (function() {
+            function getCookie(name) {
+                var matches = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+                return matches ? decodeURIComponent(matches[1]) : null;
+            }
+            var theme = getCookie('ui_theme') || 'light';
+            var fontSize = getCookie('ui_font_size') || 'normal';
+            var compact = getCookie('ui_compact') === 'true';
+            var showAvatars = getCookie('ui_show_avatars') !== 'false';
+            var html = document.documentElement;
+            html.classList.add('font-' + fontSize);
+            if (compact) html.classList.add('compact-layout');
+            if (!showAvatars) html.classList.add('hide-avatars');
+            if (theme === 'dark') html.classList.add('theme-dark');
+        })();
+    </script>
+    <script>
         tailwind.config = {
             theme: {
                 extend: {
