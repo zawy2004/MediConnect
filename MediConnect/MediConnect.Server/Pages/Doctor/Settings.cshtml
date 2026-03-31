@@ -1,0 +1,88 @@
+@page
+@model MediConnect.Server.Pages.Doctor.SettingsModel
+@{
+    ViewData["Title"] = "Cài đặt giao diện";
+    ViewData["HideLayout"] = true;
+}
+
+<div class="min-h-screen bg-[#f8fafc] flex">
+    @await Html.PartialAsync("_DoctorSidebar", "settings")
+    <main class="flex-1 overflow-y-auto p-8 space-y-6">
+        <div class="flex items-center justify-between gap-4">
+            <div>
+                <h1 class="text-4xl font-black">Cài đặt giao diện</h1>
+                <p class="text-slate-500 mt-1">Tùy chỉnh trải nghiệm sử dụng của bác sĩ.</p>
+            </div>
+            <a asp-page="/Doctor/Dashboard" class="px-4 py-2 bg-white border border-slate-300 rounded-xl no-underline text-slate-700">Quay lại Dashboard</a>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+        {
+            <div class="bg-green-50 border border-green-200 text-green-700 rounded-xl px-4 py-3 text-sm">@Model.StatusMessage</div>
+        }
+
+        <section class="bg-white border rounded-2xl p-6">
+            <h2 class="text-2xl font-black mb-4">Giao diện hệ thống</h2>
+            <form method="post" class="space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="p-5 border border-slate-200 rounded-2xl">
+                        <h3 class="font-semibold text-lg">Chế độ màu</h3>
+                        <p class="text-sm text-slate-500 mt-2">Chuyển giữa giao diện sáng và tối.</p>
+                        <div class="mt-4 space-y-3">
+                            <label class="flex items-center gap-3">
+                                <input type="radio" asp-for="ThemeMode" value="light" class="accent-primary" />
+                                <span>Giao diện sáng</span>
+                            </label>
+                            <label class="flex items-center gap-3">
+                                <input type="radio" asp-for="ThemeMode" value="dark" class="accent-primary" />
+                                <span>Giao diện tối</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="p-5 border border-slate-200 rounded-2xl">
+                        <h3 class="font-semibold text-lg">Kích thước chữ</h3>
+                        <p class="text-sm text-slate-500 mt-2">Điều chỉnh cỡ chữ cho nội dung hiển thị.</p>
+                        <div class="mt-4 space-y-3">
+                            <label class="flex items-center gap-3">
+                                <input type="radio" asp-for="FontSize" value="small" class="accent-primary" />
+                                <span>Nhỏ</span>
+                            </label>
+                            <label class="flex items-center gap-3">
+                                <input type="radio" asp-for="FontSize" value="normal" class="accent-primary" />
+                                <span>Trung bình</span>
+                            </label>
+                            <label class="flex items-center gap-3">
+                                <input type="radio" asp-for="FontSize" value="large" class="accent-primary" />
+                                <span>Lớn</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="p-5 border border-slate-200 rounded-2xl">
+                        <h3 class="font-semibold text-lg">Chế độ compact</h3>
+                        <p class="text-sm text-slate-500 mt-2">Thu gọn khoảng cách giao diện để hiển thị nhiều thông tin hơn.</p>
+                        <label class="mt-4 flex items-center gap-3">
+                            <input type="checkbox" asp-for="CompactLayout" class="accent-primary" />
+                            <span>Bật chế độ compact</span>
+                        </label>
+                    </div>
+                    <div class="p-5 border border-slate-200 rounded-2xl">
+                        <h3 class="font-semibold text-lg">Hiển thị biểu tượng</h3>
+                        <p class="text-sm text-slate-500 mt-2">Bật/tắt các biểu tượng phụ trợ trong giao diện.</p>
+                        <label class="mt-4 flex items-center gap-3">
+                            <input type="checkbox" asp-for="ShowAvatars" class="accent-primary" />
+                            <span>Hiển thị biểu tượng và avatar</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex flex-wrap items-center gap-3">
+                    <button type="submit" class="px-6 py-3 bg-primary text-white rounded-xl font-semibold">Lưu cài đặt</button>
+                    <span class="text-slate-500">Các cài đặt sẽ được lưu lại cho phiên đăng nhập hiện tại.</span>
+                </div>
+            </form>
+        </section>
+    </main>
+</div>

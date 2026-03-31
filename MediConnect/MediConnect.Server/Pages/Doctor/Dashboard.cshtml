@@ -14,10 +14,11 @@
                 <p class="text-slate-500 mt-1">Xin chào @Model.Data.DoctorName • @Model.Data.DepartmentName</p>
             </div>
             <div class="flex items-center gap-3">
-                <div class="hidden lg:flex items-center gap-2 px-3 py-2 rounded-xl border bg-white border-slate-200 text-slate-500 min-w-[280px]">
-                    <span class="material-symbols-outlined text-base">search</span>
-                    <span class="text-sm">Tìm bệnh nhân, lịch hẹn...</span>
-                </div>
+                <form method="get" asp-page="/Doctor/Dashboard" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white min-w-[280px] shadow-sm">
+                    <input type="hidden" name="viewMode" value="@Model.ViewMode" />
+                    <input asp-for="SearchQuery" placeholder="Tìm bệnh nhân, lịch hẹn..." class="flex-1 bg-transparent outline-none border-none ring-0 focus:ring-0 text-sm text-slate-700" />
+                    <button type="submit" class="text-slate-500"><span class="material-symbols-outlined text-base">search</span></button>
+                </form>
                 <button type="button" class="size-10 rounded-xl border bg-white border-slate-200 text-slate-500"><span class="material-symbols-outlined">notifications</span></button>
                 <a asp-page="/Doctor/UpdateProfile" class="px-4 py-2 border border-slate-300 rounded-xl no-underline bg-white">Cập nhật hồ sơ</a>
             </div>
@@ -48,7 +49,17 @@
                                 <p class="font-semibold">@item.PatientName</p>
                                 <p class="text-sm text-slate-500">@item.StartTime.ToString("HH:mm") • @item.Reason</p>
                             </div>
-                            <span class="px-2 py-1 text-xs rounded-full @Model.GetBadgeClass(item.Status)">@item.Status</span>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-1 text-xs rounded-full @Model.GetBadgeClass(item.Status)">@item.Status</span>
+                                @if (item.Status != "COMPLETED")
+                                {
+                                    <a asp-page="/Doctor/Consultation" asp-route-appointmentId="@item.AppointmentId" class="px-3 py-1 rounded-xl bg-primary text-white text-sm font-semibold">Khám</a>
+                                }
+                                else
+                                {
+                                    <span class="px-3 py-1 rounded-xl bg-slate-100 text-slate-500 text-sm">Đã hoàn tất</span>
+                                }
+                            </div>
                         </div>
                     }
                 </div>
@@ -92,13 +103,46 @@
                 <a asp-page="/Doctor/PerformanceAnalysis" class="mt-4 inline-block px-4 py-2 bg-white/10 border border-white/30 rounded-xl text-white no-underline">Xem chi tiết hiệu suất</a>
             </div>
             <div class="bg-white border rounded-2xl p-5">
-                <h3 class="text-lg font-black mb-3">Lịch tuần này</h3>
-                <div class="grid grid-cols-7 gap-2 text-center text-xs">
-                    @foreach (var day in new[] { "T2", "T3", "T4", "T5", "T6", "T7", "CN" })
-                    {
-                        <div class="py-2 rounded-lg bg-slate-50 border border-slate-200">@day</div>
-                    }
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                        <h3 class="text-lg font-black">@((Model.ViewMode.ToLowerInvariant() == "month") ? "Lịch tháng này" : "Lịch tuần này")</h3>
+                        <p class="text-slate-500 text-sm">Chọn chế độ xem lịch hoặc xem chi tiết trong lịch trình.</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <a asp-page="/Doctor/Dashboard" asp-route-viewMode="week" class="rounded-full px-3 py-1 text-sm font-semibold @(Model.ViewMode.ToLowerInvariant() == "week" ? "bg-primary text-white" : "bg-slate-100 text-slate-600")">Tuần</a>
+                        <a asp-page="/Doctor/Dashboard" asp-route-viewMode="month" class="rounded-full px-3 py-1 text-sm font-semibold @(Model.ViewMode.ToLowerInvariant() == "month" ? "bg-primary text-white" : "bg-slate-100 text-slate-600")">Tháng</a>
+                        <a asp-page="/Doctor/Waitlist" class="text-primary text-sm font-semibold no-underline">Xem tất cả</a>
+                    </div>
                 </div>
+
+                @if (Model.ViewMode.ToLowerInvariant() == "month")
+                {
+                    <div class="mt-4 grid grid-cols-7 gap-2 text-center text-[11px] text-slate-500">
+                        @foreach (var day in Model.Data.MonthSchedule.Take(7))
+                        {
+                            var isToday = day.Date == DateOnly.FromDateTime(DateTime.Today);
+                            <div class="rounded-2xl border p-3 @(isToday ? "border-primary bg-blue-50 text-primary" : "border-slate-200 bg-slate-50")">
+                                <p class="font-semibold">@day.Date.ToString("ddd")</p>
+                                <p class="mt-1 text-lg font-semibold text-slate-950">@day.Date.Day</p>
+                                <p class="mt-2 text-[10px]">@day.AppointmentCount sự kiện</p>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="mt-4 grid grid-cols-7 gap-2 text-center text-[11px] text-slate-500">
+                        @foreach (var day in Model.Data.WeekSchedule)
+                        {
+                            var isToday = day.IsToday;
+                            <div class="rounded-2xl border p-3 @(isToday ? "border-primary bg-blue-50 text-primary" : "border-slate-200 bg-slate-50")">
+                                <p class="font-semibold">@day.Label</p>
+                                <p class="mt-1 text-lg font-semibold text-slate-950">@day.Date.Day</p>
+                                <p class="mt-2 text-[10px]">@day.Appointments.Count sự kiện</p>
+                            </div>
+                        }
+                    </div>
+                }
             </div>
         </div>
     </section>
