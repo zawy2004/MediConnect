@@ -21,11 +21,25 @@ public class DashboardModel : PageModel
 
     public DoctorOverviewDto Data { get; set; } = new();
 
+    [BindProperty(SupportsGet = true)]
+    public string ViewMode { get; set; } = "week";
+
+    [BindProperty(SupportsGet = true)]
+    public string SearchQuery { get; set; } = string.Empty;
+
     public string GetBadgeClass(string status) => StatusHelper.GetBadgeClass(status);
 
     public async Task OnGetAsync()
     {
         Data = await _doctorPortalService.GetOverviewAsync(GetUserId());
+
+        if (!string.IsNullOrWhiteSpace(SearchQuery))
+        {
+            Data.TodayTimeline = Data.TodayTimeline
+                .Where(item => item.PatientName.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)
+                    || (item.Reason ?? string.Empty).Contains(SearchQuery, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
     }
 
     public async Task<IActionResult> OnPostConfirmAsync(int appointmentId)

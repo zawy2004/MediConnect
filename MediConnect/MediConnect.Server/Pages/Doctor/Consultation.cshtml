@@ -1,0 +1,108 @@
+@page
+@model MediConnect.Server.Pages.Doctor.ConsultationModel
+@{
+    ViewData["Title"] = "Đang khám";
+    ViewData["HideLayout"] = true;
+}
+
+<div class="min-h-screen bg-[#f8fafc] flex">
+    @await Html.PartialAsync("_DoctorSidebar", "consultation")
+    <main class="flex-1 overflow-y-auto p-8 space-y-6">
+        <div class="flex items-center justify-between gap-4">
+            <div>
+                <h1 class="text-4xl font-black">Trang khám bệnh</h1>
+                <p class="text-slate-500 mt-1">Nhập liệu khám trực tiếp và hoàn tất bệnh án cho bệnh nhân.</p>
+            </div>
+            <a asp-page="/Doctor/Dashboard" class="px-4 py-2 bg-white border border-slate-300 rounded-xl no-underline text-slate-700">Quay lại Dashboard</a>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+        {
+            <div class="bg-green-50 border border-green-200 text-green-700 rounded-xl px-4 py-3 text-sm">@Model.StatusMessage</div>
+        }
+
+        @if (Model.Data != null)
+        {
+            <div class="bg-white border rounded-2xl p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <div class="lg:col-span-2">
+                        <h2 class="text-2xl font-black">@Model.Data.PatientName</h2>
+                        <p class="text-slate-500 mt-2">@Model.Data.PatientGender • @Model.Data.PatientAge tuổi</p>
+                        <p class="text-slate-500 mt-2">Ngày khám: @Model.Data.AppointmentDate.ToString("dd/MM/yyyy") • @Model.Data.StartTime.ToString("HH:mm") - @Model.Data.EndTime.ToString("HH:mm")</p>
+                        <p class="text-slate-500 mt-2">Triệu chứng đặt lịch: @Model.Data.Reason</p>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="bg-slate-50 rounded-2xl p-4">
+                            <p class="text-xs uppercase tracking-widest text-slate-500">Trạng thái</p>
+                            <p class="text-lg font-semibold mt-2">@Model.Data.Status</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-2xl p-4">
+                            <p class="text-xs uppercase tracking-widest text-slate-500">Huyết áp / Nhịp tim</p>
+                            <p class="text-lg font-semibold mt-2">@Model.Data.BloodType</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 grid grid-cols-1 gap-6">
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                            <h3 class="font-bold text-lg">Dị ứng / Lịch sử</h3>
+                            <p class="mt-3 text-slate-600">@Model.Data.AllergyAlert</p>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                            <h3 class="font-bold text-lg">Cảnh báo</h3>
+                            <p class="mt-3 text-slate-600">Chỉ nhập liệu khi bác sĩ trực tiếp khám bệnh nhân này.</p>
+                        </div>
+                    </div>
+
+                    <form method="post" asp-page-handler="Complete">
+                        <input type="hidden" asp-for="AppointmentId" />
+                        <div class="grid grid-cols-1 gap-6">
+                            <div class="bg-white border rounded-2xl p-5">
+                                <h3 class="font-bold text-lg mb-3">Triệu chứng khám trực tiếp</h3>
+                                <textarea asp-for="Symptoms" rows="4" class="w-full rounded-xl border-slate-200 p-3" disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)"></textarea>
+                            </div>
+                            <div class="bg-white border rounded-2xl p-5">
+                                <h3 class="font-bold text-lg mb-3">Chẩn đoán</h3>
+                                <textarea asp-for="Diagnosis" rows="4" class="w-full rounded-xl border-slate-200 p-3" disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)"></textarea>
+                            </div>
+                            <div class="bg-white border rounded-2xl p-5">
+                                <h3 class="font-bold text-lg mb-3">Lời khuyên ăn uống / dinh dưỡng</h3>
+                                <textarea asp-for="TreatmentPlan" rows="4" class="w-full rounded-xl border-slate-200 p-3" disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)"></textarea>
+                            </div>
+                            <div class="bg-white border rounded-2xl p-5">
+                                <h3 class="font-bold text-lg mb-3">Đơn thuốc / kê đơn</h3>
+                                <textarea asp-for="Prescription" rows="4" class="w-full rounded-xl border-slate-200 p-3" disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)"></textarea>
+                            </div>
+                            <div class="bg-white border rounded-2xl p-5">
+                                <h3 class="font-bold text-lg mb-3">Ghi chú thêm</h3>
+                                <textarea asp-for="Notes" rows="4" class="w-full rounded-xl border-slate-200 p-3" disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)"></textarea>
+                            </div>
+                        </div>
+
+                        @if (Model.Data.Status != "COMPLETED")
+                        {
+                            <div class="mt-6 flex flex-wrap items-center gap-3">
+                                <button type="submit" class="px-6 py-3 bg-primary text-white rounded-xl font-semibold">Hoàn tất khám</button>
+                                <span class="text-slate-500">Thông tin sẽ được lưu vào bệnh án bệnh nhân.</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="mt-6 rounded-2xl bg-emerald-50 border border-emerald-200 p-5 text-emerald-700">
+                                Lịch khám này đã hoàn tất. Nội dung đã được lưu vào bệnh án.
+                            </div>
+                        }
+                    </form>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="bg-white border rounded-2xl p-6 text-slate-500">
+                <p class="font-semibold">Trang Khám bệnh</p>
+                <p class="mt-3">Chọn bệnh nhân đã được lên lịch trong Dashboard hoặc Waitlist để vào phần khám và nhập bệnh án.</p>
+            </div>
+        }
+    </main>
+</div>

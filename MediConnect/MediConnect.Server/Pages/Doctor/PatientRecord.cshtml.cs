@@ -21,9 +21,6 @@ public class PatientRecordModel : PageModel
     [BindProperty(SupportsGet = true)]
     public int PatientId { get; set; }
 
-    [BindProperty]
-    public string ClinicalNote { get; set; } = string.Empty;
-
     public DoctorPatientRecordDto? Data { get; set; }
 
     [TempData]
@@ -31,20 +28,12 @@ public class PatientRecordModel : PageModel
 
     public async Task<IActionResult> OnGetAsync()
     {
-        if (PatientId <= 0) return RedirectToPage("/Doctor/ConfirmAppointmentRequest");
+        if (PatientId <= 0) return RedirectToPage("/Doctor/Patients");
 
         Data = await _doctorPortalService.GetPatientRecordAsync(GetUserId(), PatientId);
-        if (Data == null) return NotFound();
+        if (Data == null) return RedirectToPage("/Doctor/Patients");
 
-        ClinicalNote = Data.ClinicalNoteDraft;
         return Page();
-    }
-
-    public async Task<IActionResult> OnPostSaveNoteAsync()
-    {
-        await _doctorPortalService.SaveClinicalNoteAsync(GetUserId(), PatientId, ClinicalNote);
-        StatusMessage = "Đã lưu ghi chú lâm sàng.";
-        return RedirectToPage(new { PatientId });
     }
 
     private int GetUserId() => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
