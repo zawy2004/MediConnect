@@ -19,6 +19,7 @@ public interface IDoctorPortalService
     Task<bool> SaveClinicalNoteAsync(int doctorUserId, int patientId, string note);
     Task<DoctorConsultationDto?> GetConsultationAsync(int doctorUserId, int appointmentId);
     Task<bool> CompleteConsultationAsync(int doctorUserId, int appointmentId, string symptoms, string diagnosis, string treatmentPlan, string prescription, string notes);
+    Task<bool> SendConsultationResultToPatientAsync(int doctorUserId, int appointmentId, int patientId);
 
     Task<DoctorPerformanceDto> GetPerformanceAsync(int doctorUserId);
 

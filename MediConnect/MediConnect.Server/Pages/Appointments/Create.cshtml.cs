@@ -91,7 +91,17 @@ public class CreateModel : PageModel
         var doctors = await _doctorService.SearchDoctorsAsync(new DoctorSearchFilterDto());
         DoctorList = new SelectList(doctors, "UserId", "FullName");
 
-        var slots = await _appointmentService.GetAvailableSlotsAsync();
-        SlotList = new SelectList(slots, "SlotId", "Display");
+        // Load slots của bác sĩ đã chọn (nếu có)
+        if (DoctorId > 0)
+        {
+            var fromDate = DateOnly.FromDateTime(DateTime.Today);
+            var toDate = fromDate.AddDays(30);
+            var slots = await _appointmentService.GetAvailableSlotsByDoctorAsync(DoctorId, fromDate, toDate);
+            SlotList = new SelectList(slots, "SlotId", "Display");
+        }
+        else
+        {
+            SlotList = new SelectList(Enumerable.Empty<TimeSlotDto>(), "SlotId", "Display");
+        }
     }
 }

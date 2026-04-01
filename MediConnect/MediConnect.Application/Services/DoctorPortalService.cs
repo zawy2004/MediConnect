@@ -554,6 +554,43 @@ public class DoctorPortalService : IDoctorPortalService
         return true;
     }
 
+    public async Task<bool> SendConsultationResultToPatientAsync(int doctorUserId, int appointmentId, int patientId)
+    {
+        var appointment = await _appointmentRepository.GetByIdAsync(appointmentId);
+        if (appointment == null || appointment.DoctorId != doctorUserId)
+        {
+            return false;
+        }
+
+        var doctor = await _userRepository.GetByIdAsync(doctorUserId);
+        var patient = await _userRepository.GetByIdAsync(patientId);
+        
+        if (doctor == null || patient == null)
+        {
+            return false;
+        }
+
+        // Tạo notification cho bệnh nhân
+        var notification = new Notification
+        {
+            UserId = patientId,
+            AppointmentId = appointmentId,
+            Title = "Kết quả khám bệnh",
+            Body = $"Bác sĩ {doctor.FullName} đã gửi kết quả khám ngày {appointment.AppointmentDate:dd/MM/yyyy}. Vui lòng xem chi tiết trong hồ sơ y tế của bạn.",
+            NotificationType = "SYSTEM",
+            Channel = "APP",
+            Status = "SENT",
+            IsRead = false,
+            SentAt = DateTime.Now,
+            CreatedAt = DateTime.Now
+        };
+
+        await _notificationRepository.CreateAsync(notification);
+        await _unitOfWork.SaveChangesAsync();
+        
+        return true;
+    }
+
     public async Task<DoctorPerformanceDto> GetPerformanceAsync(int doctorUserId)
     {
         var appointments = await _appointmentRepository.GetByDoctorIdAsync(doctorUserId);
