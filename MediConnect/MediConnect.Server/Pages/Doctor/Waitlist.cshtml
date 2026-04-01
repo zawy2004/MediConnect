@@ -18,6 +18,134 @@
             </form>
         </div>
 
+        <section class="bg-white border rounded-2xl p-5">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h2 class="text-xl font-black">Lịch khám</h2>
+                    <p class="text-slate-500 text-sm">Xem theo Ngày, Tuần hoặc Tháng.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a asp-page="/Doctor/Waitlist" asp-route-calendarMode="day" class="rounded-full px-3 py-1 text-sm font-semibold @(Model.CalendarMode == "day" ? "bg-primary text-white" : "bg-slate-100 text-slate-600")">Ngày</a>
+                    <a asp-page="/Doctor/Waitlist" asp-route-calendarMode="week" class="rounded-full px-3 py-1 text-sm font-semibold @(Model.CalendarMode == "week" ? "bg-primary text-white" : "bg-slate-100 text-slate-600")">Tuần</a>
+                    <a asp-page="/Doctor/Waitlist" asp-route-calendarMode="month" class="rounded-full px-3 py-1 text-sm font-semibold @(Model.CalendarMode == "month" ? "bg-primary text-white" : "bg-slate-100 text-slate-600")">Tháng</a>
+                </div>
+            </div>
+
+            @if (Model.CalendarMode == "month")
+            {
+                <div class="mt-4 flex items-center justify-between gap-3">
+                    <div class="text-sm font-semibold text-slate-700">Tháng @Model.CalendarReference.Month, @Model.CalendarReference.Year</div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" class="size-10 rounded-full border border-slate-200 bg-white text-slate-600"><span class="material-symbols-outlined">chevron_left</span></button>
+                        <button type="button" class="size-10 rounded-full border border-slate-200 bg-white text-slate-600"><span class="material-symbols-outlined">chevron_right</span></button>
+                    </div>
+                </div>
+                <div class="mt-4 grid grid-cols-7 gap-2 text-center text-xs text-slate-500 uppercase">
+                    <div>Thứ 2</div>
+                    <div>Thứ 3</div>
+                    <div>Thứ 4</div>
+                    <div>Thứ 5</div>
+                    <div>Thứ 6</div>
+                    <div>Thứ 7</div>
+                    <div>CN</div>
+                </div>
+                <div class="mt-3 grid grid-cols-7 gap-2 text-xs">
+                    @{ var firstOfMonth = new DateOnly(Model.CalendarReference.Year, Model.CalendarReference.Month, 1);
+                       var offset = firstOfMonth.DayOfWeek == DayOfWeek.Sunday ? 6 : ((int)firstOfMonth.DayOfWeek - 1);
+                    }
+                    @for (var i = 0; i < offset; i++)
+                    {
+                        <div class="h-24 rounded-2xl border border-slate-200 bg-slate-50"></div>
+                    }
+                    @foreach (var date in Model.CalendarMonthDates)
+                    {
+                        var events = Model.Data.CalendarEvents.Where(e => e.StartDate == date).ToList();
+                        var isToday = date == DateOnly.FromDateTime(DateTime.Today);
+                        <div class="min-h-[96px] rounded-2xl border p-3 @(isToday ? "border-primary bg-blue-50" : "border-slate-200 bg-white")">
+                            <div class="flex items-center justify-between">
+                                <span class="font-semibold">@date.Day</span>
+                                <span class="text-[10px] text-slate-500">@events.Count</span>
+                            </div>
+                            <div class="mt-2 space-y-1">
+                                @foreach (var item in events.Take(2))
+                                {
+                                    <div class="rounded-full px-2 py-1 text-[10px] text-white bg-primary/90 truncate">@item.StartTime.ToString("HH:mm") @item.Title</div>
+                                }
+                                @if (!events.Any())
+                                {
+                                    <div class="text-[10px] text-slate-400">Không có</div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else if (Model.CalendarMode == "week")
+            {
+                <div class="mt-4 grid grid-cols-7 gap-2">
+                    @foreach (var date in Model.CalendarWeekDates)
+                    {
+                        var events = Model.Data.CalendarEvents.Where(e => e.StartDate == date).ToList();
+                        var isToday = date == DateOnly.FromDateTime(DateTime.Today);
+                        <div class="rounded-2xl border p-3 @(isToday ? "border-primary bg-blue-50" : "border-slate-200 bg-slate-50")">
+                            <div class="text-[10px] uppercase text-slate-500">@date.DayOfWeek.ToString().Substring(0, 3)</div>
+                            <div class="mt-2 text-lg font-semibold">@date.Day</div>
+                            <div class="mt-3 space-y-2">
+                                @if (events.Any())
+                                {
+                                    @foreach (var item in events.Take(3))
+                                    {
+                                        <div class="rounded-2xl border px-2 py-2 text-[11px] bg-white">
+                                            <div class="font-semibold">@item.StartTime.ToString("HH:mm")</div>
+                                            <div class="text-slate-500 truncate">@item.Title</div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="rounded-2xl border border-dashed border-slate-200 bg-white py-3 text-[11px] text-slate-400">Trống</div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="mt-4 grid gap-3">
+                    @{ var selectedDate = DateOnly.FromDateTime(DateTime.Today);
+                       var dayEvents = Model.Data.CalendarEvents.Where(e => e.StartDate == selectedDate).OrderBy(e => e.StartTime).ToList(); }
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs uppercase text-slate-500">Ngày</p>
+                            <p class="text-lg font-semibold">@selectedDate.ToString("dd/MM/yyyy")</p>
+                        </div>
+                        <div class="text-sm text-slate-500">@dayEvents.Count sự kiện</div>
+                    </div>
+                    @if (dayEvents.Any())
+                    {
+                        @foreach (var item in dayEvents)
+                        {
+                            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                                <div class="flex items-center justify-between gap-3">
+                                    <div>
+                                        <div class="font-semibold">@item.Title</div>
+                                        <div class="text-sm text-slate-500">@item.PatientName</div>
+                                    </div>
+                                    <span class="text-xs rounded-full px-2 py-1 @(item.Status == "COMPLETED" ? "bg-slate-100 text-slate-600" : "bg-emerald-100 text-emerald-700")">@item.Status</span>
+                                </div>
+                                <div class="mt-3 text-sm text-slate-500">@item.StartTime.ToString("HH:mm") - @item.EndTime.ToString("HH:mm")</div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-500">Không có lịch trong ngày.</div>
+                    }
+                </div>
+            }
+        </section>
+
     @if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
     {
         <div class="bg-blue-50 border border-blue-200 text-blue-700 rounded-xl px-4 py-3 text-sm">@Model.StatusMessage</div>

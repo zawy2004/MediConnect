@@ -46,6 +46,78 @@ textarea {
     border-color: #dc3545 !important;
 }
 
+/* Custom utility sizes */
+.size-9,
+.size-10,
+.size-11,
+.size-16,
+.size-2.5 {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.size-9 { width: 2.25rem; height: 2.25rem; }
+.size-10 { width: 2.5rem; height: 2.5rem; }
+.size-11 { width: 2.75rem; height: 2.75rem; }
+.size-16 { width: 4rem; height: 4rem; }
+.size-2.5 { width: 0.625rem; height: 0.625rem; }
+
+/* UI customization themes */
+html.font-small { font-size: 14px; }
+html.font-normal { font-size: 16px; }
+html.font-large { font-size: 18px; }
+
+html.compact-layout .p-6 { padding: 1rem !important; }
+html.compact-layout .p-5 { padding: 0.75rem !important; }
+html.compact-layout .p-4 { padding: 0.75rem !important; }
+html.compact-layout .p-3 { padding: 0.5rem !important; }
+html.compact-layout .px-4 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+html.compact-layout .py-3 { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+html.compact-layout .space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: 1rem !important; }
+html.compact-layout .space-y-5 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.9rem !important; }
+html.compact-layout .space-y-4 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.75rem !important; }
+html.compact-layout .space-y-3 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.6rem !important; }
+html.compact-layout .gap-6 { gap: 1rem !important; }
+html.compact-layout .gap-5 { gap: 0.9rem !important; }
+html.compact-layout .gap-4 { gap: 0.75rem !important; }
+html.compact-layout .gap-3 { gap: 0.5rem !important; }
+html.compact-layout .rounded-2xl { border-radius: 0.75rem !important; }
+
+html.hide-avatars .size-9,
+html.hide-avatars .size-10,
+html.hide-avatars .size-11,
+html.hide-avatars .size-16,
+html.hide-avatars .rounded-full.bg-slate-200 {
+    display: none !important;
+}
+html.hide-avatars .material-symbols-outlined {
+    display: none !important;
+}
+
+html.theme-dark { color-scheme: dark; }
+html.theme-dark body { background-color: #0f172a; color: #e2e8f0; }
+html.theme-dark .bg-white { background-color: #0f172a !important; }
+html.theme-dark .bg-slate-50 { background-color: #111827 !important; }
+html.theme-dark .bg-slate-100 { background-color: #1f2937 !important; }
+html.theme-dark .bg-slate-200 { background-color: #374151 !important; }
+html.theme-dark .border-slate-200,
+html.theme-dark .border-slate-100,
+html.theme-dark .border-slate-300 { border-color: #4b5563 !important; }
+html.theme-dark .text-slate-900 { color: #f8fafc !important; }
+html.theme-dark .text-slate-700,
+html.theme-dark .text-slate-600 { color: #d1d5db !important; }
+html.theme-dark .text-slate-500,
+html.theme-dark .text-slate-400 { color: #9ca3af !important; }
+html.theme-dark .bg-primary { background-color: #2563eb !important; }
+html.theme-dark .text-primary { color: #93c5fd !important; }
+html.theme-dark .bg-primary\/10 { background-color: rgba(37, 99, 235, 0.1) !important; }
+html.theme-dark .bg-red-50 { background-color: #7f1d1d !important; }
+html.theme-dark .bg-green-50 { background-color: #064e3b !important; }
+html.theme-dark .bg-blue-50 { background-color: #1e40af !important; }
+html.theme-dark .bg-blue-700 { background-color: #1d4ed8 !important; }
+html.theme-dark .bg-white\/20 { background-color: rgba(255,255,255,0.2) !important; }
+
 /* Star ratings */
 .star-filled {
     font-variation-settings: 'FILL' 1;

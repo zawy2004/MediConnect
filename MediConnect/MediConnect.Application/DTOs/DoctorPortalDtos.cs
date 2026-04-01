@@ -9,6 +9,8 @@ public class DoctorOverviewDto
     public int AppointmentsThisMonth { get; set; }
     public int AverageConsultationMinutes { get; set; }
     public List<DoctorScheduleItemDto> TodayTimeline { get; set; } = new();
+    public List<DoctorScheduleDayDto> WeekSchedule { get; set; } = new();
+    public List<DoctorScheduleMonthDayDto> MonthSchedule { get; set; } = new();
     public List<DoctorAppointmentRequestDto> PendingRequests { get; set; } = new();
 }
 
@@ -23,6 +25,23 @@ public class DoctorScheduleItemDto
     public string? Reason { get; set; }
 }
 
+public class DoctorScheduleDayDto
+{
+    public DateOnly Date { get; set; }
+    public string Label { get; set; } = string.Empty;
+    public List<DoctorScheduleItemDto> Appointments { get; set; } = new();
+    public bool IsToday => Date == DateOnly.FromDateTime(DateTime.Today);
+}
+
+public class DoctorScheduleMonthDayDto
+{
+    public DateOnly Date { get; set; }
+    public int AppointmentCount { get; set; }
+    public bool HasUpcoming { get; set; }
+    public bool HasCompleted { get; set; }
+    public string Status => AppointmentCount == 0 ? "empty" : HasUpcoming ? "upcoming" : "completed";
+}
+
 public class DoctorAppointmentRequestDto
 {
     public int AppointmentId { get; set; }
@@ -31,6 +50,37 @@ public class DoctorAppointmentRequestDto
     public TimeOnly StartTime { get; set; }
     public string? Reason { get; set; }
     public string AiTriageSummary { get; set; } = string.Empty;
+    public string Status { get; set; } = string.Empty;
+}
+public class DoctorPatientListItemDto
+{
+    public int PatientId { get; set; }
+    public int AppointmentId { get; set; }
+    public string PatientName { get; set; } = string.Empty;
+    public string? PatientEmail { get; set; }
+    public string Gender { get; set; } = string.Empty;
+    public string SpecialtyName { get; set; } = string.Empty;
+    public string Status { get; set; } = string.Empty;
+    public DateOnly AppointmentDate { get; set; }
+    public TimeOnly StartTime { get; set; }
+    public string? Reason { get; set; }
+}
+
+public class DoctorPatientGroupDto
+{
+    public string CategoryKey { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty;
+    public List<DoctorPatientListItemDto> Patients { get; set; } = new();
+}
+
+public class DoctorCalendarEventDto
+{
+    public int AppointmentId { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string PatientName { get; set; } = string.Empty;
+    public DateOnly StartDate { get; set; }
+    public TimeOnly StartTime { get; set; }
+    public TimeOnly EndTime { get; set; }
     public string Status { get; set; } = string.Empty;
 }
 
@@ -52,6 +102,7 @@ public class DoctorWaitlistDto
     public int TotalCount { get; set; }
     public int AverageWaitMinutes { get; set; }
     public List<DoctorWaitlistItemDto> Items { get; set; } = new();
+    public List<DoctorCalendarEventDto> CalendarEvents { get; set; } = new();
 }
 
 public class DoctorPatientRecordDto
@@ -69,6 +120,27 @@ public class DoctorPatientRecordDto
     public List<PatientRecordHistoryDto> History { get; set; } = new();
     public List<PatientDocumentDto> Documents { get; set; } = new();
     public string ClinicalNoteDraft { get; set; } = string.Empty;
+}
+
+public class DoctorConsultationDto
+{
+    public int AppointmentId { get; set; }
+    public int PatientId { get; set; }
+    public string PatientName { get; set; } = string.Empty;
+    public int? PatientAge { get; set; }
+    public string? PatientGender { get; set; }
+    public string? BloodType { get; set; }
+    public string? AllergyAlert { get; set; }
+    public DateOnly AppointmentDate { get; set; }
+    public TimeOnly StartTime { get; set; }
+    public TimeOnly EndTime { get; set; }
+    public string? Reason { get; set; }
+    public string Status { get; set; } = string.Empty;
+    public string? Symptoms { get; set; }
+    public string? Diagnosis { get; set; }
+    public string? TreatmentPlan { get; set; }
+    public string? Prescription { get; set; }
+    public string? Notes { get; set; }
 }
 
 public class PatientRecordHistoryDto
