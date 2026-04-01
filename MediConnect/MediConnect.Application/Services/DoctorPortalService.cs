@@ -277,10 +277,13 @@ public class DoctorPortalService : IDoctorPortalService
 
     public async Task<DoctorWaitlistDto> GetWaitlistAsync(int doctorUserId)
     {
-        var items = await _appointmentWaitlistRepository.GetByDoctorIdAsync(doctorUserId);
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var items = (await _appointmentWaitlistRepository.GetByDoctorIdAsync(doctorUserId))
+            .Where(i => i.Status == "WAITING" || i.Status == "NOTIFIED")
+            .Where(i => !i.PreferredDate.HasValue || i.PreferredDate >= today)
+            .ToList();
         var ordered = items.OrderBy(i => i.CreatedAt).ToList();
 
-        var today = DateOnly.FromDateTime(DateTime.Today);
         var monthEnd = today.AddMonths(1).AddDays(-1);
         var monthAppointments = (await _appointmentRepository.GetByDateRangeAsync(today, monthEnd))
             .Where(a => a.DoctorId == doctorUserId)
@@ -288,13 +291,22 @@ public class DoctorPortalService : IDoctorPortalService
             .ThenBy(a => a.StartTime)
             .ToList();
 
+        var todayDate = DateTime.Today;
+        var weekStartDate = todayDate.DayOfWeek == DayOfWeek.Sunday ? todayDate.AddDays(-6) : todayDate.AddDays(1 - (int)todayDate.DayOfWeek);
+        var weekStartDateTime = weekStartDate.Date;
+        var averageWaitMinutes = ordered.Count == 0
+            ? 0
+            : (int)Math.Round(ordered.Average(i =>
+            {
+                var start = i.CreatedAt < weekStartDateTime ? weekStartDateTime : i.CreatedAt;
+                return (DateTime.Now - start).TotalMinutes;
+            }));
+
         return new DoctorWaitlistDto
         {
             IsFullToday = ordered.Any(i => i.PreferredDate == DateOnly.FromDateTime(DateTime.Today)),
             TotalCount = ordered.Count,
-            AverageWaitMinutes = ordered.Count == 0
-                ? 0
-                : (int)Math.Round(ordered.Average(i => (DateTime.Now - i.CreatedAt).TotalMinutes)),
+            AverageWaitMinutes = averageWaitMinutes,
             Items = ordered.Select((item, index) => new DoctorWaitlistItemDto
             {
                 WaitlistId = item.WaitlistId,
@@ -394,6 +406,92 @@ public class DoctorPortalService : IDoctorPortalService
 
         await _appointmentWaitlistRepository.UpdateAsync(current);
         await _appointmentWaitlistRepository.UpdateAsync(next);
+        await _unitOfWork.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> ConfirmWaitlistAsync(int waitlistId, int doctorUserId)
+    {
+        var item = await _appointmentWaitlistRepository.GetByIdAsync(waitlistId);
+        if (item == null || item.DoctorId != doctorUserId || item.Status == "SCHEDULED")
+        {
+            return false;
+        }
+
+        item.Status = "NOTIFIED";
+        item.NotifiedAt = DateTime.Now;
+        item.UpdatedAt = DateTime.Now;
+
+        await _appointmentWaitlistRepository.UpdateAsync(item);
+        await _notificationRepository.CreateAsync(new Notification
+        {
+            UserId = item.PatientId,
+            NotificationType = "DOCTOR_CONFIRMATION",
+            Channel = "IN_APP",
+            Title = "Yêu cầu chờ của bạn đã được xác nhận",
+            Body = "Bác sĩ đã xác nhận bạn trong danh sách chờ. Vui lòng chuẩn bị cho lịch khám sắp tới.",
+            IsRead = false,
+            SentAt = DateTime.Now,
+            Status = "SENT",
+            CreatedAt = DateTime.Now
+        });
+
+        await _unitOfWork.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> ScheduleWaitlistAsync(int waitlistId, int doctorUserId)
+    {
+        var item = await _appointmentWaitlistRepository.GetByIdAsync(waitlistId);
+        if (item == null || item.DoctorId != doctorUserId)
+        {
+            return false;
+        }
+
+        if (item.Status == "SCHEDULED")
+        {
+            return true;
+        }
+
+        item.Status = "SCHEDULED";
+        item.NotifiedAt = DateTime.Now;
+        item.UpdatedAt = DateTime.Now;
+
+        await _appointmentWaitlistRepository.UpdateAsync(item);
+        await _notificationRepository.CreateAsync(new Notification
+        {
+            UserId = item.PatientId,
+            NotificationType = "BOOKING_CONFIRMATION",
+            Channel = "IN_APP",
+            Title = "Bạn đã được chuyển thành lịch khám",
+            Body = "Bác sĩ đã chuyển bạn từ danh sách chờ sang lịch khám. Vui lòng kiểm tra lại thông tin lịch hẹn.",
+            IsRead = false,
+            SentAt = DateTime.Now,
+            Status = "SENT",
+            CreatedAt = DateTime.Now
+        });
+
+        await _unitOfWork.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> ResetWaitlistPerformanceAsync(int doctorUserId)
+    {
+        var rows = await _appointmentWaitlistRepository.GetByDoctorIdAsync(doctorUserId);
+        if (!rows.Any())
+        {
+            return false;
+        }
+
+        var ordered = rows.OrderBy(r => r.CreatedAt).ToList();
+        var now = DateTime.Now;
+        for (var i = 0; i < ordered.Count; i++)
+        {
+            ordered[i].CreatedAt = now.AddSeconds(i);
+            ordered[i].UpdatedAt = now;
+            await _appointmentWaitlistRepository.UpdateAsync(ordered[i]);
+        }
+
         await _unitOfWork.SaveChangesAsync();
         return true;
     }

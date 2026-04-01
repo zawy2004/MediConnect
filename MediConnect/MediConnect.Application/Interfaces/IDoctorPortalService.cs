@@ -14,6 +14,9 @@ public interface IDoctorPortalService
     Task<bool> NotifyNextWaitlistAsync(int doctorUserId);
     Task<bool> MoveWaitlistUpAsync(int waitlistId, int doctorUserId);
     Task<bool> MoveWaitlistDownAsync(int waitlistId, int doctorUserId);
+    Task<bool> ConfirmWaitlistAsync(int waitlistId, int doctorUserId);
+    Task<bool> ScheduleWaitlistAsync(int waitlistId, int doctorUserId);
+    Task<bool> ResetWaitlistPerformanceAsync(int doctorUserId);
 
     Task<DoctorPatientRecordDto?> GetPatientRecordAsync(int doctorUserId, int patientId);
     Task<bool> SaveClinicalNoteAsync(int doctorUserId, int patientId, string note);

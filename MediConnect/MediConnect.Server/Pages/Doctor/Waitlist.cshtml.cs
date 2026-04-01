@@ -24,6 +24,15 @@ public class WaitlistModel : PageModel
     [BindProperty(SupportsGet = true)]
     public string CalendarMode { get; set; } = "week";
 
+    [BindProperty(SupportsGet = true)]
+    public string FilterCategory { get; set; } = "all";
+
+    [BindProperty(SupportsGet = true)]
+    public DateTime? FilterPreferredDate { get; set; }
+
+    [BindProperty(SupportsGet = true)]
+    public string? FilterPreferredTime { get; set; }
+
     public DateOnly CalendarReference { get; set; } = DateOnly.FromDateTime(DateTime.Today);
     public List<DateOnly> CalendarWeekDates { get; set; } = new();
     public List<DateOnly> CalendarMonthDates { get; set; } = new();
@@ -34,6 +43,28 @@ public class WaitlistModel : PageModel
     public async Task OnGetAsync()
     {
         Data = await _doctorPortalService.GetWaitlistAsync(GetUserId());
+
+        if (!string.Equals(FilterCategory, "all", StringComparison.OrdinalIgnoreCase))
+        {
+            Data.Items = FilterCategory.ToLowerInvariant() switch
+            {
+                "waiting" => Data.Items.Where(i => i.Status == "WAITING").ToList(),
+                "notified" => Data.Items.Where(i => i.Status == "NOTIFIED").ToList(),
+                _ => Data.Items
+            };
+        }
+
+        if (FilterPreferredDate.HasValue)
+        {
+            var dateFilter = DateOnly.FromDateTime(FilterPreferredDate.Value.Date);
+            Data.Items = Data.Items.Where(i => i.PreferredDate == dateFilter).ToList();
+        }
+
+        if (!string.IsNullOrWhiteSpace(FilterPreferredTime) && TimeOnly.TryParse(FilterPreferredTime, out var timeFilter))
+        {
+            Data.Items = Data.Items.Where(i => i.PreferredTime == timeFilter).ToList();
+        }
+
         BuildCalendarRanges();
     }
 
@@ -63,7 +94,28 @@ public class WaitlistModel : PageModel
     public async Task<IActionResult> OnPostMoveDownAsync(int waitlistId)
     {
         await _doctorPortalService.MoveWaitlistDownAsync(waitlistId, GetUserId());
-        return RedirectToPage();
+        return RedirectToPage(new { FilterCategory, FilterPreferredDate, FilterPreferredTime, CalendarMode });
+    }
+
+    public async Task<IActionResult> OnPostConfirmAsync(int waitlistId)
+    {
+        var ok = await _doctorPortalService.ConfirmWaitlistAsync(waitlistId, GetUserId());
+        StatusMessage = ok ? "Bệnh nhân đã được xác nhận trong danh sách chờ." : "Không thể xác nhận bệnh nhân này.";
+        return RedirectToPage(new { FilterCategory, FilterPreferredDate, FilterPreferredTime, CalendarMode });
+    }
+
+    public async Task<IActionResult> OnPostScheduleAsync(int waitlistId)
+    {
+        var ok = await _doctorPortalService.ScheduleWaitlistAsync(waitlistId, GetUserId());
+        StatusMessage = ok ? "Bệnh nhân đã được chuyển thành lịch khám." : "Không thể chuyển bệnh nhân này thành lịch khám.";
+        return RedirectToPage(new { FilterCategory, FilterPreferredDate, FilterPreferredTime, CalendarMode });
+    }
+
+    public async Task<IActionResult> OnPostResetWaitPerformanceAsync()
+    {
+        var ok = await _doctorPortalService.ResetWaitlistPerformanceAsync(GetUserId());
+        StatusMessage = ok ? "Đã reset lại hiệu suất chờ và thời gian chờ trung bình." : "Không có dữ liệu chờ để reset.";
+        return RedirectToPage(new { FilterCategory, FilterPreferredDate, FilterPreferredTime, CalendarMode });
     }
 
     private int GetUserId() => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

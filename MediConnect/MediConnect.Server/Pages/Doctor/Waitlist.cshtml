@@ -5,6 +5,24 @@
     ViewData["HideLayout"] = true;
 }
 
+@functions {
+    private string GetWaitlistStatusLabel(string status) => status switch
+    {
+        "WAITING" => "Đang chờ",
+        "NOTIFIED" => "Đã thông báo",
+        "SCHEDULED" => "Đã lên lịch",
+        _ => status
+    };
+
+    private string GetWaitlistStatusClass(string status) => status switch
+    {
+        "WAITING" => "bg-yellow-100 text-amber-800",
+        "NOTIFIED" => "bg-blue-100 text-blue-700",
+        "SCHEDULED" => "bg-emerald-100 text-emerald-700",
+        _ => "bg-slate-100 text-slate-700"
+    };
+}
+
 <div class="min-h-screen bg-[#f8fafc] flex">
     @await Html.PartialAsync("_DoctorSidebar", "waitlist")
     <main class="flex-1 overflow-y-auto p-8 space-y-6">
@@ -152,16 +170,44 @@
     }
 
         <div class="bg-white border rounded-2xl p-2 inline-flex gap-1">
-            <button type="button" class="px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold">Tất cả</button>
-            <button type="button" class="px-4 py-2 rounded-xl text-sm text-slate-600">Cấp cứu</button>
-            <button type="button" class="px-4 py-2 rounded-xl text-sm text-slate-600">Đang thông báo</button>
+            <a asp-page="/Doctor/Waitlist" asp-route-filterCategory="all" asp-route-calendarMode="@Model.CalendarMode" asp-route-filterPreferredDate="@(Model.FilterPreferredDate.HasValue ? Model.FilterPreferredDate.Value.ToString("yyyy-MM-dd") : null)" asp-route-filterPreferredTime="@Model.FilterPreferredTime" class="px-4 py-2 rounded-xl text-sm font-semibold @(Model.FilterCategory == "all" ? "bg-primary text-white" : "text-slate-600 bg-transparent")">Tất cả</a>
+            <a asp-page="/Doctor/Waitlist" asp-route-filterCategory="waiting" asp-route-calendarMode="@Model.CalendarMode" asp-route-filterPreferredDate="@(Model.FilterPreferredDate.HasValue ? Model.FilterPreferredDate.Value.ToString("yyyy-MM-dd") : null)" asp-route-filterPreferredTime="@Model.FilterPreferredTime" class="px-4 py-2 rounded-xl text-sm font-semibold @(Model.FilterCategory == "waiting" ? "bg-primary text-white" : "text-slate-600 bg-transparent")">Đang chờ</a>
+            <a asp-page="/Doctor/Waitlist" asp-route-filterCategory="notified" asp-route-calendarMode="@Model.CalendarMode" asp-route-filterPreferredDate="@(Model.FilterPreferredDate.HasValue ? Model.FilterPreferredDate.Value.ToString("yyyy-MM-dd") : null)" asp-route-filterPreferredTime="@Model.FilterPreferredTime" class="px-4 py-2 rounded-xl text-sm font-semibold @(Model.FilterCategory == "notified" ? "bg-primary text-white" : "text-slate-600 bg-transparent")">Đã thông báo</a>
         </div>
+
+        <form method="get" asp-page="/Doctor/Waitlist" class="bg-white border rounded-2xl p-4 grid grid-cols-1 md:grid-cols-[repeat(4,minmax(0,1fr))] gap-4 items-end">
+            <input type="hidden" asp-for="CalendarMode" />
+            <input type="hidden" asp-for="FilterCategory" />
+            <div>
+                <label class="block text-sm font-semibold text-slate-700">Ngày ưu tiên</label>
+                <input asp-for="FilterPreferredDate" type="date" class="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm" />
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-slate-700">Giờ ưu tiên</label>
+                <input asp-for="FilterPreferredTime" type="time" class="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm" />
+            </div>
+            <div class="flex items-center gap-3">
+                <button type="submit" class="w-full rounded-xl bg-primary px-4 py-3 text-white font-semibold">Lọc</button>
+                <a asp-page="/Doctor/Waitlist" asp-route-calendarMode="@Model.CalendarMode" class="w-full rounded-xl border border-slate-200 px-4 py-3 text-center text-slate-700 hover:bg-slate-50">Xóa bộ lọc</a>
+            </div>
+        </form>
+        <div class="text-xs text-slate-500 mt-2">Chỉ hiển thị các mục chờ ưu tiên từ hôm nay trở đi. Dữ liệu cũ đã qua hạn sẽ không còn hiển thị.</div>
 
         <section class="grid grid-cols-2 lg:grid-cols-3 gap-4">
             <div class="bg-white border rounded-2xl p-4"><p class="text-xs text-slate-500">Trạng thái</p><p class="text-2xl font-black mt-2">@(Model.Data.IsFullToday ? "Lịch đã đầy" : "Còn slot")</p></div>
             <div class="bg-white border rounded-2xl p-4"><p class="text-xs text-slate-500">Tổng trong hàng chờ</p><p class="text-2xl font-black mt-2">@Model.Data.TotalCount</p></div>
-            <div class="bg-white border rounded-2xl p-4"><p class="text-xs text-slate-500">Hiệu suất chờ</p><p class="text-2xl font-black mt-2">@Model.Data.AverageWaitMinutes phút</p></div>
+            <div class="bg-white border rounded-2xl p-4"><p class="text-xs text-slate-500">Thời gian chờ trung bình trong tuần</p><p class="text-2xl font-black mt-2">@Model.Data.AverageWaitMinutes phút</p></div>
         </section>
+
+        <div class="flex justify-end">
+            <form method="post" asp-page-handler="ResetWaitPerformance" class="inline-flex items-center gap-2">
+                <input type="hidden" asp-for="FilterCategory" />
+                <input type="hidden" asp-for="FilterPreferredDate" />
+                <input type="hidden" asp-for="FilterPreferredTime" />
+                <input type="hidden" asp-for="CalendarMode" />
+                <button type="submit" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50">Reset hiệu suất chờ</button>
+            </form>
+        </div>
 
     <section class="bg-white border rounded-2xl overflow-hidden">
         <table class="w-full text-sm">
@@ -169,6 +215,8 @@
                 <tr>
                     <th class="text-left px-4 py-3 w-20">Thứ tự</th>
                     <th class="text-left px-4 py-3">Bệnh nhân</th>
+                    <th class="text-left px-4 py-3">Ngày ưu tiên</th>
+                    <th class="text-left px-4 py-3">Giờ ưu tiên</th>
                     <th class="text-left px-4 py-3">Thời gian đăng ký</th>
                     <th class="text-left px-4 py-3">Trạng thái</th>
                     <th class="text-left px-4 py-3">Thao tác</th>
@@ -179,18 +227,48 @@
                 {
                     <tr class="border-t border-slate-100 hover:bg-slate-50">
                         <td class="px-4 py-3 font-semibold">@item.Order.ToString("00")</td>
-                        <td class="px-4 py-3">@item.PatientName</td>
+                        <td class="px-4 py-3"><a asp-page="/Doctor/PatientRecord" asp-route-PatientId="@item.PatientId" class="text-primary font-semibold hover:underline">@item.PatientName</a></td>
+                        <td class="px-4 py-3">@(item.PreferredDate.HasValue ? item.PreferredDate.Value.ToString("dd/MM/yyyy") : "-")</td>
+                        <td class="px-4 py-3">@(item.PreferredTime.HasValue ? item.PreferredTime.Value.ToString("HH:mm") : "-")</td>
                         <td class="px-4 py-3">@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
-                        <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs bg-slate-100 text-slate-700">@item.Status</span></td>
+                        <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs @(GetWaitlistStatusClass(item.Status))">@GetWaitlistStatusLabel(item.Status)</span></td>
                         <td class="px-4 py-3">
-                            <div class="flex items-center gap-2">
-                                <form method="post" asp-page-handler="MoveUp">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <a asp-page="/Doctor/PatientRecord" asp-route-PatientId="@item.PatientId" class="px-3 py-2 rounded-xl border border-slate-200 text-slate-700 text-sm hover:bg-slate-100 no-underline">Xem chi tiết</a>
+                                @if (item.Status == "WAITING")
+                                {
+                                    <form method="post" asp-page-handler="Confirm" class="inline">
+                                        <input type="hidden" name="waitlistId" value="@item.WaitlistId" />
+                                        <input type="hidden" asp-for="FilterCategory" />
+                                        <input type="hidden" asp-for="FilterPreferredDate" />
+                                        <input type="hidden" asp-for="FilterPreferredTime" />
+                                        <input type="hidden" asp-for="CalendarMode" />
+                                        <button class="px-3 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700">Accept</button>
+                                    </form>
+                                }
+                                <form method="post" asp-page-handler="Schedule" class="inline">
                                     <input type="hidden" name="waitlistId" value="@item.WaitlistId" />
-                                    <button class="px-2 py-1 border rounded-lg">↑</button>
+                                    <input type="hidden" asp-for="FilterCategory" />
+                                    <input type="hidden" asp-for="FilterPreferredDate" />
+                                    <input type="hidden" asp-for="FilterPreferredTime" />
+                                    <input type="hidden" asp-for="CalendarMode" />
+                                    <button class="px-3 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-blue-600">Chuyển lịch</button>
                                 </form>
-                                <form method="post" asp-page-handler="MoveDown">
+                                <form method="post" asp-page-handler="MoveUp" class="inline">
                                     <input type="hidden" name="waitlistId" value="@item.WaitlistId" />
-                                    <button class="px-2 py-1 border rounded-lg">↓</button>
+                                    <input type="hidden" asp-for="FilterCategory" />
+                                    <input type="hidden" asp-for="FilterPreferredDate" />
+                                    <input type="hidden" asp-for="FilterPreferredTime" />
+                                    <input type="hidden" asp-for="CalendarMode" />
+                                    <button class="px-2 py-2 border rounded-lg">↑</button>
+                                </form>
+                                <form method="post" asp-page-handler="MoveDown" class="inline">
+                                    <input type="hidden" name="waitlistId" value="@item.WaitlistId" />
+                                    <input type="hidden" asp-for="FilterCategory" />
+                                    <input type="hidden" asp-for="FilterPreferredDate" />
+                                    <input type="hidden" asp-for="FilterPreferredTime" />
+                                    <input type="hidden" asp-for="CalendarMode" />
+                                    <button class="px-2 py-2 border rounded-lg">↓</button>
                                 </form>
                             </div>
                         </td>
@@ -202,9 +280,9 @@
 
         <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="bg-white border rounded-2xl p-5">
-                <h3 class="text-2xl font-black">Hiệu suất chờ</h3>
+                <h3 class="text-2xl font-black">Thời gian chờ trung bình</h3>
                 <p class="text-5xl font-black mt-4">@Model.Data.AverageWaitMinutes <span class="text-base font-semibold text-slate-500">phút</span></p>
-                <p class="text-sm text-slate-500 mt-2">Thời gian chờ trung bình hiện tại.</p>
+                <p class="text-sm text-slate-500 mt-2">Được tính lại từ đầu tuần hiện tại và reset về 0 mỗi tuần.</p>
             </div>
             <div class="lg:col-span-2 bg-gradient-to-br from-blue-700 to-blue-800 text-white rounded-2xl p-6">
                 <h3 class="text-4xl font-black">Gửi thông báo hàng loạt cho các slot trống sắp tới?</h3>
