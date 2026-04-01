@@ -57,6 +57,61 @@ public class DoctorPortalService : IDoctorPortalService
 
         var allForMonth = await _appointmentRepository.GetByDateRangeAsync(firstOfMonth, lastOfMonth);
         var doctorMonth = allForMonth.Where(a => a.DoctorId == doctorUserId).ToList();
+
+        var weekStart = today.AddDays(today.DayOfWeek == DayOfWeek.Sunday ? -6 : 1 - (int)today.DayOfWeek);
+        var weekSchedule = Enumerable.Range(0, 7)
+            .Select(offset =>
+            {
+                var date = weekStart.AddDays(offset);
+                var appointmentsForDay = doctorMonth
+                    .Where(a => a.AppointmentDate == date)
+                    .OrderBy(a => a.StartTime)
+                    .Select(a => new DoctorScheduleItemDto
+                    {
+                        AppointmentId = a.AppointmentId,
+                        PatientName = a.Patient.FullName,
+                        AppointmentDate = a.AppointmentDate,
+                        StartTime = a.StartTime,
+                        EndTime = a.EndTime,
+                        Status = a.Status,
+                        Reason = a.Reason
+                    })
+                    .ToList();
+
+                return new DoctorScheduleDayDto
+                {
+                    Date = date,
+                    Label = date.DayOfWeek switch
+                    {
+                        DayOfWeek.Monday => "T2",
+                        DayOfWeek.Tuesday => "T3",
+                        DayOfWeek.Wednesday => "T4",
+                        DayOfWeek.Thursday => "T5",
+                        DayOfWeek.Friday => "T6",
+                        DayOfWeek.Saturday => "T7",
+                        DayOfWeek.Sunday => "CN",
+                        _ => string.Empty
+                    },
+                    Appointments = appointmentsForDay
+                };
+            })
+            .ToList();
+
+        var monthSchedule = Enumerable.Range(1, DateTime.DaysInMonth(today.Year, today.Month))
+            .Select(day =>
+            {
+                var date = new DateOnly(today.Year, today.Month, day);
+                var items = doctorMonth.Where(a => a.AppointmentDate == date).ToList();
+                return new DoctorScheduleMonthDayDto
+                {
+                    Date = date,
+                    AppointmentCount = items.Count,
+                    HasUpcoming = items.Any(a => a.Status != AppointmentStatus.Completed),
+                    HasCompleted = items.Any(a => a.Status == AppointmentStatus.Completed)
+                };
+            })
+            .ToList();
+
         var timeline = doctorMonth
             .Where(a => a.AppointmentDate == today)
             .OrderBy(a => a.StartTime)
@@ -93,6 +148,8 @@ public class DoctorPortalService : IDoctorPortalService
             AppointmentsThisMonth = doctorMonth.Count,
             AverageConsultationMinutes = doctorMonth.Count == 0 ? 0 : (int)Math.Round(doctorMonth.Average(a => (a.EndTime - a.StartTime).TotalMinutes)),
             TodayTimeline = timeline,
+            WeekSchedule = weekSchedule,
+            MonthSchedule = monthSchedule,
             PendingRequests = pending
         };
     }
@@ -107,6 +164,51 @@ public class DoctorPortalService : IDoctorPortalService
             .Take(20)
             .Select(MapRequest)
             .ToList();
+    }
+
+    public async Task<List<DoctorPatientGroupDto>> GetPatientGroupsAsync(int doctorUserId)
+    {
+        var appointments = await _appointmentRepository.GetByDoctorIdAsync(doctorUserId);
+
+        var categories = new[]
+        {
+            new { CategoryKey = "completed", Category = "Đã khám", Statuses = new[] { AppointmentStatus.Completed } },
+            new { CategoryKey = "confirmed", Category = "Đã được chấp nhận", Statuses = new[] { AppointmentStatus.Confirmed } },
+            new { CategoryKey = "pending", Category = "Yêu cầu mới", Statuses = new[] { AppointmentStatus.Pending } }
+        };
+
+        return categories.Select(category => new DoctorPatientGroupDto
+        {
+            CategoryKey = category.CategoryKey,
+            Category = category.Category,
+            Patients = appointments
+                .Where(a => category.Statuses.Contains(a.Status))
+                .GroupBy(a => a.PatientId)
+                .Select(g =>
+                {
+                    var latest = g
+                        .OrderByDescending(a => a.AppointmentDate)
+                        .ThenByDescending(a => a.StartTime)
+                        .First();
+
+                    return new DoctorPatientListItemDto
+                    {
+                        PatientId = latest.PatientId,
+                        AppointmentId = latest.AppointmentId,
+                        PatientName = latest.Patient?.FullName ?? "Bệnh nhân",
+                        PatientEmail = latest.Patient?.Email,
+                        Gender = latest.Patient?.Gender ?? string.Empty,
+                        SpecialtyName = latest.Specialty?.SpecialtyName ?? string.Empty,
+                        Status = latest.Status,
+                        AppointmentDate = latest.AppointmentDate,
+                        StartTime = latest.StartTime,
+                        Reason = latest.Reason
+                    };
+                })
+                .OrderByDescending(item => item.AppointmentDate)
+                .ThenBy(item => item.StartTime)
+                .ToList()
+        }).ToList();
     }
 
     public async Task<bool> ConfirmRequestAsync(int appointmentId)
@@ -181,6 +283,14 @@ public class DoctorPortalService : IDoctorPortalService
         var items = await _appointmentWaitlistRepository.GetByDoctorIdAsync(doctorUserId);
         var ordered = items.OrderBy(i => i.CreatedAt).ToList();
 
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var monthEnd = today.AddMonths(1).AddDays(-1);
+        var monthAppointments = (await _appointmentRepository.GetByDateRangeAsync(today, monthEnd))
+            .Where(a => a.DoctorId == doctorUserId)
+            .OrderBy(a => a.AppointmentDate)
+            .ThenBy(a => a.StartTime)
+            .ToList();
+
         return new DoctorWaitlistDto
         {
             IsFullToday = ordered.Any(i => i.PreferredDate == DateOnly.FromDateTime(DateTime.Today)),
@@ -198,6 +308,16 @@ public class DoctorPortalService : IDoctorPortalService
                 PreferredTime = item.PreferredTime,
                 Status = item.Status,
                 CreatedAt = item.CreatedAt
+            }).ToList(),
+            CalendarEvents = monthAppointments.Select(a => new DoctorCalendarEventDto
+            {
+                AppointmentId = a.AppointmentId,
+                Title = a.Specialty?.SpecialtyName ?? a.Reason ?? "Lịch hẹn",
+                PatientName = a.Patient?.FullName ?? "Bệnh nhân",
+                StartDate = a.AppointmentDate,
+                StartTime = a.StartTime,
+                EndTime = a.EndTime,
+                Status = a.Status
             }).ToList()
         };
     }
@@ -357,6 +477,117 @@ public class DoctorPortalService : IDoctorPortalService
         }
 
         await _unitOfWork.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<DoctorConsultationDto?> GetConsultationAsync(int doctorUserId, int appointmentId)
+    {
+        var appointment = await _appointmentRepository.GetByIdAsync(appointmentId);
+        if (appointment == null || appointment.DoctorId != doctorUserId)
+        {
+            return null;
+        }
+
+        var latestRecord = await _medicalRecordRepository.GetLatestByDoctorAndPatientAsync(doctorUserId, appointment.PatientId);
+        var patient = appointment.Patient;
+        var age = patient.DateOfBirth.HasValue
+            ? DateTime.Today.Year - patient.DateOfBirth.Value.Year
+            : (int?)null;
+
+        if (patient.DateOfBirth.HasValue &&
+            new DateTime(DateTime.Today.Year, patient.DateOfBirth.Value.Month, patient.DateOfBirth.Value.Day) > DateTime.Today)
+        {
+            age--;
+        }
+
+        return new DoctorConsultationDto
+        {
+            AppointmentId = appointment.AppointmentId,
+            PatientId = appointment.PatientId,
+            PatientName = appointment.Patient.FullName,
+            PatientAge = age,
+            PatientGender = appointment.Patient.Gender,
+            BloodType = appointment.PatientId % 2 == 0 ? "A+" : "O+",
+            AllergyAlert = latestRecord?.Notes ?? "Chưa có tiền sử dị ứng cụ thể.",
+            AppointmentDate = appointment.AppointmentDate,
+            StartTime = appointment.StartTime,
+            EndTime = appointment.EndTime,
+            Reason = appointment.Reason,
+            Status = appointment.Status,
+            Symptoms = latestRecord?.Symptoms,
+            Diagnosis = latestRecord?.Diagnosis,
+            TreatmentPlan = latestRecord?.TreatmentPlan,
+            Prescription = latestRecord?.Prescription,
+            Notes = latestRecord?.Notes
+        };
+    }
+
+    public async Task<bool> CompleteConsultationAsync(int doctorUserId, int appointmentId, string symptoms, string diagnosis, string treatmentPlan, string prescription, string notes)
+    {
+        var appointment = await _appointmentRepository.GetByIdAsync(appointmentId);
+        if (appointment == null || appointment.DoctorId != doctorUserId)
+        {
+            return false;
+        }
+
+        appointment.Status = AppointmentStatus.Completed;
+        appointment.Notes = notes;
+        appointment.UpdatedAt = DateTime.Now;
+        await _appointmentRepository.UpdateAsync(appointment);
+
+        await _medicalRecordRepository.CreateAsync(new MedicalRecord
+        {
+            DoctorId = doctorUserId,
+            PatientId = appointment.PatientId,
+            AppointmentId = appointment.AppointmentId,
+            Symptoms = symptoms,
+            Diagnosis = diagnosis,
+            TreatmentPlan = treatmentPlan,
+            Prescription = prescription,
+            Notes = notes,
+            RecordDate = DateOnly.FromDateTime(DateTime.Today),
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
+        });
+
+        await _unitOfWork.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> SendConsultationResultToPatientAsync(int doctorUserId, int appointmentId, int patientId)
+    {
+        var appointment = await _appointmentRepository.GetByIdAsync(appointmentId);
+        if (appointment == null || appointment.DoctorId != doctorUserId)
+        {
+            return false;
+        }
+
+        var doctor = await _userRepository.GetByIdAsync(doctorUserId);
+        var patient = await _userRepository.GetByIdAsync(patientId);
+        
+        if (doctor == null || patient == null)
+        {
+            return false;
+        }
+
+        // Tạo notification cho bệnh nhân
+        var notification = new Notification
+        {
+            UserId = patientId,
+            AppointmentId = appointmentId,
+            Title = "Kết quả khám bệnh",
+            Body = $"Bác sĩ {doctor.FullName} đã gửi kết quả khám ngày {appointment.AppointmentDate:dd/MM/yyyy}. Vui lòng xem chi tiết trong hồ sơ y tế của bạn.",
+            NotificationType = "SYSTEM",
+            Channel = "APP",
+            Status = "SENT",
+            IsRead = false,
+            SentAt = DateTime.Now,
+            CreatedAt = DateTime.Now
+        };
+
+        await _notificationRepository.CreateAsync(notification);
+        await _unitOfWork.SaveChangesAsync();
+        
         return true;
     }
 

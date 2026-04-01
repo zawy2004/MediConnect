@@ -12,4 +12,5 @@ public interface IAppointmentService
     Task<AppointmentResultDto> CancelAppointmentAsync(CancelAppointmentDto dto);
     Task<AppointmentResultDto> ConfirmAppointmentAsync(int appointmentId);
     Task<List<TimeSlotDto>> GetAvailableSlotsAsync();
+    Task<List<TimeSlotDto>> GetAvailableSlotsByDoctorAsync(int doctorUserId, DateOnly fromDate, DateOnly toDate);
 }

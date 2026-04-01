@@ -228,6 +228,37 @@ public class AppointmentService : IAppointmentService
         }).ToList();
     }
 
+    public async Task<List<TimeSlotDto>> GetAvailableSlotsByDoctorAsync(int doctorUserId, DateOnly fromDate, DateOnly toDate)
+    {
+        var slots = await _timeSlotRepository.GetByDoctorAndDateRangeAsync(doctorUserId, fromDate, toDate);
+        return slots
+            .Where(s => s.IsAvailable && s.BookedCount < s.MaxCapacity)
+            .Select(s => new TimeSlotDto
+            {
+                SlotId = s.SlotId,
+                SlotDate = s.SlotDate,
+                StartTime = s.StartTime,
+                EndTime = s.EndTime,
+                IsAvailable = s.IsAvailable,
+                Display = $"{s.SlotDate:dd/MM} ({GetDayOfWeekVietnamese(s.SlotDate)}) | {s.StartTime:hh\\:mm} - {s.EndTime:hh\\:mm}"
+            }).ToList();
+    }
+
+    private static string GetDayOfWeekVietnamese(DateOnly date)
+    {
+        return date.DayOfWeek switch
+        {
+            DayOfWeek.Monday => "Thứ 2",
+            DayOfWeek.Tuesday => "Thứ 3",
+            DayOfWeek.Wednesday => "Thứ 4",
+            DayOfWeek.Thursday => "Thứ 5",
+            DayOfWeek.Friday => "Thứ 6",
+            DayOfWeek.Saturday => "Thứ 7",
+            DayOfWeek.Sunday => "CN",
+            _ => ""
+        };
+    }
+
     private static List<AppointmentListDto> MapToListDto(List<Appointment> appointments)
     {
         return appointments.Select(a => new AppointmentListDto

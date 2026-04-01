@@ -1,0 +1,462 @@
+@page
+@model MediConnect.Server.Pages.Doctor.ConsultationModel
+@{
+    ViewData["Title"] = "Đang khám";
+    ViewData["HideLayout"] = true;
+}
+
+<div class="min-h-screen bg-[#f8fafc] flex">
+    @await Html.PartialAsync("_DoctorSidebar", "consultation")
+    <main class="flex-1 overflow-y-auto p-8 space-y-6">
+        <div class="flex items-center justify-between gap-4">
+            <div>
+                <h1 class="text-4xl font-black">Trang khám bệnh</h1>
+                <p class="text-slate-500 mt-1">Nhập liệu khám trực tiếp và hoàn tất bệnh án cho bệnh nhân.</p>
+            </div>
+            <a asp-page="/Doctor/Dashboard" class="px-4 py-2 bg-white border border-slate-300 rounded-xl no-underline text-slate-700">Quay lại Dashboard</a>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+        {
+            <div class="bg-green-50 border border-green-200 text-green-700 rounded-xl px-4 py-3 text-sm">@Model.StatusMessage</div>
+        }
+
+        @if (Model.Data != null)
+        {
+            <!-- Thông tin bệnh nhân -->
+            <div class="bg-white border rounded-2xl p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <div class="lg:col-span-2">
+                        <h2 class="text-2xl font-black">@Model.Data.PatientName</h2>
+                        <p class="text-slate-500 mt-2">@Model.Data.PatientGender • @Model.Data.PatientAge tuổi</p>
+                        <p class="text-slate-500 mt-2">Ngày khám: @Model.Data.AppointmentDate.ToString("dd/MM/yyyy") • @Model.Data.StartTime.ToString("HH:mm") - @Model.Data.EndTime.ToString("HH:mm")</p>
+                        <p class="text-slate-500 mt-2">Triệu chứng đặt lịch: @Model.Data.Reason</p>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="bg-slate-50 rounded-2xl p-4">
+                            <p class="text-xs uppercase tracking-widest text-slate-500">Trạng thái</p>
+                            <p class="text-lg font-semibold mt-2">@Model.Data.Status</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-2xl p-4">
+                            <p class="text-xs uppercase tracking-widest text-slate-500">Nhóm máu</p>
+                            <p class="text-lg font-semibold mt-2">@Model.Data.BloodType</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 grid grid-cols-1 xl:grid-cols-2 gap-4">
+                    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+                        <div class="flex items-center gap-2 text-amber-700">
+                            <span class="material-symbols-outlined">warning</span>
+                            <h3 class="font-bold">Dị ứng / Lịch sử bệnh</h3>
+                        </div>
+                        <p class="mt-2 text-amber-600 text-sm">@(string.IsNullOrEmpty(Model.Data.AllergyAlert) ? "Không có thông tin dị ứng" : Model.Data.AllergyAlert)</p>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4">
+                        <div class="flex items-center gap-2 text-blue-700">
+                            <span class="material-symbols-outlined">info</span>
+                            <h3 class="font-bold">Lưu ý</h3>
+                        </div>
+                        <p class="mt-2 text-blue-600 text-sm">Chỉ nhập liệu khi bác sĩ trực tiếp khám bệnh nhân này.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quy trình khám bệnh theo 3 bước -->
+            <form method="post" asp-page-handler="Complete">
+                <input type="hidden" asp-for="AppointmentId" />
+                
+                <!-- Progress Steps -->
+                <div class="bg-white border rounded-2xl p-6 mb-6">
+                    <div class="flex items-center justify-between relative">
+                        <div class="absolute top-5 left-0 right-0 h-1 bg-slate-200 -z-0"></div>
+                        <div class="absolute top-5 left-0 h-1 bg-primary transition-all duration-500 -z-0" style="width: @(Model.CurrentStep == 1 ? "0%" : Model.CurrentStep == 2 ? "50%" : "100%")"></div>
+                        
+                        <!-- Step 1 -->
+                        <div class="flex flex-col items-center z-10">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm @(Model.CurrentStep >= 1 ? "bg-primary text-white" : "bg-slate-200 text-slate-500")">
+                                <span class="material-symbols-outlined text-xl">stethoscope</span>
+                            </div>
+                            <span class="mt-2 text-xs font-semibold @(Model.CurrentStep >= 1 ? "text-primary" : "text-slate-400")">Khám lâm sàng</span>
+                        </div>
+                        
+                        <!-- Step 2 -->
+                        <div class="flex flex-col items-center z-10">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm @(Model.CurrentStep >= 2 ? "bg-primary text-white" : "bg-slate-200 text-slate-500")">
+                                <span class="material-symbols-outlined text-xl">biotech</span>
+                            </div>
+                            <span class="mt-2 text-xs font-semibold @(Model.CurrentStep >= 2 ? "text-primary" : "text-slate-400")">Cận lâm sàng</span>
+                        </div>
+                        
+                        <!-- Step 3 -->
+                        <div class="flex flex-col items-center z-10">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm @(Model.CurrentStep >= 3 ? "bg-primary text-white" : "bg-slate-200 text-slate-500")">
+                                <span class="material-symbols-outlined text-xl">assignment_turned_in</span>
+                            </div>
+                            <span class="mt-2 text-xs font-semibold @(Model.CurrentStep >= 3 ? "text-primary" : "text-slate-400")">Chẩn đoán</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BƯỚC 1: Khám lâm sàng ban đầu -->
+                <div class="bg-white border rounded-2xl overflow-hidden mb-6">
+                    <div class="bg-gradient-to-r from-primary to-blue-600 px-6 py-4">
+                        <div class="flex items-center gap-3 text-white">
+                            <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                                <span class="font-bold">1</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg">Khám Lâm Sàng Ban Đầu</h3>
+                                <p class="text-blue-100 text-sm">Hỏi bệnh, khám tổng quát và chẩn đoán sơ bộ</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 space-y-6">
+                        <!-- Hỏi bệnh -->
+                        <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="material-symbols-outlined text-primary">chat</span>
+                                <h4 class="font-bold text-[#0d141b]">Hỏi bệnh</h4>
+                            </div>
+                            <p class="text-slate-500 text-sm mb-3">Ghi nhận triệu chứng, tiền sử bệnh, dị ứng thuốc...</p>
+                            <textarea asp-for="Symptoms" rows="4" placeholder="Nhập triệu chứng bệnh nhân mô tả, tiền sử bệnh, các thuốc đang sử dụng..." 
+                                class="w-full rounded-xl border-slate-300 p-3 text-sm focus:ring-primary focus:border-primary" 
+                                disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)"></textarea>
+                        </div>
+
+                        <!-- Khám tổng quát -->
+                        <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="material-symbols-outlined text-emerald-500">vital_signs</span>
+                                <h4 class="font-bold text-[#0d141b]">Khám tổng quát</h4>
+                            </div>
+                            <p class="text-slate-500 text-sm mb-3">Đo huyết áp, nhịp tim, nhiệt độ cơ thể...</p>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Huyết áp (mmHg)</label>
+                                    <input type="text" asp-for="BloodPressure" placeholder="120/80" 
+                                        class="w-full rounded-lg border-slate-300 p-2.5 text-sm focus:ring-primary focus:border-primary"
+                                        disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)" />
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Nhịp tim (bpm)</label>
+                                    <input type="text" asp-for="HeartRate" placeholder="72" 
+                                        class="w-full rounded-lg border-slate-300 p-2.5 text-sm focus:ring-primary focus:border-primary"
+                                        disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)" />
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Nhiệt độ (°C)</label>
+                                    <input type="text" asp-for="Temperature" placeholder="37.0" 
+                                        class="w-full rounded-lg border-slate-300 p-2.5 text-sm focus:ring-primary focus:border-primary"
+                                        disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)" />
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Cân nặng (kg)</label>
+                                    <input type="text" asp-for="Weight" placeholder="65" 
+                                        class="w-full rounded-lg border-slate-300 p-2.5 text-sm focus:ring-primary focus:border-primary"
+                                        disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)" />
+                                </div>
+                            </div>
+                            <textarea asp-for="PhysicalExamination" rows="3" placeholder="Ghi chú khám tổng quát: tình trạng chung, các dấu hiệu lâm sàng khác..." 
+                                class="w-full rounded-xl border-slate-300 p-3 text-sm focus:ring-primary focus:border-primary"
+                                disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)"></textarea>
+                        </div>
+
+                        <!-- Chẩn đoán sơ bộ -->
+                        <div class="bg-blue-50 rounded-xl p-5 border border-blue-200">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="material-symbols-outlined text-blue-500">diagnosis</span>
+                                <h4 class="font-bold text-[#0d141b]">Chẩn đoán sơ bộ</h4>
+                            </div>
+                            <p class="text-slate-500 text-sm mb-3">Đánh giá ban đầu về tình trạng sức khỏe bệnh nhân</p>
+                            <textarea asp-for="PreliminaryDiagnosis" rows="3" placeholder="Nhập chẩn đoán sơ bộ dựa trên triệu chứng và khám lâm sàng..." 
+                                class="w-full rounded-xl border-blue-300 p-3 text-sm focus:ring-primary focus:border-primary"
+                                disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BƯỚC 2: Chỉ định cận lâm sàng -->
+                <div class="bg-white border rounded-2xl overflow-hidden mb-6">
+                    <div class="bg-gradient-to-r from-purple-500 to-purple-700 px-6 py-4">
+                        <div class="flex items-center gap-3 text-white">
+                            <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                                <span class="font-bold">2</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg">Chỉ Định Cận Lâm Sàng</h3>
+                                <p class="text-purple-100 text-sm">Xét nghiệm và chẩn đoán hình ảnh (nếu cần)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+                            <div class="flex items-center gap-2 text-amber-700">
+                                <span class="material-symbols-outlined">lightbulb</span>
+                                <p class="text-sm font-medium">Mục đích: Xác định chính xác tình trạng bệnh</p>
+                            </div>
+                        </div>
+
+                        <!-- Chọn loại xét nghiệm -->
+                        <div class="mb-6">
+                            <h4 class="font-bold text-[#0d141b] mb-3">Chỉ định xét nghiệm</h4>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                <label class="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-purple-50 hover:border-purple-300 transition-colors has-[:checked]:bg-purple-50 has-[:checked]:border-purple-400">
+                                    <input type="checkbox" name="LabTests" value="blood" class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500" disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)" @(Model.LabTestBlood ? "checked" : "") />
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-red-500">water_drop</span>
+                                        <span class="text-sm font-medium">Xét nghiệm máu</span>
+                                    </div>
+                                </label>
+                                <label class="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-purple-50 hover:border-purple-300 transition-colors has-[:checked]:bg-purple-50 has-[:checked]:border-purple-400">
+                                    <input type="checkbox" name="LabTests" value="urine" class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500" disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)" @(Model.LabTestUrine ? "checked" : "") />
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-amber-500">science</span>
+                                        <span class="text-sm font-medium">Xét nghiệm nước tiểu</span>
+                                    </div>
+                                </label>
+                                <label class="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-purple-50 hover:border-purple-300 transition-colors has-[:checked]:bg-purple-50 has-[:checked]:border-purple-400">
+                                    <input type="checkbox" name="LabTests" value="xray" class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500" disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)" @(Model.LabTestXray ? "checked" : "") />
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-blue-500">radiology</span>
+                                        <span class="text-sm font-medium">Chụp X-quang</span>
+                                    </div>
+                                </label>
+                                <label class="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-purple-50 hover:border-purple-300 transition-colors has-[:checked]:bg-purple-50 has-[:checked]:border-purple-400">
+                                    <input type="checkbox" name="LabTests" value="ct" class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500" disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)" @(Model.LabTestCT ? "checked" : "") />
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-indigo-500">mri</span>
+                                        <span class="text-sm font-medium">Chụp CT</span>
+                                    </div>
+                                </label>
+                                <label class="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-purple-50 hover:border-purple-300 transition-colors has-[:checked]:bg-purple-50 has-[:checked]:border-purple-400">
+                                    <input type="checkbox" name="LabTests" value="mri" class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500" disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)" @(Model.LabTestMRI ? "checked" : "") />
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-purple-500">mri</span>
+                                        <span class="text-sm font-medium">Chụp MRI</span>
+                                    </div>
+                                </label>
+                                <label class="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-purple-50 hover:border-purple-300 transition-colors has-[:checked]:bg-purple-50 has-[:checked]:border-purple-400">
+                                    <input type="checkbox" name="LabTests" value="ultrasound" class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500" disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)" @(Model.LabTestUltrasound ? "checked" : "") />
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-teal-500">ecg</span>
+                                        <span class="text-sm font-medium">Siêu âm</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Chi tiết chỉ định -->
+                        <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="material-symbols-outlined text-purple-500">description</span>
+                                <h4 class="font-bold text-[#0d141b]">Chi tiết chỉ định xét nghiệm</h4>
+                            </div>
+                            <textarea asp-for="LabTestDetails" rows="3" placeholder="Ghi rõ các chỉ định cụ thể: loại xét nghiệm máu (công thức máu, sinh hóa...), vùng chụp X-quang/CT/MRI..." 
+                                class="w-full rounded-xl border-slate-300 p-3 text-sm focus:ring-primary focus:border-primary"
+                                disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)"></textarea>
+                        </div>
+
+                        <!-- Kết quả xét nghiệm -->
+                        <div class="bg-purple-50 rounded-xl p-5 border border-purple-200 mt-6">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="material-symbols-outlined text-purple-600">lab_profile</span>
+                                <h4 class="font-bold text-[#0d141b]">Kết quả xét nghiệm</h4>
+                            </div>
+                            <p class="text-slate-500 text-sm mb-3">Nhập kết quả sau khi có kết quả xét nghiệm</p>
+                            <textarea asp-for="LabTestResults" rows="4" placeholder="Nhập kết quả xét nghiệm: chỉ số máu, kết quả chụp chiếu, nhận xét của kỹ thuật viên..." 
+                                class="w-full rounded-xl border-purple-300 p-3 text-sm focus:ring-primary focus:border-primary"
+                                disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BƯỚC 3: Nhận kết quả & Chẩn đoán cuối cùng -->
+                <div class="bg-white border rounded-2xl overflow-hidden mb-6">
+                    <div class="bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-4">
+                        <div class="flex items-center gap-3 text-white">
+                            <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                                <span class="font-bold">3</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg">Chẩn Đoán & Kê Đơn</h3>
+                                <p class="text-emerald-100 text-sm">Chẩn đoán cuối cùng và phương án điều trị</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 space-y-6">
+                        <!-- Chẩn đoán cuối cùng -->
+                        <div class="bg-emerald-50 rounded-xl p-5 border border-emerald-200">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="material-symbols-outlined text-emerald-600">verified</span>
+                                <h4 class="font-bold text-[#0d141b]">Chẩn đoán cuối cùng</h4>
+                            </div>
+                            <p class="text-slate-500 text-sm mb-3">Dựa trên kết quả khám lâm sàng và cận lâm sàng</p>
+                            <textarea asp-for="Diagnosis" rows="4" placeholder="Nhập chẩn đoán xác định: tên bệnh, mã ICD-10 (nếu có), mức độ nghiêm trọng..." 
+                                class="w-full rounded-xl border-emerald-300 p-3 text-sm focus:ring-primary focus:border-primary"
+                                disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)"></textarea>
+                        </div>
+
+                        <!-- Đơn thuốc -->
+                        <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="material-symbols-outlined text-blue-500">medication</span>
+                                <h4 class="font-bold text-[#0d141b]">Đơn thuốc / Kê đơn</h4>
+                            </div>
+                            <textarea asp-for="Prescription" rows="4" placeholder="Nhập đơn thuốc: tên thuốc, liều lượng, cách dùng, thời gian sử dụng...&#10;Ví dụ: Paracetamol 500mg - 1 viên x 3 lần/ngày - sau ăn - 5 ngày" 
+                                class="w-full rounded-xl border-slate-300 p-3 text-sm focus:ring-primary focus:border-primary"
+                                disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)"></textarea>
+                        </div>
+
+                        <!-- Lời khuyên điều trị -->
+                        <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="material-symbols-outlined text-amber-500">tips_and_updates</span>
+                                <h4 class="font-bold text-[#0d141b]">Lời khuyên & Chế độ dinh dưỡng</h4>
+                            </div>
+                            <textarea asp-for="TreatmentPlan" rows="3" placeholder="Lời khuyên về chế độ ăn uống, sinh hoạt, vận động, những điều cần tránh..." 
+                                class="w-full rounded-xl border-slate-300 p-3 text-sm focus:ring-primary focus:border-primary"
+                                disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)"></textarea>
+                        </div>
+
+                        <!-- Ghi chú & Tái khám -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="material-symbols-outlined text-slate-500">event_repeat</span>
+                                    <h4 class="font-bold text-[#0d141b]">Hẹn tái khám</h4>
+                                </div>
+                                <input type="date" asp-for="FollowUpDate" 
+                                    class="w-full rounded-lg border-slate-300 p-2.5 text-sm focus:ring-primary focus:border-primary"
+                                    disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)" />
+                                <p class="text-slate-400 text-xs mt-2">Để trống nếu không cần tái khám</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="material-symbols-outlined text-slate-500">edit_note</span>
+                                    <h4 class="font-bold text-[#0d141b]">Ghi chú thêm</h4>
+                                </div>
+                                <textarea asp-for="Notes" rows="2" placeholder="Ghi chú khác..." 
+                                    class="w-full rounded-xl border-slate-300 p-3 text-sm focus:ring-primary focus:border-primary"
+                                    disabled="@(Model.Data.Status == "COMPLETED" ? "disabled" : null)"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                @if (Model.Data.Status != "COMPLETED")
+                {
+                    <div class="bg-white border rounded-2xl p-6">
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div class="flex items-center gap-2 text-slate-500">
+                                <span class="material-symbols-outlined">info</span>
+                                <span class="text-sm">Thông tin sẽ được lưu vào bệnh án bệnh nhân.</span>
+                            </div>
+                            <div class="flex gap-3">
+                                <button type="submit" asp-page-handler="SaveDraft" class="px-6 py-3 bg-slate-100 text-slate-700 rounded-xl font-semibold hover:bg-slate-200 transition-colors flex items-center gap-2">
+                                    <span class="material-symbols-outlined">save</span>
+                                    Lưu nháp
+                                </button>
+                                <button type="submit" class="px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-blue-600 transition-colors flex items-center gap-2">
+                                    <span class="material-symbols-outlined">check_circle</span>
+                                    Hoàn tất khám
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <!-- Phần hiển thị khi đã hoàn tất khám -->
+                    <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-6 text-white mb-6">
+                        <div class="flex items-center justify-between flex-wrap gap-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-2xl">task_alt</span>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-lg">Lịch khám đã hoàn tất</p>
+                                    <p class="text-emerald-100 text-sm">Nội dung đã được lưu vào bệnh án bệnh nhân.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3 flex-wrap">
+                                <a asp-page-handler="ExportPdf" asp-route-appointmentId="@Model.AppointmentId" 
+                                   class="px-5 py-2.5 bg-white text-emerald-700 rounded-xl font-semibold hover:bg-emerald-50 transition-colors flex items-center gap-2 no-underline">
+                                    <span class="material-symbols-outlined">picture_as_pdf</span>
+                                    Xuất PDF
+                                </a>
+                                <button type="submit" asp-page-handler="SendToPatient" 
+                                        class="px-5 py-2.5 bg-emerald-700 text-white rounded-xl font-semibold hover:bg-emerald-800 transition-colors flex items-center gap-2 border border-emerald-400">
+                                    <span class="material-symbols-outlined">send</span>
+                                    Gửi cho bệnh nhân
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tóm tắt kết quả khám -->
+                    <div class="bg-white border rounded-2xl overflow-hidden">
+                        <div class="bg-slate-50 px-6 py-4 border-b">
+                            <h3 class="font-bold text-lg text-[#0d141b] flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">summarize</span>
+                                Tóm tắt kết quả khám
+                            </h3>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            @if (!string.IsNullOrEmpty(Model.Symptoms))
+                            {
+                                <div class="border-l-4 border-blue-400 pl-4 py-2">
+                                    <p class="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-1">Triệu chứng & Khám lâm sàng</p>
+                                    <p class="text-slate-700 whitespace-pre-line">@Model.Symptoms</p>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.Diagnosis))
+                            {
+                                <div class="border-l-4 border-emerald-400 pl-4 py-2">
+                                    <p class="text-xs font-semibold text-emerald-600 uppercase tracking-wide mb-1">Chẩn đoán</p>
+                                    <p class="text-slate-700 whitespace-pre-line">@Model.Diagnosis</p>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.Prescription))
+                            {
+                                <div class="border-l-4 border-purple-400 pl-4 py-2">
+                                    <p class="text-xs font-semibold text-purple-600 uppercase tracking-wide mb-1">Đơn thuốc</p>
+                                    <p class="text-slate-700 whitespace-pre-line">@Model.Prescription</p>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.TreatmentPlan))
+                            {
+                                <div class="border-l-4 border-amber-400 pl-4 py-2">
+                                    <p class="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1">Lời khuyên điều trị</p>
+                                    <p class="text-slate-700 whitespace-pre-line">@Model.TreatmentPlan</p>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.Notes))
+                            {
+                                <div class="border-l-4 border-slate-400 pl-4 py-2">
+                                    <p class="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1">Ghi chú</p>
+                                    <p class="text-slate-700 whitespace-pre-line">@Model.Notes</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </form>
+        }
+        else
+        {
+            <div class="bg-white border rounded-2xl p-8 text-center">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="material-symbols-outlined text-primary text-3xl">stethoscope</span>
+                </div>
+                <h3 class="font-bold text-xl text-[#0d141b] mb-2">Trang Khám bệnh</h3>
+                <p class="text-slate-500 mb-6">Chọn bệnh nhân đã được lên lịch trong Dashboard hoặc Waitlist để vào phần khám và nhập bệnh án.</p>
+                <a asp-page="/Doctor/Dashboard" class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-blue-600 transition-colors">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    Về Dashboard
+                </a>
+            </div>
+        }
+    </main>
+</div>

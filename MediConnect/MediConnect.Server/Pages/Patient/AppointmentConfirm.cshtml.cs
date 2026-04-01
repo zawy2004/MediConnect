@@ -104,7 +104,10 @@ public class AppointmentConfirmModel : PageModel
         var doctors = await _doctorService.SearchDoctorsAsync(new DoctorSearchFilterDto());
         Doctor = doctors.FirstOrDefault(d => d.UserId == DoctorUserId);
 
-        var slots = await _appointmentService.GetAvailableSlotsAsync();
+        // Load slots của bác sĩ cụ thể trong 30 ngày tới
+        var fromDate = DateOnly.FromDateTime(DateTime.Today);
+        var toDate = fromDate.AddDays(30);
+        var slots = await _appointmentService.GetAvailableSlotsByDoctorAsync(DoctorUserId, fromDate, toDate);
         SlotList = new SelectList(slots, "SlotId", "Display");
 
         var specialties = await _doctorService.GetActiveSpecialtiesAsync();
